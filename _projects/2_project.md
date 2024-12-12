@@ -1,83 +1,65 @@
 ---
 layout: page
-title: project 2
-description: a project with a background image and giscus comments
-img: assets/img/3.jpg
+title: A Little Fog for a Large Turn
+description: Generating realistic foggy conditions to test autonomous navigation systems
+img: assets/project_preview/fog.jpg
 importance: 2
 category: work
+github: https://github.com/harsmac/A_Little_fog_for_a_Large_Turn
+related_publications: machiraju2020little
 giscus_comments: true
 ---
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+This project explores how adverse weather conditions, particularly fog, can act as natural adversaries to autonomous navigation systems. We present a novel approach to generating realistic foggy conditions that can be used to test and evaluate autonomous vehicle steering models.
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+## Key Features
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+- Novel methodology for generating adversarial weather conditions using generative models
+- CycleGAN and DistanceGAN-based implementations
+- Framework for testing autonomous navigation models under adverse conditions
+- Perceptual similarity-based definition of adversarial perturbations
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/project_preview/fog_generation.jpg" title="Fog Generation Overview" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
+    Overview of our fog generation framework showing how clear weather images are transformed into realistic foggy conditions.
 </div>
+
+## Technical Implementation
+
+The project uses two main approaches for generating foggy conditions:
+
+1. **CycleGAN Implementation**
+   - Learns mappings between clear and foggy domains
+   - Maintains structural consistency of the original image
+   - Generates realistic fog effects
+
+2. **DistanceGAN Implementation**
+   - Alternative approach focusing on distance preservation
+   - Provides different perspective on fog generation
+   - Requires Python 2 environment
+
 <div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
-</div>
-
-You can also put regular text between your rows of images.
-Say you wanted to write a little bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
-
-<div class="row justify-content-sm-center">
     <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/project_preview/fog_results.jpg" title="Results" class="img-fluid rounded z-depth-1" %}
     </div>
     <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/project_preview/fog_steering.jpg" title="Steering Analysis" class="img-fluid rounded z-depth-1" %}
     </div>
 </div>
 <div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
+    Left: Examples of generated foggy conditions from clear weather images. Right: Analysis of steering angle predictions under foggy conditions.
 </div>
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+## Impact and Applications
 
-{% raw %}
+This work has important implications for:
+- Testing robustness of autonomous driving systems
+- Creating synthetic adverse weather datasets
+- Understanding how weather conditions affect model predictions
+- Developing more robust navigation systems
 
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image"
-    class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image"
-    class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
-
-{% endraw %}
+The code is available on [GitHub](https://github.com/harsmac/A_Little_fog_for_a_Large_Turn) and the work was published at WACV 2020. For more details, check out our paper {% cite machiraju2020little %}.
