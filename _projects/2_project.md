@@ -33,6 +33,7 @@ This project explores how adverse weather conditions, particularly fog, can act 
 The project uses two main approaches for generating foggy conditions:
 
 1. **CycleGAN Implementation**
+
    - Learns mappings between clear and foggy domains
    - Maintains structural consistency of the original image
    - Generates realistic fog effects
@@ -57,6 +58,7 @@ The project uses two main approaches for generating foggy conditions:
 ## Impact and Applications
 
 This work has important implications for:
+
 - Testing robustness of autonomous driving systems
 - Creating synthetic adverse weather datasets
 - Understanding how weather conditions affect model predictions
