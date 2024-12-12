@@ -6,7 +6,7 @@ subtitle: PhD in Machine Learning, EPFL
 
 profile:
   align: right
-  image: profile_small_size.jpg
+  image: profile_small_size.jpeg
   image_circular: true # crops the image to make it circular
   # more_info: harshitha.acad@gmail.com
 
