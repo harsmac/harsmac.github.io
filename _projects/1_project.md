@@ -2,7 +2,7 @@
 layout: page
 title: MUFIA
 description: Frequency-Based Vulnerability Analysis of Deep Learning Models against Image Corruptions
-img: assets/project_preview/mufia.jpg
+img: assets/img/project_preview/mufia.jpg
 importance: 1
 category: work
 permalink: /projects/mufia/
