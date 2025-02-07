@@ -5,6 +5,7 @@ description: Generating realistic foggy conditions to test autonomous navigation
 img: assets/project_preview/fog.jpg
 importance: 2
 category: work
+permalink: /projects/little_fog/
 github: https://github.com/harsmac/A_Little_fog_for_a_Large_Turn
 related_publications: machiraju2020little
 giscus_comments: true

@@ -5,6 +5,7 @@ description: Frequency-Based Vulnerability Analysis of Deep Learning Models agai
 img: assets/project_preview/mufia.jpg
 importance: 1
 category: work
+permalink: /projects/mufia/
 github: https://github.com/harsmac/MUFIACode
 related_publications: mufia
 ---
