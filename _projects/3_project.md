@@ -1,83 +1,48 @@
 ---
 layout: page
-title: project 3 with very long name
-description: a project that redirects to another website
-img: assets/img/7.jpg
-redirect: https://unsplash.com
+title: Latent Adversarial Training
+description: Analyzing the weaknesses of adversarially trained neural networks and introducing Latent Adversarial Training (LAT) for improved robustness.
+img: assets/img/publication_preview/latent_layers.jpg
 importance: 3
-category: work
+category: research
+permalink: /projects/harnessing_vulnerability/
+github: https://github.com/msingh27/LAT_adversarial_robustness
+related_publications: kumari2020latent
+giscus_comments: true
 ---
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+This project investigates the robustness of latent layers in adversarially trained neural networks and proposes novel methods to enhance their resilience. Specifically, we introduce **Latent Adversarial Training (LAT)**, a fine-tuning technique that increases robustness at intermediate feature layers, and **Latent Attack (LA)**, a new adversarial attack targeting latent vulnerabilities.
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+## Key Features
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+- Analysis of robustness in latent layers of adversarially trained models.
+- Introduction of **Latent Adversarial Training (LAT)** for improved model robustness.
+- Development of **Latent Attack (LA)**, a novel adversarial attack exploiting latent layer weaknesses.
+- Empirical validation on datasets such as MNIST, CIFAR-10, CIFAR-100, SVHN, and Restricted ImageNet.
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
-</div>
+## Technical Implementation
 
-You can also put regular text between your rows of images.
-Say you wanted to write a little bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+The project introduces two key methodologies:
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
+### 1. **Latent Adversarial Training (LAT)**
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+- Fine-tunes adversarially trained models at latent layers to enhance robustness.
+- Uses a combination of **input-space and latent-space perturbations** for training.
+- Results in a **4-6% improvement** in adversarial accuracy on CIFAR-10 and CIFAR-100.
 
-{% raw %}
+### 2. **Latent Attack (LA)**
 
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image"
-    class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image"
-    class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
+- A new **l∞ adversarial attack** that specifically targets the latent layers.
+- Constructs perturbations by manipulating feature representations rather than input pixels.
+- Outperforms standard PGD attacks on multiple datasets.
 
-{% endraw %}
+## Impact and Applications
+
+This research has significant implications for:
+
+- Improving **adversarial robustness** of deep learning models.
+- Enhancing security in **autonomous systems** and **computer vision applications**.
+- Providing new benchmarks for **adversarial training methodologies**.
+- Offering a more **systematic approach to understanding feature-layer vulnerabilities** in neural networks.
+
+The code and implementation details are available on [GitHub](https://github.com/msingh27/LAT_adversarial_robustness). For more technical insights, refer to our publication: {% cite kumari2020latent %}.
