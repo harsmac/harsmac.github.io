@@ -2,13 +2,13 @@
 layout: page
 title: Latent Adversarial Training
 description: Analyzing the weaknesses of adversarially trained neural networks and introducing Latent Adversarial Training (LAT) for improved robustness.
-img: assets/img/publication_preview/latent_layers.jpg
+img: assets/img/publication_preview/letterH.png
 importance: 3
-category: research
-permalink: /projects/harnessing_vulnerability/
+category: work
+permalink: /projects/latent_adversarial_training/
 github: https://github.com/msingh27/LAT_adversarial_robustness
 related_publications: kumari2020latent
-giscus_comments: true
+giscus_comments: false
 ---
 
 This project investigates the robustness of latent layers in adversarially trained neural networks and proposes novel methods to enhance their resilience. Specifically, we introduce **Latent Adversarial Training (LAT)**, a fine-tuning technique that increases robustness at intermediate feature layers, and **Latent Attack (LA)**, a new adversarial attack targeting latent vulnerabilities.
