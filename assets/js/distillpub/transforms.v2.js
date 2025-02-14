@@ -14396,9 +14396,9 @@
       appendHtml(
         head,
         `
-    <meta property="article:author" content="${escapeHtml_1(
-      a.firstName,
-    )} ${escapeHtml_1(a.lastName)}" />`,
+    <meta property="article:author" content="${escapeHtml_1(a.firstName)} ${escapeHtml_1(
+      a.lastName,
+    )}" />`,
       );
     });
 
