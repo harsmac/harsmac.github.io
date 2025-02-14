@@ -2,7 +2,7 @@
 layout: page
 title: A Little Fog for a Large Turn
 description: Generating realistic foggy conditions to test autonomous navigation systems
-img: img: assets/img/publication_preview/fog.jpg
+img: assets/img/publication_preview/fog.jpg
 importance: 2
 category: work
 permalink: /projects/little_fog/
