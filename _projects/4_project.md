@@ -6,7 +6,7 @@ img: assets/img/publication_preview/letterE.png
 importance: 4
 category: work
 permalink: /projects/eren/
-github: 
+github:
 related_publications: eren
 giscus_comments: false
 ---
@@ -34,6 +34,7 @@ EREN (Enhancing Robustness through Efficient Normalization) is a framework that 
 The project implements several key components:
 
 1. **Preprocessing Pipeline**
+
    - Adaptive normalization techniques
    - Multi-scale feature enhancement
    - Real-time processing capabilities
@@ -43,4 +44,4 @@ The project implements several key components:
    - Performance metrics for robustness assessment
    - Comparative analysis with existing methods
 
-For more details, check out our paper {% cite eren %}. 
+For more details, check out our paper {% cite eren %}.

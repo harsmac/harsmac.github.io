@@ -34,6 +34,7 @@ CLAD (Contrastive Learning for Adversarial Debiasing) introduces a novel approac
 The project implements two main components:
 
 1. **Contrastive Learning Module**
+
    - Feature extraction and representation learning
    - Background-aware negative sampling
    - Adaptive margin selection
@@ -43,4 +44,4 @@ The project implements two main components:
    - Multi-task learning approach
    - Evaluation metrics for bias measurement
 
-For more technical details, refer to our publication {% cite clad %}. 
+For more technical details, refer to our publication {% cite clad %}.
