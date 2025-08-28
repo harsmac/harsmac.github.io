@@ -1,0 +1,51 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg width="1200" height="480" viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <!-- soft sky -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EEF7FF"></stop>
+      <stop offset="100%" stop-color="#EAF3FF"></stop>
+    </linearGradient>
+    <linearGradient id="w1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#BFE6FF"></stop>
+      <stop offset="100%" stop-color="#A9D4FF"></stop>
+    </linearGradient>
+    <linearGradient id="w2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#91C4FF"></stop>
+      <stop offset="100%" stop-color="#82B3FF"></stop>
+    </linearGradient>
+    <linearGradient id="w3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7D9CFF"></stop>
+      <stop offset="100%" stop-color="#6F86FF"></stop>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="480" fill="url(#sky)"></rect>
+
+  <!--
+    IMPORTANT: Each wave path starts and ends with the SAME Y at x=0 and x=1200,
+    so the right edge matches the left edge perfectly and tiles without a seam.
+  -->
+  <g opacity=".92">
+    <!-- top wave -->
+    <path fill="url(#w1)" d="
+      M 0,160
+      C 150,130 300,170 450,150
+        600,130 750,175 900,160
+        1050,145 1125,155 1200,160
+      L 1200,240 L 0,240 Z"></path>
+    <!-- mid wave -->
+    <path fill="url(#w2)" d="
+      M 0,260
+      C 180,240 360,280 540,260
+        720,240 900,285 1080,260
+        1140,252 1170,256 1200,260
+      L 1200,340 L 0,340 Z"></path>
+    <!-- bottom wave -->
+    <path fill="url(#w3)" d="
+      M 0,360
+      C 220,345 440,390 660,365
+        880,340 1100,392 1200,360
+      L 1200,480 L 0,480 Z"></path>
+  </g>
+</svg>
