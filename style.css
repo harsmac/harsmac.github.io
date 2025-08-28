@@ -19,29 +19,45 @@ body {
 }
 
 /* Flowing wave background */
-/* replaces your current .wave-bg which uses repeat-x + drift */
-.wave-bg {
+.wave-track {
   position: fixed;
   inset: -10% -30% -10% -30%;
   z-index: -1;
-  background: url('assets/expansive-waves.svg') repeat-x left center / 1200px 100%;
-  animation: wavesLoop 60s linear infinite;
-  /* 60s per tile = calm */
+  overflow: hidden;
   transform: translateY(calc(var(--scroll) * -0.05px));
-  /* keep your vertical parallax */
-  opacity: .95;
+  pointer-events: none;
 }
 
-@keyframes wavesLoop {
+.wave-seg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* each segment = viewport width */
+  background: url('assets/expansive-waves.svg') no-repeat left center / cover;
+  animation: segSlide 40s linear infinite;
+  will-change: transform;
+  /* prevent blend artifacts on some browsers */
+  mix-blend-mode: normal;
+}
+
+.wave-seg:nth-child(2) {
+  left: 100%;
+}
+
+/* sits immediately to the right */
+
+@keyframes segSlide {
   from {
-    background-position-x: 0;
+    transform: translateX(0);
   }
 
   to {
-    background-position-x: -1200px;
+    transform: translateX(-100%);
   }
 
-  /* exactly one tile width */
+  /* exactly one segment width */
 }
 
 /* Header styles */
