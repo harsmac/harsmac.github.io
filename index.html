@@ -8,22 +8,19 @@
 </head>
 <body>
   <!-- Flowing waves background -->
-  <!-- <div class="wave-bg" aria-hidden="true"></div> -->
-  <!-- Replace the single .wave-bg with this -->
-  <div class="wave-track" aria-hidden="true">
-    <div class="wave-seg"></div>
-    <div class="wave-seg"></div>
-  </div>
-
+  <div class="wave-bg" aria-hidden="true"></div>
 
   <!-- Sticky header with brand and navigation links -->
   <header class="site-header">
     <a class="brand" href="#">HM</a>
     <nav class="site-nav">
       <a href="#about">About</a>
+      <a href="#background">Background</a>
+      <a href="#papers">Papers</a>
       <a href="#projects">Projects</a>
-      <a href="#writing">Writing</a>
-      <a href="#contact">Contact</a>
+      <a href="assets/Resume general AI.pdf" target="_blank">Resume</a>
+      <!-- <a href="#writing">Writing</a> -->
+      <!-- <a href="#contact">Contact</a> -->
     </nav>
   </header>
 
@@ -41,12 +38,93 @@
   </aside>
 
   <main>
-    <!-- Hero section -->
-    <section class="hero" id="about">
+  <!-- Hero section -->
+  <section class="hero" id="about">
+    <div class="hero-text">
       <h1>Hello, I’m Harshitha.</h1>
-      <p>Research/Applied ML Engineer. This section is placeholder — add your short pitch here.</p>
-      <a class="cta" href="#projects">See projects</a>
-    </section>
+      <p>Research/Applied ML Engineer.</p>
+      <!-- <a class="cta" href="#projects">See projects</a> -->
+    </div>
+    <div class="hero-photo">
+      <img src="assets/profile_pic.jpeg" alt="Photo of Harshitha" />
+    </div>
+  </section>
+
+  <section id="background" class="content">
+    <h2>Background</h2>
+    <p>I’m an AI Engineer and freshly minted PhD from EPFL, passionate about building machine learning systems that are not just powerful, but also resilient and trustworthy. My work ranges from computer vision to NLP and multimodal learning — always with a focus on robustness and real-world impact.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <span class="timeline-year">2019–2024</span>
+            <h3>Ph.D., Computer Science — EPFL</h3>
+          </div>
+          <p>Research in robust and trustworthy machine learning across vision, NLP, and multimodal systems.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <span class="timeline-year">2017–2019</span>
+            <h3>M.S., Artificial Intelligence — University of X</h3>
+          </div>
+          <p>Specialized in deep learning and representation learning; thesis on adversarial robustness.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <span class="timeline-year">2013–2017</span>
+            <h3>B.Tech., Computer Science — Institute of Y</h3>
+          </div>
+          <p>Foundation in algorithms, systems, and applied machine learning.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section id="papers" class="content">
+  <h2>Papers</h2>
+  <ul class="paper-list">
+    <li>
+      <a href="https://doi.org/10.1109/WACV56688.2024.00254" target="_blank" rel="noreferrer">
+        MUFIA: Multi-Faceted Iterative Adversarial Perturbations for Improved Robustness
+      </a> — WACV 2024
+    </li>
+    <li>
+      <a href="https://doi.org/10.24963/ijcai.2023/133" target="_blank" rel="noreferrer">
+        Towards Robust Neural Networks via Clad: Cross-Layer Denoising
+      </a> — IJCAI 2023
+    </li>
+    <li>
+      <a href="https://openaccess.thecvf.com/content/ICCV2021W/AI4AH/html/Machiraju_EREN_Efficient_Relative_Encoding_for_Neural_Style_Transfer_ICCVW_2021_paper.html"
+        target="_blank" rel="noreferrer">
+        EREN: Efficient Relative Encoding for Neural Style Transfer
+      </a> — ICCV Workshops 2021
+    </li>
+    <li>
+      <a href="https://openaccess.thecvf.com/content/WACV2020/html/Machiraju_GenGAN_Unsupervised_Generative_Learning_With_Separation_of_Attributes_WACV_2020_paper.html"
+        target="_blank" rel="noreferrer">
+        GenGAN: Unsupervised Generative Learning with Separation of Attributes
+      </a> — WACV 2020
+    </li>
+  </ul>
+
+  <p>
+    Complete list of publications can be found
+    <a href="https://scholar.google.com/citations?hl=en&user=pkc2DDkAAAAJ&view_op=list_works&sortby=pubdate"
+      target="_blank" rel="noreferrer">here</a>.
+  </p>
+</section>
+
+
 
     <!-- Projects section -->
     <section id="projects" class="content">
@@ -77,16 +155,16 @@
     </section>
 
     <!-- Writing section -->
-    <section id="writing" class="content">
+    <!-- <section id="writing" class="content">
       <h2>Writing</h2>
       <p>Blog posts coming soon…</p>
-    </section>
+    </section> -->
 
     <!-- Contact section -->
-    <section id="contact" class="content">
+    <!-- <section id="contact" class="content">
       <h2>Contact</h2>
       <p>Reach out via the icons floating on the left.</p>
-    </section>
+    </section> -->
   </main>
 
   <!-- Parallax scroll script -->

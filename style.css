@@ -19,45 +19,32 @@ body {
 }
 
 /* Flowing wave background */
-.wave-track {
+/* Use your SVG's real width (W) here */
+:root {
+  --tile: 2048px;
+}
+
+/* example: if your SVG width/viewBox width is 2048 */
+
+.wave-bg {
   position: fixed;
-  inset: -10% -30% -10% -30%;
+  inset: 0;
   z-index: -1;
-  overflow: hidden;
-  transform: translateY(calc(var(--scroll) * -0.05px));
-  pointer-events: none;
+  background: url('assets/expansive-waves-oldold.svg') repeat-x left center / var(--tile) 100%;
+  animation: drift 30s linear infinite;
+  transform: translateY(calc(var(--scroll) * -1px));
+  /* keep vertical parallax */
+  opacity: 0.8;
 }
 
-.wave-seg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* each segment = viewport width */
-  background: url('assets/expansive-waves.svg') no-repeat left center / cover;
-  animation: segSlide 40s linear infinite;
-  will-change: transform;
-  /* prevent blend artifacts on some browsers */
-  mix-blend-mode: normal;
-}
-
-.wave-seg:nth-child(2) {
-  left: 100%;
-}
-
-/* sits immediately to the right */
-
-@keyframes segSlide {
+@keyframes drift {
   from {
-    transform: translateX(0);
+    background-position-x: 500;
   }
 
   to {
-    transform: translateX(-100%);
+    background-position-x: calc(var(--tile) * -1);
   }
-
-  /* exactly one segment width */
 }
 
 /* Header styles */
@@ -120,12 +107,21 @@ body {
 }
 
 /* Hero section */
-.hero {
+/* .hero {
   min-height: 70vh;
   display: grid;
   align-content: center;
   padding: 12vh 10vw 14vh;
   text-align: left;
+} */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12vh 10vw;
+  min-height: 70vh;
+  gap: 2rem;
+  /* space between text and photo */
 }
 .hero h1 {
   font-size: clamp(2.2rem, 5vw, 4rem);
@@ -137,6 +133,42 @@ body {
   opacity: 0.85;
   margin: 0;
 }
+
+/* Left column */
+.hero-text {
+  flex: 1;
+}
+
+/* Right column (photo) */
+.hero-photo {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-photo img {
+  max-width: 280px;
+  /* control photo size */
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  /* circle crop */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  object-fit: cover;
+}
+
+/* On small screens: stack vertically */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-photo {
+    margin-top: 2rem;
+  }
+}
+
 .cta {
   display: inline-block;
   margin-top: 18px;
@@ -177,6 +209,105 @@ body {
   margin: 0 0 10px;
   font-size: clamp(1.6rem, 3.5vw, 2.2rem);
   color: #5a5cda;
+}
+
+/* Contact form */
+.contact-form {
+  margin-top: 1.2rem;
+  max-width: 720px;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+.form-row label {
+  font-size: 0.9rem;
+  color: #345c8c;
+  margin-bottom: 6px;
+}
+.form-row input,
+.form-row textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(13,27,42,0.15);
+  background: rgba(255,255,255,0.9);
+  color: #0d1b2a;
+  font: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-row input:focus,
+.form-row textarea:focus {
+  border-color: #5a5cda;
+  box-shadow: 0 0 0 3px rgba(90,92,218,0.15);
+}
+.form-hint {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #345c8c;
+}
+
+/* Education timeline */
+.timeline {
+  position: relative;
+  margin-top: 1.8rem;
+  padding-left: 26px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(90,92,218,0.25), rgba(90,92,218,0.05));
+}
+.timeline-item {
+  position: relative;
+  margin: 0 0 22px 0;
+}
+.timeline-dot {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #5a5cda;
+  box-shadow: 0 0 0 4px rgba(90,92,218,0.15);
+}
+.timeline-content {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(13,27,42,0.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.timeline-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.timeline-year {
+  font-size: 0.85rem;
+  color: #345c8c;
+  background: rgba(90,92,218,0.12);
+  border: 1px solid rgba(90,92,218,0.25);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.timeline h3 {
+  margin: 6px 0 4px 0;
+  font-size: 1.05rem;
+  color: #233;
+}
+.timeline p {
+  margin: 0;
+  color: #345c8c;
+  font-size: 0.95rem;
 }
 
 /* Projects grid */
