@@ -24,7 +24,7 @@ body {
   position: fixed;
   inset: -10% -30% -10% -30%;
   z-index: -1;
-  background: url('assets/wave-tile.svg') repeat-x left center / 1200px 100%;
+  background: url('assets/expansive-waves.svg') repeat-x left center / 1200px 100%;
   animation: wavesLoop 60s linear infinite;
   /* 60s per tile = calm */
   transform: translateY(calc(var(--scroll) * -0.05px));
