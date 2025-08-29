@@ -383,6 +383,29 @@ main { padding-top: 70px; }
   .projects-grid { grid-template-columns: 1fr; }
 }
 
+/* Section loading states */
+.section-placeholder {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.section-placeholder .loading {
+  color: #5a5cda;
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+
+.section-placeholder .error {
+  color: #e74c3c;
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
 /* Reduce oversized spacing on smaller screens while keeping separation */
 @media (max-width: 768px) {
   .hero {
@@ -391,4 +414,96 @@ main { padding-top: 70px; }
   .content {
     padding: 18vh 8vw;
   }
+}
+
+.papers-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.paper-controls {
+  display: flex;
+  gap: .6rem;
+}
+
+.paper-controls input,
+.paper-controls select {
+  padding: .6rem .8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, .08);
+  background: rgba(255, 255, 255, .75);
+  backdrop-filter: blur(6px);
+}
+
+.paper-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.paper {
+  background: rgba(255, 255, 255, .75);
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 14px;
+  padding: 14px 16px;
+  backdrop-filter: blur(6px);
+}
+
+.paper-title {
+  font-weight: 700;
+  text-decoration: none;
+  color: #0d1b2a;
+}
+
+.paper-title:hover {
+  text-decoration: underline;
+}
+
+.paper-venue {
+  margin-left: .6rem;
+  font-size: .9rem;
+  color: #4a5;
+  background: #e8f5ff;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+}
+
+.paper-blurb {
+  margin: 6px 0 8px;
+  opacity: .9;
+}
+
+.paper-actions a {
+  display: inline-block;
+  margin-right: .6rem;
+  padding: .25rem .55rem;
+  font-size: .9rem;
+  border-radius: 999px;
+  text-decoration: none;
+  background: #eef3ff;
+}
+
+.paper-tags {
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.paper-tags span {
+  background: #f0f4ff;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+  font-size: .85rem;
+}
+
+.bibtex summary {
+  cursor: pointer;
+  font-size: .9rem;
+  opacity: .85;
 }
