@@ -18,6 +18,9 @@ body {
   --scroll: 0;
 }
 
+/* Push content below fixed header height */
+main { padding-top: 70px; }
+
 /* Flowing wave background */
 /* Use your SVG's real width (W) here */
 :root {
@@ -49,8 +52,10 @@ body {
 
 /* Header styles */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
