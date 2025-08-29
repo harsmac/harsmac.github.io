@@ -118,7 +118,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12vh 10vw;
+  padding: 18vh 10vw;
   min-height: 70vh;
   gap: 2rem;
   /* space between text and photo */
@@ -203,7 +203,7 @@ body {
 
 /* Content sections */
 .content {
-  padding: 12vh 10vw;
+  padding: 24vh 10vw;
 }
 .content h2 {
   margin: 0 0 10px;
@@ -357,4 +357,14 @@ body {
   .site-nav a { margin-left: 12px; }
   .social-bar { left: 8px; }
   .projects-grid { grid-template-columns: 1fr; }
+}
+
+/* Reduce oversized spacing on smaller screens while keeping separation */
+@media (max-width: 768px) {
+  .hero {
+    padding: 16vh 10vw;
+  }
+  .content {
+    padding: 18vh 8vw;
+  }
 }
