@@ -163,9 +163,7 @@ body {
 }
 
 /* Flip state */
-.hero-photo img.is-flipped {
-  transform: scaleX(-1);
-}
+/* remove flip; using spin instead */
 
 /* 360° horizontal spin */
 @keyframes spinY360 {
@@ -174,7 +172,8 @@ body {
 }
 
 .hero-photo img.is-spinning {
-  animation: spinY360 900ms ease;
+  animation: spinY360 900ms linear;
+  transition: none;
 }
 
 /* On small screens: stack vertically */

@@ -8,7 +8,7 @@
   window.addEventListener('scroll', update, { passive: true });
 })();
 
-// Flip hero image on load and when scrolled through its midline
+// Spin hero image on load and when scrolled through its midline
 (function(){
   const hero = document.querySelector('.hero');
   const img = document.querySelector('.hero-photo img');
@@ -19,15 +19,12 @@
     const viewportMid = window.innerHeight / 2;
     const heroMid = rect.top + rect.height / 2;
     const isCrossingMid = heroMid < viewportMid && rect.bottom > 0 && rect.top < window.innerHeight;
-    // Toggle flipped state (kept for visual cue if desired)
-    img.classList.toggle('is-flipped', isCrossingMid);
     // Trigger a 360 spin when crossing the midpoint into view
     if (isCrossingMid) triggerSpin();
   };
 
   // Flip once after first paint
   window.requestAnimationFrame(() => {
-    img.classList.add('is-flipped');
     triggerSpin();
     // then compute based on actual position
     setFlipByViewport();
