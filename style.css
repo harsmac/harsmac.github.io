@@ -144,6 +144,7 @@ body {
   flex: 1;
   display: flex;
   justify-content: center;
+  perspective: 1000px;
 }
 
 .hero-photo img {
@@ -157,11 +158,23 @@ body {
   object-fit: cover;
   transition: transform 600ms ease;
   transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 /* Flip state */
 .hero-photo img.is-flipped {
   transform: scaleX(-1);
+}
+
+/* 360° horizontal spin */
+@keyframes spinY360 {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+
+.hero-photo img.is-spinning {
+  animation: spinY360 900ms ease;
 }
 
 /* On small screens: stack vertically */
