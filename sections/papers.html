@@ -5,77 +5,95 @@
       <input id="paper-search" type="search" placeholder="Search title or tag…" aria-label="Search papers">
       <select id="paper-filter" aria-label="Filter by tag">
         <option value="">All tags</option>
-        <option>Robustness</option>
-        <option>Adversarial</option>
-        <option>Computer Vision</option>
-        <option>NLP</option>
-        <option>Multimodal</option>
-        <option>Fairness</option>
+        <option>Thesis</option>
+        <option>Adversarial Robustness</option>
+        <option>Corruption & Pre-processing</option>
+        <option>Bias & Fairness</option>
+        <option>Bio-Inspired Models</option>
+        <option>Evaluation Methods</option>
       </select>
     </div>
   </div>
 
   <ul class="paper-list">
-    <li class="paper" data-tags="Robustness,Adversarial,Computer Vision" data-year="2024">
-      <a class="paper-title" href="https://arxiv.org/abs/2402.12345" target="_blank" rel="noreferrer">
+    <li class="paper" data-tags="Thesis" data-year="2024">
+      <a class="paper-title"
+        href="https://infoscience.epfl.ch/entities/publication/ac8892a4-df42-4176-8c1e-fc16df744f74" target="_blank"
+        rel="noreferrer">
+        Towards Robust Vision Models
+      </a>
+      <span class="paper-venue">PhD Thesis, EPFL 2024</span>
+      <p class="paper-blurb">Doctoral thesis on designing vision models resilient to adversarial attacks and real-world
+        corruptions. Advisors: Michael Herzog & Pascal Frossard.</p>
+      <div class="paper-tags"><span>Thesis</span></div>
+    </li>
+
+    <li class="paper" data-tags="Corruption & Pre-processing" data-year="2024">
+      <a class="paper-title" target="_blank" rel="noreferrer">
         EREN: Enhancing Deep Learning Robustness through Image Pre-processing
       </a>
       <span class="paper-venue">Under Review, 2024</span>
-      <p class="paper-blurb">Introduces a differentiable image pre-processing method that strengthens models against
-        diverse corruptions.</p>
-      <div class="paper-tags"><span>Robustness</span><span>Computer Vision</span></div>
+      <p class="paper-blurb">A differentiable pre-processing method to defend models against natural corruptions.</p>
+      <div class="paper-tags"><span>Corruption & Pre-processing</span></div>
     </li>
 
-    <li class="paper" data-tags="Robustness,Adversarial,Computer Vision" data-year="2023">
-      <a class="paper-title" href="https://arxiv.org/abs/2309.12345" target="_blank" rel="noreferrer">
+    <li class="paper" data-tags="Corruption & Pre-processing" data-year="2023">
+      <a class="paper-title" href="https://arxiv.org/abs/2306.07178" target="_blank" rel="noreferrer">
         Frequency-based Vulnerability Analysis of Deep Learning Models
       </a>
       <span class="paper-venue">Under Review, 2023</span>
-      <p class="paper-blurb">Analyzes how spectral biases make models vulnerable to natural corruptions and adversarial
-        perturbations.</p>
-      <div class="paper-tags"><span>Robustness</span><span>Adversarial</span></div>
+      <p class="paper-blurb">Shows how spectral biases create vulnerabilities to corruptions and adversarial noise.</p>
+      <div class="paper-tags"><span>Corruption & Pre-processing</span></div>
     </li>
 
-    <li class="paper" data-tags="Robustness,Debiasing,Computer Vision" data-year="2022">
-      <a class="paper-title" href="https://www.bmvc2022.org/CLAD" target="_blank" rel="noreferrer">
+    <li class="paper" data-tags="Bias & Fairness" data-year="2022">
+      <a class="paper-title" href="https://arxiv.org/abs/2210.02748" target="_blank" rel="noreferrer">
         CLAD: Contrastive Learning for Background Debiasing
       </a>
       <span class="paper-venue">BMVC 2022</span>
-      <p class="paper-blurb">Proposes an efficient contrastive learning approach that mitigates background bias,
-        achieving SOTA on the Background Challenge dataset.</p>
-      <div class="paper-tags"><span>Robustness</span><span>Computer Vision</span><span>Debiasing</span></div>
+      <p class="paper-blurb">Contrastive learning method that removes background bias, achieving SOTA on debiasing
+        benchmarks.</p>
+      <div class="paper-tags"><span>Bias & Fairness</span></div>
     </li>
 
-    <li class="paper" data-tags="Robustness,Adversarial,Computer Vision" data-year="2020">
+    <li class="paper" data-tags="Bio-Inspired Models" data-year="2022">
+      <a class="paper-title"
+        href="https://arxiv.org/abs/2205.09037"
+        target="_blank" rel="noreferrer">
+        Empirical Advocacy of Bio-Inspired Models for Robust Image Recognition
+      </a>
+      <span class="paper-venue">CVPR NeuroVision Workshop 2022</span>
+      <p class="paper-blurb">Makes the case for bio-inspired approaches as promising alternatives for robustness.</p>
+      <div class="paper-tags"><span>Bio-Inspired Models</span></div>
+    </li>
+
+    <li class="paper" data-tags="Adversarial Robustness" data-year="2020">
       <a class="paper-title"
         href="https://openaccess.thecvf.com/content_WACV_2020/html/Machiraju_A_Little_Fog_for_a_Large_Turn_WACV_2020_paper.html"
         target="_blank" rel="noreferrer">
         A Little Fog for a Large Turn: Adversarial Weather Attacks
       </a>
       <span class="paper-venue">WACV 2020</span>
-      <p class="paper-blurb">Pioneers GAN-based adversarial fog generation for evaluating robustness of vision models in
-        navigation.</p>
-      <div class="paper-tags"><span>Adversarial</span><span>Robustness</span><span>Computer Vision</span></div>
+      <p class="paper-blurb">First GAN-based adversarial fog attacks for stress-testing vision models in navigation.</p>
+      <div class="paper-tags"><span>Adversarial Robustness</span></div>
     </li>
 
-    <li class="paper" data-tags="Robustness,Adversarial,Computer Vision" data-year="2019">
-      <a class="paper-title" href="https://www.ijcai.org/proceedings/2019/354" target="_blank" rel="noreferrer">
+    <li class="paper" data-tags="Adversarial Robustness" data-year="2019">
+      <a class="paper-title" href="https://arxiv.org/abs/1905.05186" target="_blank" rel="noreferrer">
         Harnessing Latent Layer Vulnerabilities in Adversarially Trained Models
       </a>
       <span class="paper-venue">IJCAI 2019</span>
-      <p class="paper-blurb">Introduces latent-space perturbations as a novel adversarial training method to boost model
-        robustness.</p>
-      <div class="paper-tags"><span>Adversarial</span><span>Robustness</span></div>
+      <p class="paper-blurb">Introduces latent-space perturbations as a novel adversarial training method.</p>
+      <div class="paper-tags"><span>Adversarial Robustness</span></div>
     </li>
 
-    <li class="paper" data-tags="Evaluation,Computer Vision" data-year="2018">
-      <a class="paper-title" href="https://ieeexplore.ieee.org/document/8451683" target="_blank" rel="noreferrer">
+    <li class="paper" data-tags="Evaluation Methods" data-year="2018">
+      <a class="paper-title" href="https://ieeexplore.ieee.org/abstract/document/8451718" target="_blank" target="_blank" rel="noreferrer">
         An Evaluation Metric for Object Detection in Autonomous Navigation
       </a>
       <span class="paper-venue">ICIP 2018 (Oral)</span>
-      <p class="paper-blurb">Proposes a novel metric for testing detection robustness in autonomous navigation under
-        diverse weather conditions.</p>
-      <div class="paper-tags"><span>Evaluation</span><span>Computer Vision</span></div>
+      <p class="paper-blurb">Proposes a metric to evaluate object detection under varying weather conditions.</p>
+      <div class="paper-tags"><span>Evaluation Methods</span></div>
     </li>
   </ul>
 
