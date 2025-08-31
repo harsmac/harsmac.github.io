@@ -507,3 +507,20 @@ main { padding-top: 70px; }
   font-size: .9rem;
   opacity: .85;
 }
+
+/* Copyright footer */
+.copyright {
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  background: rgba(255, 255, 255, 0.75);
+  border-top: 1px solid rgba(13, 27, 42, 0.08);
+  backdrop-filter: blur(6px);
+}
+
+.copyright p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #0d1b2a;
+  opacity: 0.8;
+}
