@@ -12,10 +12,23 @@
     <!-- Flowing waves background and social icons -->
     <div class="wave-bg" aria-hidden="true"></div>
     <aside class="social-bar" aria-label="Social links">
-        <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">GH</a>
-        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank"
-            rel="noreferrer">IN</a>
-        <a href="mailto:harshitha.acad@gmail.com" aria-label="Email">✉</a>
+        <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                    d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.8.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.3 1-.3 2-.4 3-.4s2 .1 3 .4C18 5.4 19 5.7 19 5.7c.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.4.3.8 1 .8 2v3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" />
+            </svg>
+        </a>
+        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank" rel="noreferrer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                    d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.6 4.8 6v8.6h-4V15c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V23h-4V8.5z" />
+            </svg>
+        </a>
+        <a href="mailto:harshitha.acad@gmail.com" aria-label="Email">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 13 2 6.76V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6.76L12 13zm10-9H2l10 6 10-6z" />
+            </svg>
+        </a>
     </aside>
 
     <!-- Header -->
@@ -53,7 +66,7 @@
                 such as gender and religion.
             </p>
             <img src="https://harsmac.github.io/assets/adversarial_nlp/project-overview-abstract.png" alt="Abstract illustration of embedding space"
-                class="decor-img">
+                class="figure">
         </section>
 
         <!-- Method -->
@@ -72,8 +85,8 @@
         <section class="section" id="results">
             <h2>Results</h2>
             <div class="decor-wrapper">
-                <!-- <img src="assets/adversarial_nlp/results-spectrum.png" alt="Singular value spectrum" class="figure"> -->
-                <img src="https://harsmac.github.io/assets/adversarial_nlp/abstract-blob.svg" class="decor-img" alt="" aria-hidden="true">
+                <img src="https://harsmac.github.io/assets/adversarial_nlp/results-spectrum.png" alt="Singular value spectrum" class="figure">
+                <img src="https://harsmac.github.io/assets/adversarial_nlp/abstract-blob.svg" class="figure" alt="" aria-hidden="true">
             </div>
             <p class="caption">Singular value spectrum of adversarial perturbations (Standard vs Robust BERT).</p>
         </section>
@@ -99,7 +112,7 @@
             <ul>
                 <li>Adversarial perturbations reveal compact, high-value subspaces in embeddings.</li>
                 <li>Robustness ≠ Fairness — adversarial training alone does not mitigate bias.</li>
-                <li>Geometric analysis (SVD of perturbations) is a powerful tool for model interpretability.</li>
+                <li>Geoimgmetric analysis (SVD of perturbations) is a powerful tool for model interpretability.</li>
             </ul>
             <p>
                 Future work includes semantically-preserving attacks, dataset-level bias swaps, and applying
@@ -112,6 +125,9 @@
             <a href="index.html" class="primary-btn">← Back to Home</a>
         </div>
     </main>
+
+    <!-- Parallax scroll script -->
+    <script src="https://harsmac.github.io/parallax.js"></script>
 
     <footer>
         <p>© 2025 Harshitha Machiraju. All rights reserved.</p>

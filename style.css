@@ -539,3 +539,28 @@ main { padding-top: 70px; }
   opacity: 0.9;
   margin-top: 1.5rem;
 }
+
+.figure {
+  display: block;
+  max-width: 100%;
+  margin: 2rem auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section {
+  scroll-margin-top: 85px;
+  /* header offset */
+  padding: 6rem 2rem;
+  max-width: 900px;
+  /* matches index content width */
+  margin: 0 auto;
+  /* centers section horizontally */
+}
+
+.hero {
+  scroll-margin-top: 85px;
+  padding: 8rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
