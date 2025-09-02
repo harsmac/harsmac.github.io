@@ -551,7 +551,7 @@ main { padding-top: 70px; }
 .section {
   scroll-margin-top: 85px;
   /* header offset */
-  padding: 3rem 2rem;
+  padding: 0 2rem;
   max-width: 900px;
   /* matches index content width */
   margin: 0 auto;
