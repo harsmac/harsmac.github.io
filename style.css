@@ -11,7 +11,13 @@ html, body { height: 100%; }
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
-  color: #0d1b2a;
+  /* Theme tokens */
+  --color-text: #0d1b2a;
+  --color-surface: rgba(255, 255, 255, 0.75);
+  --color-surface-strong: rgba(255, 255, 255, 0.95);
+  --color-border: rgba(13, 27, 42, 0.08);
+  --brand: #5a5cda;
+  color: var(--color-text);
   /* Light background – avoids an overly blue cast */
   background: linear-gradient(180deg, #f7faff, #fcfdff);
   /* Parallax scroll variable updated by JS */
@@ -40,6 +46,8 @@ main { padding-top: 70px; }
   opacity: 0.8;
 }
 
+body.dark .wave-bg { opacity: 0.35; }
+
 @keyframes drift {
   from {
     background-position-x: 500;
@@ -61,8 +69,8 @@ main { padding-top: 70px; }
   justify-content: space-between;
   padding: 14px 20px;
   backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.55);
-  border-bottom: 1px solid rgba(13, 27, 42, 0.08);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   z-index: 5;
 }
 .brand {
@@ -86,6 +94,43 @@ main { padding-top: 70px; }
   color: #5a5cda;
 }
 
+/* Toggle control */
+.theme-toggle-input { display: none; }
+.theme-toggle {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: 64px;
+  height: 32px;
+  margin-left: 12px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  position: relative;
+  cursor: pointer;
+}
+.theme-toggle::before {
+  content: '☀️';
+  text-align: center;
+  font-size: 14px;
+  opacity: .8;
+}
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #5a5cda;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+  transition: transform .25s ease;
+}
+.theme-toggle-input:checked + .theme-toggle::before { content: '🌙'; }
+.theme-toggle-input:checked + .theme-toggle::after { transform: translateX(32px); }
+
 /* Floating social bar */
 .social-bar {
   position: fixed;
@@ -101,14 +146,14 @@ main { padding-top: 70px; }
   place-items: center;
   width: 40px; height: 40px;
   border-radius: 12px;
-  color: #5a5cda;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(13, 27, 42, 0.08);
+  color: var(--brand);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .social-bar a:hover {
   transform: translateY(-2px) scale(1.06);
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-surface-strong);
 }
 
 /* Hero section */
@@ -383,6 +428,32 @@ main { padding-top: 70px; }
   .projects-grid { grid-template-columns: 1fr; }
 }
 
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  body:not(.light){
+    --color-text: #e8eef6;
+    --color-surface: rgba(18, 22, 33, 0.65);
+    --color-surface-strong: rgba(18, 22, 33, 0.9);
+    --color-border: rgba(232, 238, 246, 0.14);
+    --brand: #9ab0ff;
+    background: linear-gradient(180deg, #0b0f18, #05070c);
+  }
+  body:not(.light) .site-nav a { color: var(--brand); opacity: 1; }
+  body:not(.light) .site-nav a:hover { color: #c6d0ff; }
+}
+
+/* Explicit dark class (overrides system) */
+body.dark {
+  --color-text: #e8eef6;
+  --color-surface: rgba(18, 22, 33, 0.65);
+  --color-surface-strong: rgba(18, 22, 33, 0.9);
+  --color-border: rgba(232, 238, 246, 0.14);
+  --brand: #9ab0ff;
+  background: linear-gradient(180deg, #0b0f18, #05070c);
+}
+body.dark .site-nav a { color: var(--brand); opacity: 1; }
+body.dark .site-nav a:hover { color: #c6d0ff; }
+
 /* Section loading states */
 .section-placeholder {
   min-height: 200px;
@@ -513,8 +584,8 @@ main { padding-top: 70px; }
   text-align: center;
   padding: 20px;
   margin-top: 40px;
-  background: rgba(255, 255, 255, 0.75);
-  border-top: 1px solid rgba(13, 27, 42, 0.08);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
   backdrop-filter: blur(6px);
 }
 
