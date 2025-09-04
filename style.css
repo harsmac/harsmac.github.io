@@ -30,8 +30,7 @@ main { padding-top: 70px; }
 /* Flowing wave background */
 /* Use your SVG's real width (W) here */
 :root {
-  /* width of the wave SVG for seamless tiling */
-  --tile: 4096px;
+  --tile: 2048px;
 }
 
 /* example: if your SVG width/viewBox width is 2048 */
@@ -40,8 +39,7 @@ main { padding-top: 70px; }
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: url('assets/expansive-waves.svg') repeat-x left center / var(--tile) 100%;
-  background-position-y: 60%;
+  background: url('assets/expansive-waves-oldold.svg') repeat-x left center / var(--tile) 100%;
   animation: drift 30s linear infinite;
   transform: translateY(calc(var(--scroll) * -1px));
   /* keep vertical parallax */
@@ -51,8 +49,13 @@ main { padding-top: 70px; }
 body.dark .wave-bg { opacity: 0.35; }
 
 @keyframes drift {
-  from { background-position-x: 0; }
-  to { background-position-x: calc(var(--tile) * -1); }
+  from {
+    background-position-x: 500;
+  }
+
+  to {
+    background-position-x: calc(var(--tile) * -1);
+  }
 }
 
 /* Header styles */
@@ -465,6 +468,7 @@ body.dark .content * {
   color: #0d1b2a !important;
   opacity: 1 !important;
 }
+
 
 /* Section loading states */
 .section-placeholder {
