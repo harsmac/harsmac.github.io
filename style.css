@@ -551,6 +551,9 @@ body.dark .content * {
   gap: 1rem;
   margin-bottom: 1rem;
 }
+@media (max-width: 600px) {
+  .content#papers, #papers.content, section#papers.content { padding-left: clamp(18px, 6vw, 2rem); padding-right: clamp(18px, 6vw, 2rem); }
+}
 
 .paper-controls {
   display: flex;
