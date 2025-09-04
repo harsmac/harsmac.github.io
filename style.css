@@ -12,21 +12,21 @@ body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
   /* Theme tokens */
-  --color-text: #0d1b2a;
+  --color-text: #152238; /* calm ink */
   --color-surface: rgba(255, 255, 255, 0.75);
   --color-surface-strong: rgba(255, 255, 255, 0.95);
   --color-border: rgba(13, 27, 42, 0.08);
-  --brand: #5a5cda;
+  --brand: #5f6ee8; /* slightly softer purple */
   /* Cards (timeline boxes) */
-  --card-bg: #f4f6ff; /* soft lavender/indigo tint for comfort */
-  --card-border: rgba(90, 92, 218, 0.15);
+  --card-bg: #f6f7ff; /* gentle lavender wash */
+  --card-border: rgba(95, 110, 232, 0.18);
   /* Tag/Chip styles */
   --chip-bg: #eef2ff; /* subtler than white */
-  --chip-border: rgba(90, 92, 218, 0.28);
-  --chip-text: #3b3f8f;
+  --chip-border: rgba(95, 110, 232, 0.28);
+  --chip-text: #3a4599;
   color: var(--color-text);
   /* Light background – avoids an overly blue cast */
-  background: linear-gradient(180deg, #f7faff, #fcfdff);
+  background: linear-gradient(180deg, #fbfcff, #f2f5ff);
   /* Parallax scroll variable updated by JS */
   --scroll: 0;
 }
