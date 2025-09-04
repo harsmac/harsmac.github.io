@@ -89,6 +89,7 @@ body.dark .wave-bg { opacity: 0.35; }
   padding: 4px 8px;
   border-radius: 10px;
 }
+.site-nav { display: flex; align-items: center; }
 .site-nav a {
   margin-left: 18px;
   text-decoration: none;
