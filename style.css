@@ -20,6 +20,10 @@ body {
   /* Cards (timeline boxes) */
   --card-bg: #f4f6ff; /* soft lavender/indigo tint for comfort */
   --card-border: rgba(90, 92, 218, 0.15);
+  /* Tag/Chip styles */
+  --chip-bg: #eef2ff; /* subtler than white */
+  --chip-border: rgba(90, 92, 218, 0.28);
+  --chip-text: #3b3f8f;
   color: var(--color-text);
   /* Light background – avoids an overly blue cast */
   background: linear-gradient(180deg, #f7faff, #fcfdff);
