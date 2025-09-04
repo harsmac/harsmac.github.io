@@ -644,7 +644,7 @@ body.dark .content * {
 /* Copyright footer */
 .copyright {
   text-align: center;
-  padding: 20px;
+  padding: 20px env(safe-area-inset-right) 20px env(safe-area-inset-left);
   margin-top: 40px;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
@@ -696,7 +696,7 @@ body.dark .copyright p {
 .section {
   scroll-margin-top: 85px;
   /* header offset */
-  padding: 0 2rem;
+  padding: 0 clamp(18px, 6vw, 2rem);
   max-width: 900px;
   /* matches index content width */
   margin: 0 auto;
