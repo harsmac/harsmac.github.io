@@ -445,6 +445,8 @@ body.dark .wave-bg { opacity: 0.35; }
   .site-nav.open { display:flex; }
   .social-bar { left: 8px; }
   .projects-grid { grid-template-columns: 1fr; }
+  .paper-list { grid-template-columns: 1fr; }
+  .paper { padding: 12px; }
 }
 
 /* Media defaults for fluid images */
@@ -573,6 +575,8 @@ body.dark .content * {
 }
 
 .paper {
+  width: 100%;
+  box-sizing: border-box;
   background: var(--card-bg);
   border: 1px solid rgba(0, 0, 0, .06);
   border-radius: 14px;
