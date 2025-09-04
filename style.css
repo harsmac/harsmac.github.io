@@ -431,28 +431,30 @@ body.dark .wave-bg { opacity: 0.35; }
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   body:not(.light){
-    --color-text: #e8eef6;
+    --brand: #9ab0ff;
+    --color-text: var(--brand);
     --color-surface: rgba(18, 22, 33, 0.65);
     --color-surface-strong: rgba(18, 22, 33, 0.9);
     --color-border: rgba(232, 238, 246, 0.14);
-    --brand: #9ab0ff;
     background: linear-gradient(180deg, #0b0f18, #05070c);
   }
   body:not(.light) .site-nav a { color: var(--brand); opacity: 1; }
   body:not(.light) .site-nav a:hover { color: #c6d0ff; }
+  body:not(.light) :where(h1,h2,h3,h4,h5,h6,p,li,a,span,small,em,strong,code){ color: var(--brand); }
 }
 
 /* Explicit dark class (overrides system) */
 body.dark {
-  --color-text: #e8eef6;
+  --brand: #9ab0ff;
+  --color-text: var(--brand);
   --color-surface: rgba(18, 22, 33, 0.65);
   --color-surface-strong: rgba(18, 22, 33, 0.9);
   --color-border: rgba(232, 238, 246, 0.14);
-  --brand: #9ab0ff;
   background: linear-gradient(180deg, #0b0f18, #05070c);
 }
 body.dark .site-nav a { color: var(--brand); opacity: 1; }
 body.dark .site-nav a:hover { color: #c6d0ff; }
+body.dark :where(h1,h2,h3,h4,h5,h6,p,li,a,span,small,em,strong,code){ color: var(--brand); }
 
 /* Ensure readable dark text on light surfaces in dark mode */
 body.dark .paper,
