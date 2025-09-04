@@ -17,6 +17,9 @@ body {
   --color-surface-strong: rgba(255, 255, 255, 0.95);
   --color-border: rgba(13, 27, 42, 0.08);
   --brand: #5a5cda;
+  /* Cards (timeline boxes) */
+  --card-bg: #f4f6ff; /* soft lavender/indigo tint for comfort */
+  --card-border: rgba(90, 92, 218, 0.15);
   color: var(--color-text);
   /* Light background – avoids an overly blue cast */
   background: linear-gradient(180deg, #f7faff, #fcfdff);
@@ -348,7 +351,7 @@ body.dark .wave-bg { opacity: 0.35; }
   box-shadow: 0 0 0 4px rgba(90,92,218,0.15);
 }
 .timeline-content {
-  background: rgba(255,255,255,0.85);
+  background: var(--card-bg);
   border: 1px solid rgba(13,27,42,0.08);
   border-radius: 12px;
   padding: 12px 14px;
@@ -387,7 +390,7 @@ body.dark .wave-bg { opacity: 0.35; }
   margin-top: 1.6rem;
 }
 .project-card {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--card-bg);
   border-radius: 12px;
   overflow: hidden;
   text-decoration: none;
@@ -436,6 +439,8 @@ body.dark .wave-bg { opacity: 0.35; }
     --color-surface: rgba(18, 22, 33, 0.65);
     --color-surface-strong: rgba(18, 22, 33, 0.9);
     --color-border: rgba(232, 238, 246, 0.14);
+    --card-bg: #101521; /* deep slate */
+    --card-border: rgba(154, 176, 255, 0.22);
     background: linear-gradient(180deg, #0b0f18, #05070c);
   }
   body:not(.light) .site-nav a { color: var(--brand); opacity: 1; }
@@ -450,6 +455,8 @@ body.dark {
   --color-surface: rgba(18, 22, 33, 0.65);
   --color-surface-strong: rgba(18, 22, 33, 0.9);
   --color-border: rgba(232, 238, 246, 0.14);
+  --card-bg: #101521;
+  --card-border: rgba(154, 176, 255, 0.22);
   background: linear-gradient(180deg, #0b0f18, #05070c);
 }
 body.dark .site-nav a { color: var(--brand); opacity: 1; }
@@ -522,8 +529,8 @@ body.dark .content * {
 .paper-controls select {
   padding: .6rem .8rem;
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, .08);
-  background: rgba(255, 255, 255, .75);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
   backdrop-filter: blur(6px);
 }
 
@@ -536,7 +543,7 @@ body.dark .content * {
 }
 
 .paper {
-  background: rgba(255, 255, 255, .75);
+  background: var(--card-bg);
   border: 1px solid rgba(0, 0, 0, .06);
   border-radius: 14px;
   padding: 14px 16px;
