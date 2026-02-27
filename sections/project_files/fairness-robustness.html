@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fairness vs. Robustness</title>
     <link rel="icon" href="https://harsmac.github.io/assets/favicon.svg" type="image/svg+xml" />
-    <script>/*! early-theme */(function(){try{var k='hm-theme',t=localStorage.getItem(k);if(t==='dark'||t==='light'){document.documentElement.classList.add(t);} }catch(e){}})();</script>
+    <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
     <link rel="stylesheet" href="https://harsmac.github.io/style.css">
 </head>
+
 <body>
     <!-- Flowing waves background and social icons -->
     <div class="wave-bg" aria-hidden="true"></div>
     <aside class="social-bar" aria-label="Social links">
         <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.8.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.3 1-.3 2-.4 3-.4s2 .1 3 .4C18 5.4 19 5.7 19 5.7c.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.4.3.8 1 .8 2v3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                    d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.8.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.3 1-.3 2-.4 3-.4s2 .1 3 .4C18 5.4 19 5.7 19 5.7c.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.4.3.8 1 .8 2v3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" />
+            </svg>
         </a>
-        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank" rel="noreferrer">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.6 4.8 6v8.6h-4V15c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V23h-4V8.5z"/></svg>
+        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank"
+            rel="noreferrer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path
+                    d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.6 4.8 6v8.6h-4V15c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V23h-4V8.5z" />
+            </svg>
         </a>
         <a href="mailto:harshitha.acad@gmail.com" aria-label="Email">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13 2 6.76V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6.76L12 13zm10-9H2l10 6 10-6z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 13 2 6.76V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6.76L12 13zm10-9H2l10 6 10-6z" />
+            </svg>
         </a>
     </aside>
     <header class="site-header">
@@ -28,58 +39,130 @@
         <nav class="site-nav" data-collapsible>
             <a href="https://harsmac.github.io/">Home</a>
             <a href="#overview">Overview</a>
-            <a href="#analysis">Analysis</a>
+            <a href="#motivation">Motivation</a>
+            <a href="#analysis">Setup</a>
+            <a href="#findings">Findings</a>
+            <a href="#takeaways">Takeaways</a>
             <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
             <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
         </nav>
     </header>
 
     <main>
+        <!-- Hero -->
         <section class="hero" id="overview">
-            <h1>Fairness vs. Robustness</h1>
-            <p>Exploring the relationship between robustness and bias in modern AI</p>
+            <div class="hero-text">
+                <h1>Fairness vs. Robustness</h1>
+                <p>Does making a model adversarially robust also make it fair? We challenge this assumption —
+                    and find the answer is more complicated than it seems.</p>
+            </div>
         </section>
 
+        <!-- Overview -->
         <section class="section">
             <h2>Project Overview</h2>
             <p>
-                This study examines whether adversarially robust models are also fair. We challenge
-                the assumption that robustness automatically reduces bias and show that robust models can
-                still exhibit systematic unfairness across demographic groups.
+                A common intuition in ML safety is that adversarially robust models should also be <em>fairer</em> —
+                after all, if a model is harder to fool, it should rely on genuine features rather than spurious
+                correlations tied to sensitive attributes like gender or background context. This project puts that
+                intuition to the test.
             </p>
             <p>
-                We evaluate a range of models on benchmarks measuring both adversarial robustness and fairness
-                metrics. The results highlight a tension between these objectives: increasing robustness does
-                not necessarily improve fairness and may even exacerbate biases in certain contexts.
+                We evaluate a suite of standard and adversarially trained vision models across benchmarks measuring
+                both <strong>adversarial robustness</strong> and <strong>group fairness</strong>. Our central finding:
+                robustness and fairness are distinct axes, and optimising for one does not reliably improve the other.
             </p>
         </section>
 
+        <!-- Motivation -->
+        <section class="section" id="motivation">
+            <h2>Motivation</h2>
+            <p>
+                Adversarial training — exposing a model to worst-case perturbations during training — is the
+                de-facto method for improving robustness. It encourages models to learn features that are stable
+                under small input changes. At the same time, biased models often latch onto <em>unstable</em>
+                shortcut features (e.g., background textures, co-occurrence statistics). So one might hope
+                that adversarial training implicitly reduces bias as a side effect.
+            </p>
+            <p>
+                But adversarial training optimises for <strong>average-case worst-case robustness</strong> across
+                the whole dataset. It says nothing about whether that robustness is distributed <em>equitably</em>
+                across demographic groups or classes. A model can become globally more robust while becoming
+                less robust — and less accurate — for minority or underrepresented groups.
+            </p>
+            <img src="../../assets/project2.png" alt="Fairness vs Robustness visualisation"
+                style="width:100%; max-height:340px; object-fit:cover; border-radius:var(--border-radius); margin-top:1.5rem;" />
+            <p class="caption">Illustration of the divergence between average robustness and group-level fairness.</p>
+        </section>
+
+        <!-- Analysis -->
         <section class="section" id="analysis">
-            <h2>Analysis &amp; Findings</h2>
-            <img src="assets/project2.png" alt="Fairness vs Robustness" style="width:100%; max-height:300px; object-fit:cover; border-radius:var(--border-radius); margin-bottom:1rem;">
+            <h2>Experimental Setup</h2>
             <p>
-                Use this space to describe your experimental setup, datasets, evaluation protocols and the
-                insights gained from your analyses. Discuss how robustness was achieved, how fairness was
-                quantified and the trade‑offs observed between these two qualities.
+                We evaluate models trained with standard empirical risk minimisation alongside adversarially trained
+                counterparts (PGD-AT and TRADES) on ImageNet variants and background-augmented benchmarks. Fairness
+                is measured via class-wise accuracy gaps and worst-group accuracy — metrics that surface whether
+                robustness gains are spread evenly or concentrated on already-easy classes.
+            </p>
+            <ol>
+                <li><strong>Models:</strong> Standard, PGD-AT, and TRADES trained ResNets at multiple
+                    perturbation budgets (ε = 2/255, 4/255, 8/255).</li>
+                <li><strong>Robustness metrics:</strong> Average clean accuracy and average robust accuracy
+                    under PGD-50 attack.</li>
+                <li><strong>Fairness metrics:</strong> Per-class robust accuracy, worst-class robust accuracy,
+                    and the class-wise robustness gap (best class minus worst class).</li>
+                <li><strong>Bias probes:</strong> Background Challenge (IN-9) and spurious-correlation splits
+                    to measure reliance on non-causal features.</li>
+            </ol>
+        </section>
+
+        <!-- Findings -->
+        <section class="section" id="findings">
+            <h2>Key Findings</h2>
+            <ul>
+                <li>
+                    <strong>Adversarial training widens class-wise accuracy gaps.</strong> While overall robust
+                    accuracy improves, the gap between best- and worst-performing classes grows. Easy classes
+                    become more robust; hard or minority classes often stagnate or regress.
+                </li>
+                <li>
+                    <strong>Robust models retain background bias.</strong> Adversarially trained models still
+                    rely heavily on background context for classification — the robustness guarantee applies to
+                    ℓ∞ perturbations, not to the semantic spurious correlations that drive unfairness.
+                </li>
+                <li>
+                    <strong>Accuracy–robustness–fairness is a three-way trade-off.</strong> Achieving strong
+                    average robustness consistently comes at the cost of worst-class accuracy, pointing to
+                    a triangular tension between the three objectives rather than a simple binary trade-off.
+                </li>
+                <li>
+                    <strong>Standard training is more class-balanced, but fragile.</strong> Models trained
+                    without adversarial objectives show more uniform per-class performance — but at near-zero
+                    robustness to adversarial attack.
+                </li>
+            </ul>
+        </section>
+
+        <!-- Takeaways -->
+        <section class="section" id="takeaways">
+            <h2>Takeaways</h2>
+            <p>
+                Robustness and fairness are <strong>not substitutes</strong>. A model hardened against adversarial
+                perturbations can still make systematically unfair predictions for underrepresented groups.
+                Practitioners deploying adversarially trained models in high-stakes settings should audit
+                fairness metrics <em>independently</em> — robustness certificates are not fairness certificates.
             </p>
             <p>
-                <em>Note:</em> Feel free to supplement this page with charts, tables and references to
-                publications. The more context you provide, the easier it will be for readers to understand
-                the challenges of achieving both fairness and robustness simultaneously.
+                Future directions include class-reweighted adversarial training objectives that explicitly
+                minimise worst-group robust accuracy, and combining adversarial training with background
+                debiasing methods such as <a href="clad-bias-mitigation.html">CLAD</a> to jointly address
+                both failure modes.
             </p>
         </section>
 
-        <section class="section">
-            <h2>Implications</h2>
-            <p>
-                Reflect on the broader implications of this work for deploying AI responsibly. Highlight
-                potential mitigation strategies and research directions aimed at aligning robustness with
-                fairness.
-            </p>
-        </section>
-
-        <div class="section" style="text-align:center;">
-            <a href="index.html" class="primary-btn">← Back to Home</a>
+        <!-- Back link -->
+        <div class="section" style="text-align:center; padding-bottom: 4rem;">
+            <a href="https://harsmac.github.io/" class="primary-btn">← Back to Home</a>
         </div>
     </main>
 
@@ -87,9 +170,9 @@
         <p>© 2025 Harshitha Machiraju. All rights reserved.</p>
     </footer>
 
-    <!-- Parallax scroll for wave background -->
     <script src="https://harsmac.github.io/parallax.js"></script>
     <script src="https://harsmac.github.io/menu.js"></script>
     <script src="https://harsmac.github.io/theme.js"></script>
 </body>
+
 </html>
