@@ -6,12 +6,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adversarial Subspace Analysis in NLP</title>
     <link rel="icon" href="https://harsmac.github.io/assets/favicon.svg" type="image/svg+xml" />
-    <script>/*! early-theme */(function(){try{var k='hm-theme',t=localStorage.getItem(k);if(t==='dark'||t==='light'){document.documentElement.classList.add(t);} }catch(e){}})();</script>
+    <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
     <link rel="stylesheet" href="https://harsmac.github.io/style.css">
+    <style>
+        .metric-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .metric-card {
+            flex: 1;
+            min-width: 140px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-card .val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .metric-card .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 1.5rem 0;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.45rem 0.7rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .results-table th {
+            background: var(--surface);
+            font-weight: 600;
+        }
+
+        .fig-caption {
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .authors {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        .insight-box {
+            background: var(--surface);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Flowing waves background and social icons -->
     <div class="wave-bg" aria-hidden="true"></div>
     <aside class="social-bar" aria-label="Social links">
         <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">
@@ -20,7 +91,8 @@
                     d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.8.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.3 1-.3 2-.4 3-.4s2 .1 3 .4C18 5.4 19 5.7 19 5.7c.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.4.3.8 1 .8 2v3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" />
             </svg>
         </a>
-        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank" rel="noreferrer">
+        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank"
+            rel="noreferrer">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path
                     d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.6 4.8 6v8.6h-4V15c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V23h-4V8.5z" />
@@ -33,7 +105,6 @@
         </a>
     </aside>
 
-    <!-- Header -->
     <header class="site-header">
         <a class="brand" href="https://harsmac.github.io/">HM</a>
         <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
@@ -53,97 +124,204 @@
         <!-- Hero -->
         <section class="hero">
             <div class="hero-text">
-                <h1>Adversarial Subspace Analysis in NLP</h1>
-                <p>Exploring how adversarial perturbations reveal discriminative features and hidden biases in language models.</p>
-                <!-- <a class="cta" href="#projects">See projects</a> -->
+                <h1>Are Adversarial Examples also Features in NLP?</h1>
+                <p>Adversarial perturbations in vision models encode discriminative features — not random noise. We
+                    ask whether the same holds for language models, and find that it does, along with a troubling
+                    consequence: those features encode gender and religious bias.</p>
+                <p class="authors">With Javier Maroto &amp; Apostolos Modas · EPFL</p>
             </div>
-            <!-- <div class="hero-photo">
-                <img src="https://harsmac.github.io/assets/adversarial_nlp/abstract-waves.svg" alt="Abstract waves illustration" />
-            </div> -->
         </section>
-
 
         <!-- Overview -->
         <section class="section" id="overview">
             <h2>Project Overview</h2>
             <p>
-                Inspired by findings in vision, this project investigates whether adversarial examples also correspond
-                to meaningful features in <strong>NLP models</strong>. Using BERT trained on IMDB sentiment analysis, we
-                analyzed adversarial perturbations in the embedding space. We found they span a <em>low-dimensional
-                    subspace</em>
-                that captures most of the model’s discriminative power — but also align with <strong>bias-related
-                    features</strong>
-                such as gender and religion.
+                It's well established in computer vision that adversarial perturbations aren't just noise — they
+                span a <strong>low-dimensional, highly discriminative subspace</strong> that captures the features
+                a model relies on most. Remove that subspace from the data and accuracy collapses; keep only that
+                subspace and accuracy is nearly preserved.
             </p>
-            <!-- <img src="https://harsmac.github.io/assets/adversarial_nlp/project-overview-abstract.png" alt="Abstract illustration of embedding space"
-                class="figure"> -->
+            <p>
+                This project asks: <em>does the same geometric structure exist in NLP?</em> Using BERT fine-tuned on
+                IMDB sentiment classification, we compute L∞ PGD adversarial perturbations in the
+                <strong>continuous word embedding space</strong>, then analyse them with Singular Value Decomposition
+                to identify the dominant eigen-directions of those perturbations.
+            </p>
+            <div class="insight-box">
+                <strong>Core finding:</strong> Yes — adversarial perturbations in NLP span a compact subspace that
+                encodes most of BERT's discriminative power. And alarmingly, that same subspace is strongly aligned
+                with gender and religious bias features.
+            </div>
         </section>
 
         <!-- Method -->
         <section class="section" id="method">
             <h2>Methodology</h2>
+            <p>
+                We use two BERT models — one trained normally (94% test accuracy) and one adversarially trained with
+                TextAttack (95% test accuracy) — on the IMDB 25k-review sentiment dataset.
+            </p>
             <ol>
-                <li>Generate adversarial perturbations in the embedding space (PGD attack).</li>
-                <li>Perform Singular Value Decomposition (SVD) to identify dominant eigen-directions.</li>
-                <li>Project embeddings onto these subspaces and evaluate classification accuracy.</li>
-                <li>Probe how sensitive features (gender, religion) align with adversarial subspaces.</li>
+                <li><strong>Adversarial perturbation generation:</strong> For each word embedding in the dataset, apply
+                    a 10-step L∞ PGD attack (ε = 1) to produce adversarial perturbations δ ∈ ℝ<sup>W×D</sup>, where
+                    W = 512 tokens and D = 1024 dimensions.</li>
+                <li><strong>Singular Value Decomposition:</strong> Stack all perturbations into a tensor
+                    T ∈ ℝ<sup>(N×W)×D</sup> (N=25,000 reviews) and run SVD to obtain the eigen basis V with singular
+                    values S ranked by importance.</li>
+                <li><strong>Discriminative power test:</strong> Project clean embeddings onto the top-k eigenvectors
+                    and measure classification accuracy — how much of the model's knowledge lives in each subspace?</li>
+                <li><strong>Bias alignment test:</strong> Use WEAT bias word pairs (e.g. <em>he/she</em>,
+                    <em>church/mosque</em>, <em>art/science</em>) and measure how much of their energy concentrates in
+                    the top eigen components.
+                </li>
             </ol>
-            <!-- <img src="https://harsmac.github.io/assets/adversarial_nlp/method-abstract.svg" alt="Geometric abstract diagram" class="decor-img"> -->
         </section>
 
         <!-- Results -->
         <section class="section" id="results">
-            <h2>Results</h2>
-            <!-- <div class="decor-wrapper">
-                <img src="https://harsmac.github.io/assets/adversarial_nlp/results-spectrum.png" alt="Singular value spectrum" class="figure">
-                <img src="https://harsmac.github.io/assets/adversarial_nlp/abstract-blob.svg" class="figure" alt="" aria-hidden="true">
-            </div> -->
-            <p class="caption">Singular value spectrum of adversarial perturbations (Standard vs Robust BERT).</p>
-        </section>
+            <h2>Results: A Compact, Powerful Subspace</h2>
+            <p>
+                The singular value spectrum drops sharply after the first few hundred dimensions, indicating that the
+                adversarial perturbation space is highly structured — not uniform noise. The discriminative power
+                test confirms this:
+            </p>
 
+            <div class="metric-row">
+                <div class="metric-card">
+                    <div class="val">400</div>
+                    <div class="label">eigenvectors needed to recover 96% of discriminative power (out of 1024)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="val">53%</div>
+                    <div class="label">accuracy after removing just the top 50 eigenvectors — near random</div>
+                </div>
+                <div class="metric-card">
+                    <div class="val">80%</div>
+                    <div class="label">accuracy using only the top 200 eigenvectors</div>
+                </div>
+            </div>
+
+            <img src="../../assets/adversarial_nlp/figures/svd_accuracy.png"
+                alt="Singular value spectrum and classification accuracy vs. number of eigenvectors used or removed"
+                class="figure">
+            <p class="fig-caption">Top: singular value profiles for standard (left) and adversarially trained BERT
+                (right) — both show a sharp drop, indicating structured subspaces. Bottom: projecting onto the
+                top-k eigenvectors (left) quickly recovers near-full accuracy; removing the top-k (right) causes
+                accuracy to collapse, confirming the subspace encodes discriminative information.</p>
+
+            <p>
+                Crucially, this pattern holds for both the standard and adversarially trained model — adversarial
+                training compresses the subspace slightly (300 eigenvectors needed instead of 400) but does not
+                remove its discriminative structure.
+            </p>
+        </section>
 
         <!-- Bias -->
         <section class="section" id="bias">
-            <h2>Bias Analysis</h2>
+            <h2>Bias Analysis: What Does the Subspace Encode?</h2>
             <p>
-                When projecting bias-related word pairs (e.g., <em>he/she</em>, <em>church/mosque</em>) into the
-                adversarial
-                basis, we found strong alignment with top components — meaning models treat these biases as
-                discriminative. Robust training <em>did not</em> remove this effect.
+                Knowing the subspace is discriminative, the next question is: <em>what does the model consider
+                    discriminative?</em> We probe this using the Word Embedding Association Test (WEAT), measuring how
+                much energy bias word-pair differences (e.g. embeddings of "brother" minus "sister") project onto
+                the top adversarial eigen-components.
             </p>
-            <!-- <img src="https://harsmac.github.io/assets/adversarial_nlp/bias-energy.png" alt="Bias decomposition energy plots" class="figure"> -->
-            <p class="caption">Energy decomposition of gender, religion, and subject biases in adversarial subspaces.
+            <p>
+                A high-energy concentration in the top components means the model treats that difference as an
+                important feature for classification. A flat distribution means the model is effectively invariant.
             </p>
+
+            <img src="../../assets/adversarial_nlp/figures/bias_plots.png"
+                alt="Energy decomposition on adversarial basis: gender (left), religion (middle), subjects (right)"
+                class="figure">
+            <p class="fig-caption">Energy decomposition on the adversarial eigen-basis for three bias types. Gender
+                (left) and religion (middle) show concentrated energy in top components — the model uses these as
+                discriminative features. Subject bias (art vs. science, right) shows a flatter distribution —
+                the model is largely invariant to it.</p>
+
+            <img src="../../assets/adversarial_nlp/figures/bias_energy.png"
+                alt="Energy of synonym substitutions and gender table results" class="figure">
+            <p class="fig-caption">Synonym substitution energy profiles (left: standard model, right: robust model).
+                The robust model distributes energy more evenly — consistent with synonym invariance — but gender
+                and religious biases remain concentrated at the top in both models.</p>
+
+            <h3 style="margin-top:1.5rem;">Input Manipulation: Gender Pronoun Swaps</h3>
+            <p>
+                We also test bias directly: swapping all male pronouns to female (and vice versa) across the 25k
+                test reviews, then measuring whether predictions change. A fair model should be perfectly consistent.
+            </p>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Swap</th>
+                        <th>% Positive (Standard)</th>
+                        <th>% Positive (Robust)</th>
+                        <th>% Consistency (Standard)</th>
+                        <th>% Consistency (Robust)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Male → Female</td>
+                        <td>49.91</td>
+                        <td>48.00</td>
+                        <td rowspan="2">97.91</td>
+                        <td rowspan="2">97.10</td>
+                    </tr>
+                    <tr>
+                        <td>Female → Male</td>
+                        <td>49.30</td>
+                        <td>48.30</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="fig-caption">The robust model is <em>more</em> affected by the male→female swap (larger drop in
+                positive rate), suggesting adversarial training can amplify certain gender biases rather than
+                removing them.</p>
+
+            <div class="insight-box">
+                <strong>Key insight:</strong> The robust model associates male pronouns more strongly with positive
+                sentiment. When male → female pronouns are swapped, its positive prediction rate drops more sharply
+                than the standard model's — adversarial training did not make it fairer; it may have made it
+                less fair.
+            </div>
         </section>
 
         <!-- Takeaways -->
         <section class="section" id="takeaways">
             <h2>Takeaways</h2>
             <ul>
-                <li>Adversarial perturbations reveal compact, high-value subspaces in embeddings.</li>
-                <li>Robustness ≠ Fairness — adversarial training alone does not mitigate bias.</li>
-                <li>Geoimgmetric analysis (SVD of perturbations) is a powerful tool for model interpretability.</li>
+                <li><strong>Adversarial perturbations in NLP are features, not bugs.</strong> Even in the discrete
+                    embedding space, they span a low-dimensional, highly discriminative subspace — mirroring findings
+                    in vision.</li>
+                <li><strong>That subspace encodes social biases.</strong> Gender and religious associations
+                    concentrate in the top adversarial eigen-directions, meaning the model treats them as core
+                    classification features.</li>
+                <li><strong>Adversarial training ≠ fairness.</strong> Robust BERT shows the same (or worse) bias
+                    alignment. Robustness to synonym substitution does not imply invariance to sensitive attributes.
+                </li>
+                <li><strong>SVD of adversarial perturbations is a powerful interpretability tool.</strong> It reveals
+                    what a model is <em>actually</em> using to make decisions — without needing to hand-craft probes.
+                </li>
             </ul>
             <p>
-                Future work includes semantically-preserving attacks, dataset-level bias swaps, and applying
-                this framework to <strong>larger LLMs</strong>.
+                Future directions include semantically constrained adversarial attacks (ensuring grammatical
+                fluency), full gender-swap datasets with name and occupation replacement, and applying this
+                framework to decoder-based LLMs where the embedding space has richer structure.
             </p>
         </section>
 
-        <!-- Back link -->
-        <div class="section" style="text-align:center;">
-            <a href="index.html" class="primary-btn">← Back to Home</a>
+        <div class="section" style="text-align:center; padding-bottom:4rem;">
+            <a href="https://harsmac.github.io/" class="primary-btn">← Back to Home</a>
         </div>
     </main>
 
-    <!-- Parallax scroll script -->
+    <footer>
+        <p>© 2026 Harshitha Machiraju. All rights reserved.</p>
+    </footer>
+
     <script src="https://harsmac.github.io/parallax.js"></script>
     <script src="https://harsmac.github.io/menu.js"></script>
     <script src="https://harsmac.github.io/theme.js"></script>
-
-    <footer>
-        <p>© 2025 Harshitha Machiraju. All rights reserved.</p>
-    </footer>
 </body>
 
 </html>

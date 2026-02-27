@@ -4,14 +4,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLAD: Bias Mitigation</title>
+    <title>CLAD: Contrastive Learning for Background Debiasing</title>
     <link rel="icon" href="https://harsmac.github.io/assets/favicon.svg" type="image/svg+xml" />
-    <script>/*! early-theme */(function(){try{var k='hm-theme',t=localStorage.getItem(k);if(t==='dark'||t==='light'){document.documentElement.classList.add(t);} }catch(e){}})();</script>
+    <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
     <link rel="stylesheet" href="https://harsmac.github.io/style.css">
+    <style>
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 1.5rem 0;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.45rem 0.7rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .results-table th {
+            background: var(--surface);
+            font-weight: 600;
+        }
+
+        .results-table tr.ours td {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .results-table tr.ours {
+            background: rgba(95, 110, 232, 0.06);
+        }
+
+        .metric-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .metric-card {
+            flex: 1;
+            min-width: 140px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-card .val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .metric-card .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+
+        .paper-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.85rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+
+        .paper-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .fig-caption {
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Flowing waves background and social icons -->
     <div class="wave-bg" aria-hidden="true"></div>
     <aside class="social-bar" aria-label="Social links">
         <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">
@@ -34,7 +119,6 @@
         </a>
     </aside>
 
-    <!-- Header -->
     <header class="site-header">
         <a class="brand" href="https://harsmac.github.io/">HM</a>
         <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
@@ -43,106 +127,249 @@
             <a href="#overview">Overview</a>
             <a href="#method">Method</a>
             <a href="#results">Results</a>
-            <a href="#bias">Bias</a>
+            <a href="#analysis">Analysis</a>
             <a href="#takeaways">Takeaways</a>
             <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
             <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
         </nav>
     </header>
 
-<main>
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-text">
-            <h1>CLAD: Contrastive Learning for Bias Mitigation</h1>
-            <p>A contrastive learning approach to reduce background bias in vision models, encouraging models to focus
-                on
-                objects rather than spurious context.</p>
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-text">
+                <h1>CLAD: Contrastive Learning for Background Debiasing</h1>
+                <p>CNNs learn to cheat — leaning on backgrounds rather than the objects themselves. CLAD fixes this
+                    with a targeted contrastive objective, achieving state-of-the-art results on the Background
+                    Challenge benchmark.</p>
+                <a class="paper-link" href="https://arxiv.org/abs/2210.02748" target="_blank" rel="noreferrer">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z" />
+                    </svg>
+                    BMVC 2022 Paper
+                </a>
+            </div>
+        </section>
+
+        <!-- Overview -->
+        <section class="section" id="overview">
+            <h2>The Problem: CNNs That Cheat on Backgrounds</h2>
+            <p>
+                Despite achieving superhuman performance on many benchmarks, CNNs don't see images the way humans do.
+                They routinely exploit <strong>backgrounds and textures</strong> as shortcuts — a wolf classifier that
+                fires because it sees snow, not the animal. This means excellent accuracy on standard test sets can
+                mask a model that will fail catastrophically when the background distribution shifts.
+            </p>
+            <p>
+                The <em>Background Challenge</em> (ImageNet-9) was designed to expose exactly this: models trained
+                normally show dramatic accuracy drops when objects are placed on completely random backgrounds
+                (MIXED-RAND), even though the foreground hasn't changed at all.
+            </p>
+            <img src="../../assets/clad/intro_fig.png"
+                alt="CLAD feature space: robust to background, sensitive to foreground" class="figure">
+            <p class="fig-caption">CLAD learns a feature space that stays consistent across background changes while
+                remaining sensitive to foreground object differences.</p>
+        </section>
+
+        <!-- Method -->
+        <section class="section" id="method">
+            <h2>Method: Background-Debiased Contrastive Pairs</h2>
+            <p>
+                Standard contrastive learning doesn't help here — conventional positive pairs share the same
+                background, so minimising their distance actually <em>reinforces</em> background bias. CLAD flips this
+                logic with a purpose-built sampling strategy:
+            </p>
+            <ol>
+                <li><strong>Foreground extraction:</strong> Use GrabCut (or U²-Net for scalability) to segment the
+                    object from its background.</li>
+                <li><strong>Positive pairs:</strong> Take the same foreground and place it on a <em>different-class</em>
+                    background. Same object, different context → model must ignore the background to recognise them as
+                    equivalent.</li>
+                <li><strong>Negative pairs:</strong> Different foreground objects placed on <em>similar-class</em>
+                    backgrounds, pulled from a memory-efficient dictionary queue. Same background, different object →
+                    model must use foreground to distinguish them.</li>
+                <li><strong>Training objective:</strong> Combine standard cross-entropy (L<sub>class</sub>) with
+                    InfoNCE contrastive loss (L<sub>con</sub>), weighted by λ. CLAD+ optionally adds classification
+                    loss on the positive samples too.</li>
+            </ol>
+            <img src="../../assets/clad/construct_samples.png"
+                alt="Contrastive pair sampling: conventional vs CLAD's background-debiased strategy" class="figure">
+            <p class="fig-caption">Left: conventional contrastive learning preserves background in positive pairs.
+                Right: CLAD's strategy — same foreground, different background for positives; different foreground,
+                same background for negatives.</p>
+            <img src="../../assets/clad/flow_chart.png" alt="Full CLAD training pipeline" class="figure">
+            <p class="fig-caption">The full training pipeline: for each batch, positive samples are generated via
+                background swapping, used to update the negative dictionary, and the combined loss is computed over
+                anchor, positive, and negative features.</p>
+        </section>
+
+        <!-- Results -->
+        <section class="section" id="results">
+            <h2>Results</h2>
+            <p>
+                Evaluated on the Background Challenge (ImageNet-9), CLAD and CLAD+ set a new state of the art —
+                with almost no accuracy trade-off on original, unmodified images.
+            </p>
+
+            <div class="metric-row">
+                <div class="metric-card">
+                    <div class="val">+4.1%</div>
+                    <div class="label">CLAD+ on MIXED-RAND vs prior SOTA</div>
+                </div>
+                <div class="metric-card">
+                    <div class="val">1.2</div>
+                    <div class="label">BG-GAP (CLAD+) — lowest of all methods</div>
+                </div>
+                <div class="metric-card">
+                    <div class="val">&lt;0.5%</div>
+                    <div class="label">Accuracy drop on original images</div>
+                </div>
+                <div class="metric-card">
+                    <div class="val">96.9%</div>
+                    <div class="label">Decision consistency (CLAD+) after bg swap</div>
+                </div>
+            </div>
+
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>ORIGINAL ↑</th>
+                        <th>ONLY-FG ↑</th>
+                        <th>MIXED-RAND ↑</th>
+                        <th>MIXED-SAME ↑</th>
+                        <th>BG-GAP ↓</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Base (IN9)</td>
+                        <td>96.0</td>
+                        <td>86.0</td>
+                        <td>73.4</td>
+                        <td>87.5</td>
+                        <td>14.1</td>
+                    </tr>
+                    <tr>
+                        <td>Base (MR)</td>
+                        <td>88.4</td>
+                        <td>89.5</td>
+                        <td>86.7</td>
+                        <td>87.1</td>
+                        <td>0.4</td>
+                    </tr>
+                    <tr>
+                        <td>MoCo-v2 (BG Swaps)</td>
+                        <td>95.2</td>
+                        <td>87.5</td>
+                        <td>85.2</td>
+                        <td>89.6</td>
+                        <td>4.4</td>
+                    </tr>
+                    <tr>
+                        <td>BYOL (BG Random)</td>
+                        <td>96.1</td>
+                        <td>88.3</td>
+                        <td>85.2</td>
+                        <td>90.2</td>
+                        <td>5.0</td>
+                    </tr>
+                    <tr class="ours">
+                        <td>CLAD (ours)</td>
+                        <td>95.9</td>
+                        <td>93.8</td>
+                        <td>87.5</td>
+                        <td>90.1</td>
+                        <td>2.6</td>
+                    </tr>
+                    <tr class="ours">
+                        <td>CLAD+ (ours)</td>
+                        <td>95.6</td>
+                        <td><strong>94.6</strong></td>
+                        <td><strong>89.3</strong></td>
+                        <td>90.5</td>
+                        <td><strong>1.2</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="fig-caption">Accuracy (%) on Background Challenge variants. BG-GAP = MIXED-SAME − MIXED-RAND;
+                lower means less background bias.</p>
+
+            <img src="../../assets/clad/results.png"
+                alt="MIXED-SAME vs MIXED-RAND scatter: CLAD closest to identity line" class="figure">
+            <p class="fig-caption">Models closer to the identity line have lower background bias. CLAD and CLAD+ sit
+                furthest right and closest to the line — high accuracy on both splits.</p>
+        </section>
+
+        <!-- Analysis -->
+        <section class="section" id="analysis">
+            <h2>Analysis</h2>
+
+            <h3 style="margin-top:1.5rem;">Saliency Maps</h3>
+            <p>
+                SmoothGrad saliency maps make the improvement visually clear. Baseline models (Base-IN9 and Base-MR)
+                highlight background regions — notably the snow behind a wolf. CLAD and CLAD+ focus tightly on the
+                animal itself, even in cluttered scenes.
+            </p>
+            <img src="../../assets/clad/saliency.png"
+                alt="Saliency maps: CLAD focuses on foreground vs baselines attending to background" class="figure">
+            <p class="fig-caption">SmoothGrad saliency maps across four models. CLAD+ and CLAD produce cleaner,
+                foreground-focused maps. The wolf/snow example (row 2) is a classic CNN background bias failure —
+                only CLAD correctly attends to the animal.</p>
+
+            <h3 style="margin-top:1.5rem;">Feature &amp; Decision Consistency</h3>
+            <p>
+                CLAD+ achieves 92.0% feature similarity and 96.9% decision consistency between original and
+                background-swapped image pairs — meaning the model extracts nearly the same features regardless of
+                what's behind the object. Baselines sit 10–17 points lower on both metrics.
+            </p>
+
+            <h3 style="margin-top:1.5rem;">Contrastive Loss Weight (λ) Ablation</h3>
+            <img src="../../assets/clad/ablation_lambda.png"
+                alt="Ablation of lambda: MIXED-RAND improves while ORIGINAL stays stable up to λ=1" class="figure">
+            <p class="fig-caption">As λ increases from 0 to 1, MIXED-RAND accuracy improves while ORIGINAL accuracy
+                stays flat. Beyond λ=1, the contrastive term dominates and performance on clean images degrades —
+                the sweet spot is λ=1.</p>
+
+            <h3 style="margin-top:1.5rem;">Generalising to Texture Bias</h3>
+            <p>
+                CLAD's framework is not specific to background. By swapping the contrastive construction to use
+                texture (via AdaIN style transfer) instead of background, the same approach reduces <em>texture
+                    bias</em>
+                — improving accuracy on Stylized ImageNet-9 and ImageNet-9-Sketch by ~20% over the standard baseline,
+                with no drop on original images. Background debiasing alone does not fully transfer to texture, and
+                vice versa — each bias requires its own targeted contrastive pairs.
+            </p>
+        </section>
+
+        <!-- Takeaways -->
+        <section class="section" id="takeaways">
+            <h2>Takeaways</h2>
+            <ul>
+                <li><strong>Contrastive pair design matters.</strong> Simply adding contrastive loss doesn't help —
+                    you need pairs where the <em>spurious feature is the only thing that varies</em>.</li>
+                <li><strong>The negative dictionary is key.</strong> It provides scalable, hard negatives that share
+                    background with the anchor, without requiring expensive per-sample generation.</li>
+                <li><strong>No accuracy trade-off.</strong> Unlike augmentation-only baselines (e.g. Base-MR, which
+                    drops 7.6% on ORIGINAL to gain robustness), CLAD achieves both.</li>
+                <li><strong>Generalises beyond background.</strong> The same contrastive recipe reduces texture bias
+                    when applied to shape/texture pairs — suggesting a general framework for targeted debiasing.</li>
+            </ul>
+        </section>
+
+        <div class="section" style="text-align:center; padding-bottom:4rem;">
+            <a href="https://harsmac.github.io/" class="primary-btn">← Back to Home</a>
         </div>
-        <div class="hero-photo">
-            <img src="assets/clad/intro_fig.png" alt="Illustration of background bias problem" class="figure">
-        </div>
-    </section>
+    </main>
 
-    <!-- Overview -->
-    <section class="section" id="overview">
-        <h2>Project Overview</h2>
-        <p>
-            Deep CNNs often exploit <strong>backgrounds and textures</strong> instead of focusing on foreground objects,
-            leading to <em>spurious correlations</em> and poor generalization. CLAD introduces a framework that treats
-            background swaps as positives and shared backgrounds as negatives, guiding models to learn
-            <strong>foreground-aware representations</strong>.
-        </p>
-        <img src="assets/clad/construct_samples.png" alt="Foreground-background sample construction in CLAD"
-            class="figure">
-    </section>
+    <footer>
+        <p>© 2026 Harshitha Machiraju. All rights reserved.</p>
+    </footer>
 
-    <!-- Method -->
-    <section class="section" id="method">
-        <h2>Methodology</h2>
-        <ol>
-            <li><strong>Foreground extraction:</strong> Separate object from background using segmentation.</li>
-            <li><strong>Positive pairs:</strong> Replace the background of the same object with a random class
-                background.</li>
-            <li><strong>Negative pairs:</strong> Keep similar backgrounds but vary the object, managed with a dictionary
-                queue.</li>
-            <li><strong>Training objective:</strong> Combine supervised classification loss with contrastive InfoNCE
-                loss.</li>
-        </ol>
-        <img src="assets/clad/flow_chart.png" alt="CLAD training pipeline diagram" class="figure">
-    </section>
-
-    <!-- Results -->
-    <section class="section" id="results">
-        <h2>Results</h2>
-        <p>
-            CLAD and CLAD+ outperform baselines on the Background Challenge:
-        </p>
-        <ul>
-            <li>+4.1% accuracy on MIXED-RAND dataset.</li>
-            <li>Reduced BG-GAP, showing less reliance on spurious backgrounds.</li>
-            <li>Negligible drop (<0.5%) on ORIGINAL ImageNet-9.</li>
-        </ul>
-        <img src="assets/clad/results.png" alt="CLAD results on Background Challenge benchmark" class="figure">
-        <img src="assets/clad/ablation_lambda.png" alt="Ablation study on contrastive loss weight" class="figure">
-    </section>
-
-    <!-- Bias -->
-    <section class="section" id="bias">
-        <h2>Bias Analysis</h2>
-        <p>
-            Saliency maps show that CLAD-trained models <em>focus on the object</em> rather than background context
-            (e.g., wolves vs snow). Feature similarity analysis confirms >90% reliance on foreground features.
-        </p>
-        <img src="assets/clad/saliency.png" alt="Saliency maps comparing baseline vs CLAD-trained models"
-            class="figure">
-    </section>
-
-    <!-- Takeaways -->
-    <section class="section" id="takeaways">
-        <h2>Takeaways</h2>
-        <ul>
-            <li>CLAD provides a scalable, efficient way to mitigate background bias.</li>
-            <li>Contrastive learning balances robustness and accuracy without heavy augmentation.</li>
-            <li>The approach generalizes to other biases, such as <strong>texture vs shape</strong>.</li>
-        </ul>
-    </section>
-
-    <!-- Back link -->
-    <div class="section" style="text-align:center;">
-        <a href="index.html" class="primary-btn">← Back to Home</a>
-    </div>
-</main>
-
-
-    <!-- Parallax scroll script -->
     <script src="https://harsmac.github.io/parallax.js"></script>
     <script src="https://harsmac.github.io/menu.js"></script>
     <script src="https://harsmac.github.io/theme.js"></script>
-
-    <footer>
-        <p>© 2025 Harshitha Machiraju. All rights reserved.</p>
-    </footer>
 </body>
 
 </html>
