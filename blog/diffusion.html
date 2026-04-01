@@ -1533,6 +1533,53 @@
                 });
             });
         </script>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" aria-label="Back to top"
+            onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+        <style>
+            .back-to-top {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: var(--accent);
+                color: var(--bg);
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 99;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            }
+
+            .back-to-top:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            }
+
+            .back-to-top.visible {
+                opacity: 1;
+                visibility: visible;
+            }
+        </style>
+
+        <script>
+            const backToTop = document.querySelector('.back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 500) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+        </script>
+
 </body>
 
 </html>

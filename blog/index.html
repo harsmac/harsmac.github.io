@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — Harshitha Machiraju</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-orange: #f0883e;
+            --accent-purple: #a371f7;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem;
+            padding-top: 80px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Navigation Header */
+        .blog-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .blog-nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .blog-nav a:hover {
+            opacity: 0.8;
+        }
+
+        .blog-nav .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Series Section */
+        .series-section {
+            margin-bottom: 3rem;
+        }
+
+        .series-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .series-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .series-icon.generative {
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(163, 113, 247, 0.2));
+        }
+
+        .series-title {
+            flex: 1;
+        }
+
+        .series-title h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .series-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Chapter List */
+        .chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chapter-card {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .chapter-card:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .chapter-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .chapter-number.vae {
+            background: rgba(88, 166, 255, 0.2);
+            color: var(--accent);
+        }
+
+        .chapter-number.gan {
+            background: rgba(240, 136, 62, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .chapter-number.diffusion {
+            background: rgba(163, 113, 247, 0.2);
+            color: var(--accent-purple);
+        }
+
+        .chapter-content {
+            flex: 1;
+        }
+
+        .chapter-content h3 {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .chapter-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .chapter-arrow {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            transition: transform 0.2s;
+        }
+
+        .chapter-card:hover .chapter-arrow {
+            transform: translateX(4px);
+            color: var(--accent);
+        }
+
+        /* Coming Soon */
+        .coming-soon {
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .coming-soon h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        .blog-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .blog-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .blog-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+                padding-top: 70px;
+            }
+
+            .blog-nav {
+                padding: 0.75rem 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .chapter-card {
+                padding: 1rem;
+            }
+
+            .chapter-content p {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="blog-nav">
+        <a href="../index.html" class="back-link">← Back to Portfolio</a>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1>Blog</h1>
+        <p>Deep dives into machine learning concepts — the way I wish they were explained to me.</p>
+    </header>
+
+    <!-- Generative Models Series -->
+    <section class="series-section">
+        <div class="series-header">
+            <div class="series-icon generative">🎨</div>
+            <div class="series-title">
+                <h2>Generative Models</h2>
+                <p>A 3-part series covering VAEs, GANs, and Diffusion Models from first principles</p>
+            </div>
+        </div>
+
+        <div class="chapter-list">
+            <a href="vae.html" class="chapter-card">
+                <div class="chapter-number vae">1</div>
+                <div class="chapter-content">
+                    <h3>VAE: The Complete Story</h3>
+                    <p>From autoencoders to ELBO — understanding variational autoencoders with every "but why?" answered
+                    </p>
+                </div>
+                <span class="chapter-arrow">→</span>
+            </a>
+
+            <a href="gan.html" class="chapter-card">
+                <div class="chapter-number gan">2</div>
+                <div class="chapter-content">
+                    <h3>GANs: The Complete Story</h3>
+                    <p>From VAE's blur problem to Wasserstein distance — why adversarial training works and when it
+                        breaks</p>
+                </div>
+                <span class="chapter-arrow">→</span>
+            </a>
+
+            <a href="diffusion.html" class="chapter-card">
+                <div class="chapter-number diffusion">3</div>
+                <div class="chapter-content">
+                    <h3>Diffusion: The Complete Story</h3>
+                    <p>From noise to images — how diffusion models achieve the best of both VAE stability and GAN
+                        quality</p>
+                </div>
+                <span class="chapter-arrow">→</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Coming Soon -->
+    <section class="series-section">
+        <div class="coming-soon">
+            <h3>More coming soon...</h3>
+            <p>Transformers, attention mechanisms, and more deep dives on the way.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="blog-footer">
+        <p>
+            <a href="../index.html">← Back to Portfolio</a>
+        </p>
+    </footer>
+</body>
+
+</html>
