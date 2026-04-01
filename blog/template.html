@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTICLE TITLE — Harshitha Machiraju</title>
+
+    <!-- KaTeX for math rendering (remove if not needed) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* ============================================
+           COLOR SCHEME - CHANGE THESE FOR NEW ARTICLES
+           ============================================
+           
+           Current themes used:
+           - VAE:       --accent: #58a6ff (blue)
+           - GAN:       --accent: #f0883e (orange)
+           - Diffusion: --accent: #a371f7 (purple)
+           
+           Other nice options:
+           - Teal:      #3fb9a0
+           - Pink:      #f778ba
+           - Red:       #f85149
+           - Yellow:    #d29922
+           - Green:     #3fb950
+        */
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            /* <-- CHANGE THIS for article accent color */
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-purple: #a371f7;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem;
+            padding-top: 80px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Navigation Header */
+        .article-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            z-index: 100;
+        }
+
+        .article-nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .article-nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Article Header */
+        .article-header {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .series-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .chapter-num {
+            background: var(--accent);
+            color: var(--bg);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-purple);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul,
+        ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Question Block - Yellow accent */
+        .question-block {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .question-block .label {
+            color: var(--accent-yellow);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-block p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--text);
+        }
+
+        /* Answer Block - Green accent */
+        .answer-block {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-green);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .answer-block .label {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Key Insight Block - Uses article accent */
+        .key-insight {
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.1), rgba(163, 113, 247, 0.1));
+            border: 1px solid var(--accent);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .key-insight .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Math Block */
+        .math-block {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text);
+        }
+
+        /* ASCII Diagram */
+        .ascii-diagram {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: var(--text-muted);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Verdict Block */
+        .verdict {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-red);
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            font-weight: 500;
+        }
+
+        .verdict.good {
+            border-left-color: var(--accent-green);
+        }
+
+        strong {
+            color: var(--accent);
+        }
+
+        code {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        /* TL;DR Block */
+        .tldr {
+            background: linear-gradient(135deg, rgba(63, 185, 80, 0.1), rgba(88, 166, 255, 0.1));
+            border: 1px solid var(--accent-green);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .tldr .label {
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Interview Tip Block */
+        .interview-tip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-purple);
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .interview-tip .label {
+            color: var(--accent-purple);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .toc li {
+            padding: 0.4rem 0;
+            color: var(--text-muted);
+        }
+
+        .toc a {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            color: var(--accent);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        /* Part Header (for multi-part articles) */
+        .part-header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 2rem;
+            margin: 3rem 0 2rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .part-header .part-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .part-header h2 {
+            margin: 0;
+            justify-content: center;
+            font-size: 1.6rem;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+                padding-top: 70px;
+            }
+
+            .article-nav {
+                padding: 0.75rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="article-nav">
+        <a href="index.html" class="back-link">← Back to Blog</a>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="article-header">
+        <!-- Optional: Series badge - remove if standalone article -->
+        <span class="series-badge">Part X of Y • Series Name</span>
+        <h1>Article Title</h1>
+        <p class="subtitle">A catchy subtitle explaining what this article covers</p>
+    </header>
+
+    <!-- Optional: Table of Contents -->
+    <div class="toc">
+        <h3>Contents</h3>
+        <ul>
+            <li><a href="#ch1">1. First Chapter</a></li>
+            <li><a href="#ch2">2. Second Chapter</a></li>
+            <li><a href="#ch3">3. Third Chapter</a></li>
+        </ul>
+    </div>
+
+    <!-- ==================== CONTENT STARTS HERE ==================== -->
+
+    <!-- Chapter with numbered heading -->
+    <h2 id="ch1"><span class="chapter-num">1</span> First Chapter Title</h2>
+
+    <p>Your content goes here. Regular paragraphs work like this.</p>
+
+    <!-- Question/Answer blocks for Q&A style -->
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"A question someone might ask?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>The explanation or answer to that question.</p>
+    </div>
+
+    <!-- Key insight callout -->
+    <div class="key-insight">
+        <div class="label">Key Insight</div>
+        <p>An important takeaway or concept to remember.</p>
+    </div>
+
+    <!-- Math block (uses KaTeX) -->
+    <div class="math-block">
+        $$E = mc^2$$
+    </div>
+
+    <!-- Code block -->
+    <div class="code-block">def hello():
+        print("Hello, world!")</div>
+
+    <!-- ASCII diagram -->
+    <div class="ascii-diagram">Input → [Encoder] → Latent → [Decoder] → Output</div>
+
+    <!-- Verdict/conclusion block -->
+    <div class="verdict">
+        <strong>Verdict:</strong> A conclusion or important note.
+    </div>
+
+    <!-- Green verdict for positive conclusions -->
+    <div class="verdict good">
+        <strong>Result:</strong> A positive outcome or success.
+    </div>
+
+    <!-- Interview tip -->
+    <div class="interview-tip">
+        <div class="label">🎯 Interview Tip</div>
+        <p>Something useful to remember for interviews.</p>
+    </div>
+
+    <!-- TL;DR summary -->
+    <div class="tldr">
+        <div class="label">TL;DR</div>
+        <p>Quick summary of the key points.</p>
+    </div>
+
+    <!-- ==================== CONTENT ENDS HERE ==================== -->
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="Back to top"
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+    <script>
+        // Math rendering
+        document.addEventListener("DOMContentLoaded", function () {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false }
+                ]
+            });
+        });
+
+        // Back to top button visibility
+        const backToTop = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+
+</html>

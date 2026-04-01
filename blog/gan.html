@@ -52,9 +52,6 @@
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
             z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .article-nav a {
@@ -66,22 +63,6 @@
 
         .article-nav a:hover {
             opacity: 0.8;
-        }
-
-        .article-nav .back-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .article-nav .series-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .article-nav .series-links a.current {
-            color: var(--text);
-            font-weight: 600;
         }
 
         /* Article Header */
@@ -492,10 +473,6 @@
                 padding: 0.75rem 1rem;
             }
 
-            .article-nav .series-links {
-                display: none;
-            }
-
             h1 {
                 font-size: 1.8rem;
             }
@@ -510,12 +487,7 @@
 <body>
     <!-- Navigation -->
     <nav class="article-nav">
-        <a href="../index.html#blog" class="back-link">← Back to Portfolio</a>
-        <div class="series-links">
-            <a href="vae.html">VAE</a>
-            <a href="gan.html" class="current">GAN</a>
-            <a href="diffusion.html">Diffusion</a>
-        </div>
+        <a href="index.html" class="back-link">← Back to Blog</a>
     </nav>
 
     <!-- Article Header -->

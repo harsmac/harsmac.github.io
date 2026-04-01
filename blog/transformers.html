@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformers: The Complete Story — From Attention to KV Caching</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #e05252;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-purple: #e07878;
+            --border: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.7;
+            padding: 2rem; padding-top: 80px; max-width: 900px; margin: 0 auto;
+        }
+        .article-nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(13,17,23,0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); padding: 1rem 2rem;
+            z-index: 100; display: flex; justify-content: space-between; align-items: center;
+        }
+        .article-nav a { color: var(--accent); text-decoration: none; font-size: 0.9rem; transition: opacity 0.2s; }
+        .article-nav a:hover { opacity: 0.8; }
+        .article-nav .back-link { display: flex; align-items: center; gap: 0.5rem; }
+        .article-nav .series-links { display: flex; gap: 1.5rem; }
+        .article-nav .series-links a.current { color: var(--text); font-weight: 600; }
+        .article-header { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+        .series-badge {
+            display: inline-block; background: var(--accent); color: var(--bg);
+            font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem;
+            border-radius: 999px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--accent); }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+        h2 {
+            font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1.5rem; color: var(--accent);
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        h2 .chapter-num {
+            background: var(--accent); color: var(--bg); width: 2rem; height: 2rem;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: bold; flex-shrink: 0;
+        }
+        h3 { font-size: 1.3rem; margin-top: 2rem; margin-bottom: 1rem; color: var(--text); }
+        h4 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--accent-purple); }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        .question-block { background: var(--bg-secondary); border-left: 4px solid var(--accent-yellow); padding: 1.25rem 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+        .question-block .label { color: var(--accent-yellow); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .question-block p { margin-bottom: 0; font-style: italic; color: var(--text); }
+        .answer-block { background: var(--bg-tertiary); border-left: 4px solid var(--accent-green); padding: 1.25rem 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+        .answer-block .label { color: var(--accent-green); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .key-insight { background: linear-gradient(135deg, rgba(224,82,82,0.1), rgba(224,120,120,0.1)); border: 1px solid var(--accent); padding: 1.25rem 1.5rem; margin: 1.5rem 0; border-radius: 8px; }
+        .key-insight .label { color: var(--accent); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .worked-example { background: rgba(63,185,80,0.05); border: 1px solid var(--accent-green); padding: 1.5rem; margin: 1.5rem 0; border-radius: 8px; }
+        .worked-example .label { color: var(--accent-green); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+        .notation-box { background: var(--bg-secondary); border: 2px solid var(--accent); padding: 1.5rem; margin: 2rem 0; border-radius: 8px; }
+        .notation-box .label { color: var(--accent); font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
+        .math-block { background: var(--bg-secondary); padding: 1.5rem; margin: 1.5rem 0; border-radius: 8px; overflow-x: auto; text-align: center; }
+        .code-block { background: var(--bg-secondary); padding: 1.25rem; margin: 1.5rem 0; border-radius: 8px; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.9rem; overflow-x: auto; white-space: pre; color: var(--text); }
+        .ascii-diagram { background: var(--bg-secondary); padding: 1.5rem; margin: 1.5rem 0; border-radius: 8px; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.85rem; overflow-x: auto; white-space: pre; line-height: 1.4; color: var(--text-muted); }
+        .nomenclature { background: var(--bg-secondary); padding: 1.5rem; margin: 1.5rem 0; border-radius: 8px; border: 1px solid var(--border); }
+        .nomenclature h4 { margin-top: 0; color: var(--accent); }
+        .nomenclature table { margin: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 0.875rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-tertiary); font-weight: 600; color: var(--accent); }
+        tr:last-child td { border-bottom: none; }
+        .verdict { background: var(--bg-tertiary); border-left: 4px solid var(--accent-red); padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; font-weight: 500; }
+        .verdict.good { border-left-color: var(--accent-green); }
+        strong { color: var(--accent); }
+        code { background: var(--bg-tertiary); padding: 0.2rem 0.4rem; border-radius: 4px; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.9em; }
+        .tldr { background: linear-gradient(135deg, rgba(63,185,80,0.1), rgba(224,82,82,0.1)); border: 1px solid var(--accent-green); padding: 1.5rem; margin: 2rem 0; border-radius: 8px; }
+        .tldr .label { color: var(--accent-green); font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; }
+        .interview-tip { background: var(--bg-secondary); border: 1px solid var(--accent-purple); padding: 1.25rem 1.5rem; margin: 2rem 0; border-radius: 8px; }
+        .interview-tip .label { color: var(--accent-purple); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+        .transition { text-align: center; color: var(--text-muted); font-style: italic; margin: 2rem 0; padding: 1rem; }
+        .transition::before { content: "↓"; display: block; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .toc { background: var(--bg-secondary); padding: 1.5rem 2rem; border-radius: 8px; margin-bottom: 3rem; }
+        .toc h3 { margin-top: 0; color: var(--accent); }
+        .toc ul { list-style: none; padding-left: 0; margin: 0; }
+        .toc li { padding: 0.4rem 0; color: var(--text-muted); }
+        .toc a { color: var(--text); text-decoration: none; }
+        .toc a:hover { color: var(--accent); }
+        hr { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+        .part-header { background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); padding: 2rem; margin: 3rem 0 2rem 0; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .part-header .part-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .part-header h2 { margin: 0; justify-content: center; font-size: 1.6rem; }
+        .derivation-step { background: var(--bg-secondary); border-left: 3px solid var(--accent-purple); padding: 1rem 1.5rem; margin: 1rem 0; border-radius: 0 8px 8px 0; }
+        .derivation-step .step-label { color: var(--accent-purple); font-weight: 600; font-size: 0.8rem; margin-bottom: 0.5rem; }
+        /* Timeline styles */
+        .timeline { position: relative; margin: 2rem 0; }
+        .timeline::before { content: ''; position: absolute; left: 120px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+        .timeline-item { display: flex; gap: 2rem; margin-bottom: 2rem; position: relative; }
+        .timeline-year { width: 100px; flex-shrink: 0; text-align: right; font-family: 'SF Mono','Fira Code',monospace; font-size: 0.85rem; color: var(--accent); font-weight: 600; padding-top: 0.2rem; }
+        .timeline-dot { position: absolute; left: 113px; top: 0.4rem; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); flex-shrink: 0; }
+        .timeline-content { flex: 1; padding-left: 1.5rem; }
+        .timeline-content h4 { margin-top: 0; color: var(--text); font-size: 1rem; }
+        .timeline-content .paper-ref { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .timeline-content p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0; }
+        .timeline-content .problem { color: var(--accent-red); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .timeline-content .solution { color: var(--accent-green); font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .article-footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+        .article-footer-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+        .article-footer-nav a { color: var(--accent); text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; }
+        .article-footer-nav a:hover { background: var(--bg-secondary); border-color: var(--accent); }
+        .article-footer-nav .next { margin-left: auto; }
+        .paper-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent); font-size: 0.9em; transition: opacity 0.2s; }
+        .paper-link:hover { opacity: 0.75; }
+        .paper-link::after { content: " ↗"; font-size: 0.8em; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--bg); border: none; font-size: 1.5rem; cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .back-to-top:hover { transform: translateY(-3px); }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        @media (max-width: 600px) {
+            body { padding: 1rem; padding-top: 70px; }
+            .article-nav { padding: 0.75rem 1rem; }
+            .article-nav .series-links { display: none; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.4rem; }
+            .timeline::before { left: 80px; }
+            .timeline-year { width: 60px; }
+            .timeline-dot { left: 73px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="article-nav">
+    <a href="../index.html#blog" class="back-link">← Back to Portfolio</a>
+    <div class="series-links">
+        <a href="vae.html">VAE</a>
+        <a href="gan.html">GAN</a>
+        <a href="diffusion.html">Diffusion</a>
+        <a href="transformers.html" class="current">Transformers</a>
+    </div>
+</nav>
+
+<header class="article-header">
+    <span class="series-badge">Deep Dive Series</span>
+    <h1>Transformers: The Complete Story</h1>
+    <p class="subtitle">Attention, Multi-Head, Complexity, KV Caching — Broken down and Explained from the basics</p>
+</header>
+
+<!-- ===================== NOTATION ===================== -->
+<div class="notation-box">
+    <div class="label">📐 Notation Reference — Every Variable Used In This Post</div>
+    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">Defined once here. Refer back whenever a symbol appears and you're unsure what it means.</p>
+    <table style="margin:0">
+        <tr><th>Symbol</th><th>What It Means</th><th>Typical Value (GPT-2 Small)</th></tr>
+        <tr><td>$B$</td><td>Batch size — number of sequences processed simultaneously</td><td>32</td></tr>
+        <tr><td>$S$</td><td>Sequence length — number of tokens in one sequence</td><td>1024</td></tr>
+        <tr><td>$d_{model}$</td><td>Model dimension — size of each token's embedding vector</td><td>768</td></tr>
+        <tr><td>$n_{heads}$</td><td>Number of attention heads</td><td>12</td></tr>
+        <tr><td>$d_{head}$</td><td>Dimension per head — always $d_{model} / n_{heads}$</td><td>64</td></tr>
+        <tr><td>$L$</td><td>Number of transformer layers (depth)</td><td>12</td></tr>
+        <tr><td>$X$</td><td>Input matrix — shape $(S, d_{model})$, all tokens stacked</td><td>—</td></tr>
+        <tr><td>$Q$</td><td>Query matrix — shape $(S, d_{head})$ per head</td><td>—</td></tr>
+        <tr><td>$K$</td><td>Key matrix — shape $(S, d_{head})$ per head</td><td>—</td></tr>
+        <tr><td>$V$</td><td>Value matrix — shape $(S, d_{head})$ per head</td><td>—</td></tr>
+        <tr><td>$W_Q, W_K, W_V$</td><td>Learned projection weight matrices — shape $(d_{model}, d_{model})$ each</td><td>—</td></tr>
+        <tr><td>$W_O$</td><td>Output projection weight matrix — shape $(d_{model}, d_{model})$</td><td>—</td></tr>
+        <tr><td>$t$</td><td>Current generation step (which token is being produced)</td><td>—</td></tr>
+        <tr><td>FLOPs</td><td>Floating point operations — how we measure compute cost</td><td>—</td></tr>
+    </table>
+</div>
+
+<!-- ===================== TOC ===================== -->
+<div class="toc">
+    <h3>Contents</h3>
+    <ul>
+        <li><strong>Part I: Why Transformers?</strong></li>
+        <li style="padding-left:1rem"><a href="#ch1">1. The Problem with RNNs</a></li>
+        <li style="padding-left:1rem"><a href="#ch2">2. The Core Idea: Attention</a></li>
+        <li><strong>Part II: The Attention Mechanism</strong></li>
+        <li style="padding-left:1rem"><a href="#ch3">3. Q, K, V — What They Are</a></li>
+        <li style="padding-left:1rem"><a href="#ch4">4. Scaled Dot-Product Attention</a></li>
+        <li style="padding-left:1rem"><a href="#ch5">5. Why Scale by √d_head? (With Numbers)</a></li>
+        <li><strong>Part III: Multi-Head Attention</strong></li>
+        <li style="padding-left:1rem"><a href="#ch6">6. Why One Head Isn't Enough</a></li>
+        <li style="padding-left:1rem"><a href="#ch7">7. The Full Dimension Flow</a></li>
+        <li style="padding-left:1rem"><a href="#ch8">8. Weight Matrices: Still d_model × d_model</a></li>
+        <li><strong>Part IV: Complexity — Where O(S²·d_model) Comes From</strong></li>
+        <li style="padding-left:1rem"><a href="#ch9">9. How Matrix Multiply Cost Works (From Scratch)</a></li>
+        <li style="padding-left:1rem"><a href="#ch10">10. Compute: Why O(S²·d_model)</a></li>
+        <li style="padding-left:1rem"><a href="#ch11">11. Memory: Why O(S²)</a></li>
+        <li><strong>Part V: KV Caching — Full Deep Dive</strong></li>
+        <li style="padding-left:1rem"><a href="#ch12">12. The Problem KV Caching Solves</a></li>
+        <li style="padding-left:1rem"><a href="#ch13">13. Why K and V but not Q?</a></li>
+        <li style="padding-left:1rem"><a href="#ch14">14. Cache Size: Where 2·S·L·d_model Comes From</a></li>
+        <li style="padding-left:1rem"><a href="#ch15">15. Does It Actually Save That Much? (With Numbers)</a></li>
+        <li><strong>Part VI: Masking</strong></li>
+        <li style="padding-left:1rem"><a href="#ch16">16. The Three Types of Masking</a></li>
+        <li style="padding-left:1rem"><a href="#ch17">17. The Padding Bug</a></li>
+        <li><strong>Part VII: Training</strong></li>
+        <li style="padding-left:1rem"><a href="#ch18">18. The Correct Training Loop</a></li>
+        <li style="padding-left:1rem"><a href="#ch19">19. Why Warmup LR?</a></li>
+        <li><strong>Part VIII: What Came After — The Timeline</strong></li>
+        <li style="padding-left:1rem"><a href="#ch20">20. Every Problem the Vanilla Transformer Had, and Who Fixed It</a></li>
+        <li style="padding-left:1rem"><a href="#ch21">21. Interview Summary</a></li>
+    </ul>
+</div>
+
+<!-- ==================== PART I ==================== -->
+<div class="part-header"><div class="part-label">Part I</div><h2>Why Transformers?</h2></div>
+
+<h2 id="ch1"><span class="chapter-num">1</span> The Problem with RNNs</h2>
+
+<p>Before transformers, sequence modelling meant RNNs and LSTMs. They process one token at a time, left to right, updating a hidden state $h_t$ at each step:</p>
+
+<div class="ascii-diagram">h_0 → h_1 → h_2 → h_3 → h_4 → h_5
+     ↑      ↑      ↑      ↑      ↑      ↑
+    "The" "cat"  "sat"   "on"  "the"  "mat"
+
+To understand "mat" using "The", information about "The" must
+survive 5 hidden state compressions. By step 5 it's a faint echo.</div>
+
+<div class="verdict"><strong>Problem 1 — Vanishing Gradients:</strong> Backpropagating through 500 timesteps means gradients shrink exponentially. Early tokens contribute almost nothing to learning.</div>
+<div class="verdict"><strong>Problem 2 — Sequential Processing:</strong> Step $t$ depends on step $t-1$. Can't parallelise. Slow on long sequences.</div>
+<div class="verdict"><strong>Problem 3 — Fixed Bottleneck:</strong> All information must pass through one $d_{model}$-dimensional vector. Lossy by design.</div>
+
+<div class="transition">What if every token could directly look at every other token?</div>
+
+<h2 id="ch2"><span class="chapter-num">2</span> The Core Idea: Attention</h2>
+
+<div class="key-insight">
+    <div class="label">One Line Intuition</div>
+    <p>Instead of compressing the whole sequence into a hidden state, let every token <strong>directly query</strong> every other token and decide how much to borrow from it.</p>
+</div>
+
+<p>For "The cat sat on the mat because <strong>it</strong> was tired" — when processing "it", attention scores every token directly:</p>
+
+<div class="ascii-diagram">Attention weights computed by "it":
+
+The   cat   sat   on   the   mat   because   it    was   tired
+0.02  0.71  0.05  0.02  0.03  0.08   0.04   0.01  0.02  0.02
+       ↑
+"cat" gets 71% of attention weight. Coreference resolved directly.
+No compression needed. No forgetting.</div>
+
+<p>The output for "it" = $0.71 \times \text{rep}(\text{"cat"}) + 0.08 \times \text{rep}(\text{"mat"}) + \ldots$ — a context-aware blend.</p>
+
+<!-- ==================== PART II ==================== -->
+<div class="part-header"><div class="part-label">Part II</div><h2>The Attention Mechanism</h2></div>
+
+<h2 id="ch3"><span class="chapter-num">3</span> Q, K, V — What They Are</h2>
+
+<p>Every token produces three vectors via learned linear projections $W_Q, W_K, W_V$:</p>
+
+<div class="nomenclature">
+    <h4>Q, K, V Intuition</h4>
+    <table>
+        <tr><th>Vector</th><th>Database Analogy</th><th>Role in Attention</th></tr>
+        <tr><td><strong>Query $Q$</strong></td><td>"What am I looking for?"</td><td>Current token's search request</td></tr>
+        <tr><td><strong>Key $K$</strong></td><td>"What do I contain?"</td><td>Each token advertising its content</td></tr>
+        <tr><td><strong>Value $V$</strong></td><td>"What do I actually give you?"</td><td>Information to aggregate if selected</td></tr>
+    </table>
+</div>
+
+<div class="ascii-diagram">Resolving "it":
+
+Query from "it":  "find me: animate subject noun, introduced earlier"
+
+Key from "cat":   "I am: animate, subject, early position"   → HIGH match
+Key from "mat":   "I am: inanimate, location object"          → low match
+Key from "sat":   "I am: a verb"                              → low match
+
+match = Q_it · K_cat = high  → attend more
+match = Q_it · K_mat = low   → attend less
+
+Output = 0.71 × V_cat + 0.08 × V_mat + ...  = mostly "cat"'s information</div>
+
+<p>In matrix form (all $S$ tokens at once):</p>
+
+<div class="math-block">
+    $$Q = X W_Q, \quad K = X W_K, \quad V = X W_V$$
+    $$\text{where } X \in \mathbb{R}^{S \times d_{model}}, \quad W_Q, W_K, W_V \in \mathbb{R}^{d_{model} \times d_{model}}$$
+</div>
+
+<h2 id="ch4"><span class="chapter-num">4</span> Scaled Dot-Product Attention</h2>
+
+<div class="math-block">
+    $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_{head}}}\right) V$$
+</div>
+
+<div class="derivation-step">
+    <div class="step-label">Step 1 — Raw scores: QKᵀ → shape (S, S)</div>
+    $(S, d_{head}) \times (d_{head}, S) = (S, S)$. Entry $(i, j)$ = dot product of token $i$'s query and token $j$'s key = how much token $i$ wants to attend to $j$.
+</div>
+<div class="derivation-step">
+    <div class="step-label">Step 2 — Scale by √d_head</div>
+    Divide every score by $\sqrt{d_{head}}$. Prevents large values from breaking softmax. Chapter 5 explains why with actual numbers.
+</div>
+<div class="derivation-step">
+    <div class="step-label">Step 3 — Softmax (row-wise)</div>
+    Each row (token $i$'s scores over all $S$ tokens) becomes a probability distribution summing to 1. These are the attention weights.
+</div>
+<div class="derivation-step">
+    <div class="step-label">Step 4 — Weighted sum: weights × V → shape (S, d_head)</div>
+    $(S, S) \times (S, d_{head}) = (S, d_{head})$. Each token gets a weighted mix of all value vectors. Token representations now contain context.
+</div>
+
+<h2 id="ch5"><span class="chapter-num">5</span> Why Scale by √d_head? (With Numbers)</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"Why √d_head? Why not d_head? Why not nothing?"</p>
+</div>
+
+<p>Assume $Q$ and $K$ are initialised from $\mathcal{N}(0,1)$. Each element has mean 0, variance 1. The dot product $Q_i \cdot K_j = \sum_{l=1}^{d_{head}} Q_{il} \cdot K_{jl}$ is a sum of $d_{head}$ products.</p>
+
+<div class="worked-example">
+    <div class="label">📊 Worked Example — Variance of one dot product</div>
+    <p>If $a \sim \mathcal{N}(0,1)$ and $b \sim \mathcal{N}(0,1)$ independently: $\text{Var}(ab) = 1$.</p>
+    <p>Sum of $d_{head}$ such independent terms has variance $= d_{head}$. Standard deviation $= \sqrt{d_{head}}$.</p>
+    <p><strong>With $d_{head}=64$:</strong> std dev = 8, so dot products are typically in $[-24, +24]$.</p>
+</div>
+
+<p>Feed $[-24, +24]$ into softmax:</p>
+
+<div class="ascii-diagram">softmax([24, 23, 0, -1]):
+≈ [0.73, 0.27, 0.00, 0.00]
+
+One token absorbs nearly all attention weight.
+Softmax gradient ≈ 0. Model stops learning.</div>
+
+<p>Divide by $\sqrt{d_{head}}$ first:</p>
+
+<div class="math-block">
+    $$\text{Var}\!\left(\frac{Q_i \cdot K_j}{\sqrt{d_{head}}}\right) = \frac{d_{head}}{d_{head}} = 1$$
+</div>
+
+<div class="worked-example">
+    <div class="label">📊 After Scaling — d_head=64, divide by √64=8</div>
+    <p>Scores in $[-24,+24]$ become $[-3,+3]$.</p>
+    <p><code>softmax([3, 2, 0, -1]) = [0.61, 0.23, 0.11, 0.04]</code> — smooth distribution, healthy gradients.</p>
+    <p>$\sqrt{d_{head}}$ is exactly the standard deviation of the unscaled dot product — dividing by it restores unit variance.</p>
+</div>
+
+<!-- ==================== PART III ==================== -->
+<div class="part-header"><div class="part-label">Part III</div><h2>Multi-Head Attention</h2></div>
+
+<h2 id="ch6"><span class="chapter-num">6</span> Why One Head Isn't Enough</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"Why split into n_heads heads? Why not just use one big attention with full d_model?"</p>
+</div>
+
+<div class="ascii-diagram">"The cat sat on the mat because it was tired"
+
+Relationships present simultaneously:
+  Coreference:  "it" → "cat"
+  Syntactic:    "cat" is subject of "sat"
+  Positional:   "on" relates "sat" to "mat"
+  Semantic:     "tired" is a state of "cat"
+
+One head: one weight matrix W_Q captures a single mixture of all types.
+Learns a compromise — mediocre at everything.
+
+n_heads=12: each head independently learns one type.
+  Head 1  → coreference
+  Head 2  → syntactic roles
+  Head 3  → positional
+  ...
+Concatenate all heads → rich, multi-perspective representation.</div>
+
+<div class="key-insight">
+    <div class="label">Key Insight — Same Parameters, Better Structure</div>
+    <p>Splitting $d_{model}$ into $n_{heads}$ heads of $d_{head} = d_{model}/n_{heads}$ each uses the <strong>same number of parameters</strong>. You're not adding capacity — you're restructuring it to encourage specialisation.</p>
+</div>
+
+<h2 id="ch7"><span class="chapter-num">7</span> The Full Dimension Flow</h2>
+
+<p>Tracing exact shapes through GPT-2 Small: $B=1$, $S=1024$, $d_{model}=768$, $n_{heads}=12$, $d_{head}=64$.</p>
+
+<div class="ascii-diagram">Input X:                (1, 1024, 768)     = (B, S, d_model)
+
+Project W_Q, W_K, W_V — each (768, 768):
+Q = X @ W_Q:            (1, 1024, 768)
+K = X @ W_K:            (1, 1024, 768)
+V = X @ W_V:            (1, 1024, 768)
+
+Reshape to split into heads:
+Q:                      (1, 1024, 12, 64)  = (B, S, n_heads, d_head)
+
+Transpose for batched matmul:
+Q:                      (1, 12, 1024, 64)  = (B, n_heads, S, d_head)
+K, V: same
+
+Attention scores Q @ K.T:
+                        (1, 12, 1024, 1024) = (B, n_heads, S, S)
+                        ↑ THIS is the S² matrix — 12.5M numbers per batch
+
+Divide by √64=8, softmax row-wise.
+
+Weighted sum @ V:
+                        (1, 12, 1024, 64)   = (B, n_heads, S, d_head)
+
+Transpose + reshape (concatenate heads):
+                        (1, 1024, 768)      = (B, S, d_model)
+
+Output projection W_O (768×768):
+                        (1, 1024, 768)      = same shape as input ✓</div>
+
+<h2 id="ch8"><span class="chapter-num">8</span> Weight Matrices: Still d_model × d_model</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"If there are 12 heads, are there 12 separate W_Q matrices or one shared one?"</p>
+</div>
+
+<div class="answer-block">
+    <div class="label">✓ One matrix (d_model × d_model) that implicitly contains all heads</div>
+    <p>$W_Q$ is $(768, 768)$. After the projection we reshape to $(S, n_{heads}, d_{head})$ to split by head. Conceptually it's $n_{heads}$ stacked projections of $(768, 64)$. One matrix for GPU efficiency; split after multiplication.</p>
+</div>
+
+<div class="worked-example">
+    <div class="label">📊 Parameter Count — One Attention Layer, GPT-2 Small</div>
+    <p>$d_{model}=768$, $n_{heads}=12$, $d_{head}=64$.</p>
+    <p>$W_Q$: $768 \times 768 = 589{,}824$ &nbsp;|&nbsp; $W_K$: same &nbsp;|&nbsp; $W_V$: same &nbsp;|&nbsp; $W_O$: same</p>
+    <p><strong>Total per layer: $\approx 2.36M$ parameters — identical for 1 head or 12 heads.</strong></p>
+</div>
+
+<!-- ==================== PART IV ==================== -->
+<div class="part-header"><div class="part-label">Part IV</div><h2>Complexity — Where O(S²·d_model) Comes From</h2></div>
+
+<h2 id="ch9"><span class="chapter-num">9</span> How Matrix Multiply Cost Works (From Scratch)</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Starting from scratch</div>
+    <p>"I've heard O(S²·d_model) but I don't know how to count the cost of multiplying two matrices."</p>
+</div>
+
+<p><strong>Dot product of two length-$k$ vectors:</strong> $k$ multiplications + $(k-1)$ additions $\approx 2k$ operations.</p>
+
+<div class="worked-example">
+    <div class="label">📊 Dot Product Cost</div>
+    <p>$[1,2,3]\cdot[4,5,6] = 4+10+18=32$ &nbsp;→&nbsp; 3 multiplications + 2 additions = 5 ops $\approx 2k$ for $k=3$.</p>
+</div>
+
+<p><strong>Matrix multiply $(A: m \times k)$ by $(B: k \times p)$:</strong> result is $(m \times p)$. Each of the $m \times p$ entries is a length-$k$ dot product.</p>
+
+<div class="math-block">
+    $$\text{Cost of } (m,k) \times (k,p) = O(m \cdot k \cdot p)$$
+</div>
+
+<div class="worked-example">
+    <div class="label">📊 Matrix Multiply Cost</div>
+    <p>$(4\times3)\times(3\times5)$ → result $(4,5)$. Number of dot products: $4\times5=20$. Each length 3.</p>
+    <p>Total: $4\times5\times3=60$ ops = $O(m\cdot k\cdot p)$.</p>
+    <p><strong>Rule: multiply all three dimensions of the two matrices together.</strong></p>
+</div>
+
+<h2 id="ch10"><span class="chapter-num">10</span> Compute: Why O(S²·d_model)</h2>
+
+<h3>Operation 1 — Linear Projections (Q, K, V, O)</h3>
+
+<p>$X W_Q$: $(S, d_{model}) \times (d_{model}, d_{model}) \to (S, d_{model})$. Cost $= O(S \cdot d_{model}^2)$. Four projections total: $O(S \cdot d_{model}^2)$.</p>
+
+<h3>Operation 2 — Attention Scores QKᵀ</h3>
+
+<p>Per head: $Q$ is $(S, d_{head})$, $K^\top$ is $(d_{head}, S)$. Result: $(S, S)$.</p>
+<p>Cost per head $= O(S \cdot d_{head} \cdot S) = O(S^2 d_{head})$.</p>
+<p>All $n_{heads}$ heads: $O(n_{heads} \cdot S^2 d_{head}) = O(S^2 \cdot n_{heads} \cdot d_{head}) = O(S^2 \cdot d_{model})$ since $n_{heads} \cdot d_{head} = d_{model}$.</p>
+
+<div class="worked-example">
+    <div class="label">📊 QKᵀ Cost — GPT-2 Small</div>
+    <p>$S=1024$, $d_{head}=64$, $n_{heads}=12$.</p>
+    <p>Per head: $1024 \times 1024 \times 64 = 67M$ FLOPs.</p>
+    <p>All 12 heads: $12 \times 67M = 805M$ FLOPs for attention scores alone.</p>
+    <p>Projection cost: $1024 \times 768 \times 768 = 603M$ FLOPs. Both are at the same order of magnitude.</p>
+</div>
+
+<h3>Operation 3 — Weighted Sum (weights × V)</h3>
+
+<p>$(S, S) \times (S, d_{head})$ per head. Cost $= O(S^2 d_{head})$ per head $= O(S^2 d_{model})$ total. Same as $QK^\top$.</p>
+
+<h3>Total</h3>
+
+<div class="math-block">
+    $$\text{Total Compute} = O(S \cdot d_{model}^2) + O(S^2 \cdot d_{model})$$
+</div>
+
+<div class="ascii-diagram">Which term dominates?
+
+S ≪ d_model (short sequences, large model):  S·d_model² dominates → projections bottleneck
+S ≫ d_model (very long sequences):           S²·d_model dominates → attention scores bottleneck
+S ~ d_model (typical):                       Both matter. Written as O(S²·d_model).</div>
+
+<div class="key-insight">
+    <div class="label">Why the S² Hurts</div>
+    <p>Double the sequence length → <strong>4× the compute and memory</strong> for attention. This is why 100k-token contexts are expensive, and why FlashAttention, sparse attention, and linear attention were invented.</p>
+</div>
+
+<h2 id="ch11"><span class="chapter-num">11</span> Memory: Why O(S²)</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"Compute is O(S²·d_model). Why is memory only O(S²)? Shouldn't memory scale with d_model too?"</p>
+</div>
+
+<p>Compute counts <em>operations performed</em>. Memory counts <em>values that must be stored simultaneously</em>.</p>
+
+<p>The attention score matrix has shape $(B, n_{heads}, S, S)$. That's $B \times n_{heads} \times S^2$ numbers. The $d_{head}$ dimension was consumed by the dot product — it doesn't appear in the output matrix. So storing the score matrix costs $O(S^2)$ per batch element per head.</p>
+
+<div class="worked-example">
+    <div class="label">📊 Attention Score Memory — GPT-2 Small</div>
+    <p>$S=1024$, $n_{heads}=12$, float32 (4 bytes each).</p>
+    <p>Score matrix: $12 \times 1024 \times 1024 = 12{,}582{,}912$ floats $\approx$ <strong>48 MB per layer.</strong></p>
+    <p>During training with backprop ($L=12$ layers): $12 \times 48 = 576$ MB just for attention scores.</p>
+</div>
+
+<div class="worked-example">
+    <div class="label">📊 Why Long Contexts Hit a Wall</div>
+    <p>Score matrix scales as $S^2$.</p>
+    <p>$S=1024$ → 48 MB/layer. &nbsp; $S=4096$ → 768 MB/layer. &nbsp; $S=32{,}768$ → 49 GB/layer.</p>
+    <p><strong>At $S=32k$, storing attention scores is infeasible on most GPUs.</strong> This is the exact problem FlashAttention solves by recomputing scores on the fly rather than storing them.</p>
+</div>
+
+<!-- ==================== PART V ==================== -->
+<div class="part-header"><div class="part-label">Part V</div><h2>KV Caching — Full Deep Dive</h2></div>
+
+<h2 id="ch12"><span class="chapter-num">12</span> The Problem KV Caching Solves</h2>
+
+<p>KV caching is an <strong>inference-time</strong> optimisation only — it doesn't apply during training.</p>
+
+<p>During autoregressive generation, tokens are produced one at a time:</p>
+
+<div class="ascii-diagram">Step 1: Input = ["The", "cat"]             → generate "sat"
+Step 2: Input = ["The", "cat", "sat"]      → generate "on"
+Step 3: Input = ["The", "cat", "sat", "on"]→ generate "the"
+...</div>
+
+<p>At each step, in every transformer layer, the model computes $K$ and $V$ for <em>every token in the current input</em>.</p>
+
+<div class="worked-example">
+    <div class="label">📊 Redundant Computation Without Caching</div>
+    <p>Generating the 100th token. Context = 99 previous tokens.</p>
+    <p>Model computes $K$ and $V$ for all 99 tokens (including "The", "cat", etc.).</p>
+    <p>Generating the 101st token. Context = 100 tokens.</p>
+    <p>Model computes $K$ and $V$ for all 100 tokens — including the same 99 from before.</p>
+    <p>$K$ of "The" at step 100 = $K$ of "The" at step 1 = identical. <strong>Recomputed for no reason.</strong></p>
+    <p>For a 1000-token generation: token 1000 triggers recomputation of K,V for 999 prior tokens. Total redundant projection operations: $1+2+\ldots+999 \approx O(S^2)$.</p>
+</div>
+
+<h2 id="ch13"><span class="chapter-num">13</span> Why K and V but not Q?</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"Why cache K and V specifically? What's special about them vs Q?"</p>
+</div>
+
+<div class="ascii-diagram">Generating token t (the NEW token):
+
+Q of new token:
+  = "What does THIS token need from the context?"
+  → Computed from the new token's embedding.
+  → DIFFERENT every step — new token, new Q.
+  → Nothing to cache. Always fresh.
+
+K of token 1 ("The"):
+  = "What does 'The' contain?" = X_The @ W_K
+  → Computed from 'The's embedding, which never changes.
+  → K of "The" at step 100 = K of "The" at step 1. IDENTICAL.
+  → CACHE IT.
+
+V of token 1 ("The"):
+  = "What does 'The' contribute if attended to?" = X_The @ W_V
+  → Same logic. Cache it.
+
+At step t:
+  Retrieve K,V for tokens 1..t-1 from cache  (free)
+  Compute K,V only for new token t            (1 vector)
+  Compute Q only for new token t              (1 vector)
+  Run attention: Q_t over all K_1..K_t        (cheap)
+  Append K_t, V_t to cache                   (for next step)</div>
+
+<div class="key-insight">
+    <div class="label">Key Insight</div>
+    <p>$K$ and $V$ are <strong>deterministic functions of their token</strong> — same token always produces the same $K$ and $V$. $Q$ is the current token's fresh question to the world — always new. Cache the answers, not the questions.</p>
+</div>
+
+<h2 id="ch14"><span class="chapter-num">14</span> Cache Size: Where 2·S·L·d_model Comes From</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"I've seen KV cache size quoted as 2·S·L·d_model (roughly). Where does each term come from?"</p>
+</div>
+
+<div class="derivation-step">
+    <div class="step-label">Term: d_head</div>
+    One $K$ vector for one token in one head has $d_{head}$ numbers. One $V$ vector also has $d_{head}$. Per token, per head: $2 \times d_{head}$ numbers.
+</div>
+<div class="derivation-step">
+    <div class="step-label">Term: n_heads</div>
+    There are $n_{heads}$ heads. Each has its own $K$ and $V$. Per token, per layer: $2 \times n_{heads} \times d_{head} = 2 \times d_{model}$ numbers (since $n_{heads} \times d_{head} = d_{model}$).
+</div>
+<div class="derivation-step">
+    <div class="step-label">Term: L</div>
+    There are $L$ transformer layers. Each layer has its own $K$ and $V$ cache. Per token: $2 \times L \times d_{model}$ numbers.
+</div>
+<div class="derivation-step">
+    <div class="step-label">Term: S</div>
+    We cache up to $S$ tokens (full context). Total: $2 \times S \times L \times d_{model}$ numbers.
+</div>
+
+<div class="math-block">
+    $$\text{KV Cache} = 2 \cdot S \cdot L \cdot d_{model} \text{ numbers}$$
+    $$\text{In bytes (float16, 2 bytes per number):} \quad 4 \cdot S \cdot L \cdot d_{model} \text{ bytes}$$
+</div>
+
+<div class="worked-example">
+    <div class="label">📊 GPT-2 Small KV Cache</div>
+    <p>$S=1024$, $L=12$, $d_{model}=768$, float16.</p>
+    <p>Numbers: $2 \times 1024 \times 12 \times 768 = 18{,}874{,}368$</p>
+    <p>Bytes: $\times 2 = 37{,}748{,}736 \approx$ <strong>36 MB. Tiny.</strong></p>
+</div>
+
+<div class="worked-example">
+    <div class="label">📊 LLaMA 70B KV Cache — Why This Matters</div>
+    <p>$S=4096$, $L=80$, $d_{model}=8192$, float16.</p>
+    <p>Bytes: $4 \times 4096 \times 80 \times 8192 = 10{,}737{,}418{,}240 \approx$ <strong>10 GB just for KV cache.</strong></p>
+    <p>Model weights: ~130 GB additional. For $S=32{,}768$ (long context): KV cache alone → ~80 GB.</p>
+</div>
+
+<h2 id="ch15"><span class="chapter-num">15</span> Does It Actually Save That Much? (With Numbers)</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"K and V are just two matrix multiplies. How much can reusing them actually save?"</p>
+</div>
+
+<p>At generation step $t$, the input context has $t-1$ tokens.</p>
+
+<p><strong>Without KV cache:</strong> compute $K$ and $V$ for all $t-1$ tokens per layer. Each is $(t-1, d_{model}) \times (d_{model}, d_{model})$: cost $= O((t-1) \cdot d_{model}^2)$ per layer.</p>
+
+<p><strong>With KV cache:</strong> compute $K$ and $V$ only for the new token. That's $(1, d_{model}) \times (d_{model}, d_{model})$: cost $= O(d_{model}^2)$ per layer — independent of $t$.</p>
+
+<div class="worked-example">
+    <div class="label">📊 Operations Saved at Step t=500, GPT-2 Small</div>
+    <p>$t=500$, $d_{model}=768$, $L=12$.</p>
+    <p><strong>Without cache — K,V projections all layers:</strong> $499 \times 768 \times 768 \times 12 \times 2 \approx 5.6B$ FLOPs</p>
+    <p><strong>With cache — K,V for 1 new token all layers:</strong> $1 \times 768 \times 768 \times 12 \times 2 \approx 14M$ FLOPs</p>
+    <p><strong>Savings: ~400× fewer FLOPs for K,V projections at step 500.</strong></p>
+</div>
+
+<p>Total savings across all $S$ generation steps:</p>
+
+<div class="ascii-diagram">Total K,V projection FLOPs across generating S tokens:
+
+Without KV cache:
+  Step 1: K,V for 1 token   → O(d_model²)
+  Step 2: K,V for 2 tokens  → O(2·d_model²)
+  ...
+  Step S: K,V for S tokens  → O(S·d_model²)
+  Total:  (1+2+...+S)·d_model² = O(S²·d_model)   ← quadratic in S
+
+With KV cache:
+  Every step: K,V for 1 token → O(d_model²)
+  Total:      S·d_model²      = O(S·d_model²)      ← linear in S
+
+Speedup ratio: O(S²·d_model) / O(S·d_model²) = O(S/d_model)
+At S=10000, d_model=768: ~13× faster projections.</div>
+
+<div class="question-block">
+    <div class="label">🤔 Follow-up</div>
+    <p>"But we still run attention over the full cached K and V every step. Doesn't that stay O(S²)?"</p>
+</div>
+
+<div class="answer-block">
+    <div class="label">✓ Yes — and this is the remaining bottleneck</div>
+    <p>Correct. At step $t$, the new token's $Q$ attends over all $t-1$ cached $K$ vectors: $(1, d_{head}) \times (d_{head}, t-1) = O(t \cdot d_{head})$ per head. Summed across all steps and heads: $O(S^2 \cdot d_{model})$ — still quadratic. KV caching eliminates the redundant projection cost. The attention over the growing context remains $O(S^2)$.</p>
+</div>
+
+<!-- ==================== PART VI ==================== -->
+<div class="part-header"><div class="part-label">Part VI</div><h2>Masking</h2></div>
+
+<h2 id="ch16"><span class="chapter-num">16</span> The Three Types of Masking</h2>
+
+<p>Masking = set certain attention scores to $-\infty$ before softmax so they get zero weight. Three distinct situations need it:</p>
+
+<table>
+    <tr><th>Mask</th><th>Problem It Solves</th><th>Where Applied</th><th>Implementation</th></tr>
+    <tr><td><strong>Padding mask</strong></td><td>Batch sequences are padded to equal length — PAD tokens shouldn't influence attention</td><td>Attention scores</td><td><code>attention_mask</code> (1=real, 0=pad)</td></tr>
+    <tr><td><strong>Loss mask</strong></td><td>PAD tokens shouldn't contribute to the loss</td><td>Cross-entropy loss</td><td><code>ignore_index=0</code></td></tr>
+    <tr><td><strong>Causal mask</strong></td><td>Autoregressive models can't see future tokens during training</td><td>Attention scores</td><td>Upper triangular $-\infty$, built into model</td></tr>
+</table>
+
+<h2 id="ch17"><span class="chapter-num">17</span> The Padding Bug</h2>
+
+<div class="ascii-diagram">"hello world"   → [5, 3, 0, 0, 0]   2 real + 3 PADs
+"good morning"  → [2, 7, 1, 4, 0]   4 real + 1 PAD
+"I love pandas" → [6, 3, 9, 2, 1]   5 real + 0 PADs</div>
+
+<p><strong>Bug 1 — No attention mask:</strong> Real tokens attend to PAD tokens, pulling garbage into their representations.</p>
+
+<div class="code-block"># Broken ❌ — real tokens attend to PAD tokens
+output = model(x)
+
+# Fixed ✅ — PAD positions get -∞ before softmax → 0 weight
+output = model(x, attention_mask=mask)   # mask: 1=real, 0=pad</div>
+
+<p><strong>Bug 2 — No loss mask:</strong> Model penalised for predicting PAD token positions — meaningless noise.</p>
+
+<div class="code-block"># Broken ❌
+loss = nn.CrossEntropyLoss()(logits, targets)
+
+# Fixed ✅
+loss = nn.CrossEntropyLoss(ignore_index=0)(logits, targets)</div>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"Is ignore_index=0 the position index or the token value?"</p>
+</div>
+
+<div class="answer-block">
+    <div class="label">✓ Token value — not position</div>
+    <p>"Skip any position where the target tensor value equals 0." If your PAD token ID is 99, use <code>ignore_index=99</code>. Think of it as <code>ignore_token_id</code>.</p>
+</div>
+
+<p><strong>Symptom of both bugs:</strong> model performs poorly on short sequences (more padding = more noise), well on long ones. Length-correlated degradation is the tell.</p>
+
+<!-- ==================== PART VII ==================== -->
+<div class="part-header"><div class="part-label">Part VII</div><h2>Training</h2></div>
+
+<h2 id="ch18"><span class="chapter-num">18</span> The Correct Training Loop</h2>
+
+<div class="code-block">model = TransformerModel()
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
+scheduler = get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=1000)
+
+for epoch in range(num_epochs):
+
+    # ── Training ──────────────────────────────────────────────────────
+    model.train()                                                # (1) train mode
+    for x, y, mask in train_loader:
+        optimizer.zero_grad()                                    # (2) clear gradients
+        output = model(x, attention_mask=mask)                   # (3) pass padding mask
+        loss = nn.CrossEntropyLoss(ignore_index=0)(output, y)   # (4) mask loss
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # (5) clip gradients
+        optimizer.step()
+        scheduler.step()                                         # (6) update LR
+
+    # ── Validation ────────────────────────────────────────────────────
+    model.eval()                                                 # (7) eval mode
+    with torch.no_grad():
+        for x, y, mask in val_loader:
+            output = model(x, attention_mask=mask)
+            val_loss = nn.CrossEntropyLoss(ignore_index=0)(output, y)
+
+    model.train()                                                # (8) switch back!</div>
+
+<table>
+    <tr><th>#</th><th>What</th><th>Effect if Missing</th><th>Severity</th></tr>
+    <tr><td>2</td><td><code>zero_grad()</code></td><td>Gradients accumulate — wrong update every step</td><td>🔴 Immediate failure</td></tr>
+    <tr><td>4</td><td><code>ignore_index</code></td><td>PAD tokens add noise to loss — silent degradation</td><td>🟠 Silent</td></tr>
+    <tr><td>3</td><td><code>attention_mask</code></td><td>PAD pollutes representations — silent degradation</td><td>🟠 Silent</td></tr>
+    <tr><td>8</td><td><code>model.train()</code> after eval</td><td>Dropout/BN in wrong mode — conditional on having called eval()</td><td>🟡 Conditional</td></tr>
+    <tr><td>5</td><td>grad clipping</td><td>Gradient explosion on long sequences</td><td>🟡 Rare for transformers</td></tr>
+</table>
+
+<h2 id="ch19"><span class="chapter-num">19</span> Why Warmup LR for Transformers?</h2>
+
+<div class="question-block">
+    <div class="label">🤔 Question</div>
+    <p>"Why do transformers need LR warmup? CNNs work fine without it."</p>
+</div>
+
+<p><strong>Reason 1 — Adam's early estimates are unreliable.</strong> Adam maintains $m_t$ (EMA of gradients) and $v_t$ (EMA of squared gradients). At step 1, $m_1 = 0.1 \times g_1$ — based on one sample, highly noisy. A large LR multiplies this noise into a large bad update.</p>
+
+<div class="worked-example">
+    <div class="label">📊 Typical Warmup Schedule</div>
+    <p>100k total steps, target LR $= 1\times10^{-4}$:</p>
+    <p>Steps 0–1000: LR increases linearly $0 \to 1\times10^{-4}$ (warmup — 1% of training).</p>
+    <p>Steps 1000–100k: cosine decay $1\times10^{-4} \to 1\times10^{-5}$.</p>
+    <p>The 1000-step warmup often makes the difference between stable and divergent early training.</p>
+</div>
+
+<p><strong>Reason 2 — Transformers amplify instability.</strong> Multi-head attention + layer norm + residual connections across many layers means a bad early update propagates through all $L$ layers. CNNs are locally connected and more forgiving.</p>
+
+<!-- ==================== PART VIII ==================== -->
+<div class="part-header"><div class="part-label">Part VIII</div><h2>What Came After — The Timeline</h2></div>
+
+<h2 id="ch20"><span class="chapter-num">20</span> Every Problem the Vanilla Transformer Had, and Who Fixed It</h2>
+
+<p>The 2017 "Attention is All You Need" transformer was a breakthrough — but it had real problems. Here's how each was addressed, in order. Each entry below will become its own deep-dive post.</p>
+
+<div class="timeline">
+
+    <div class="timeline-item">
+        <div class="timeline-year">2017</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>Vanilla Transformer</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/1706.03762" class="paper-link" target="_blank">Attention Is All You Need — Vaswani et al.</a></div>
+            <p>Introduced self-attention, multi-head attention, positional encoding. Encoder-decoder architecture for translation. Replaced RNNs entirely for sequence-to-sequence tasks.</p>
+            <div class="problem">Problems: O(S²) memory, fixed positional encoding doesn't generalise, no way to run long contexts.</div>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2018</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>GPT-1 & BERT — The Pretraining Era Begins</h4>
+            <div class="paper-ref"><a href="https://openai.com/research/language-unsupervised" class="paper-link" target="_blank">GPT (Radford et al.)</a> · <a href="https://arxiv.org/abs/1810.04805" class="paper-link" target="_blank">BERT (Devlin et al.)</a></div>
+            <p>GPT: decoder-only, causal masking, autoregressive pretraining. BERT: encoder-only, masked language modelling, bidirectional context. Both showed that large-scale pretraining + fine-tuning transfers to nearly any NLP task.</p>
+            <div class="problem">Problem: Still O(S²), fixed context window (512 for BERT, 1024 for GPT), expensive to train.</div>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2019</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>Transformer-XL — Breaking the Fixed Context Window</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/1901.02860" class="paper-link" target="_blank">Transformer-XL — Dai et al.</a></div>
+            <div class="problem">Problem: Transformer processes each context window independently. No memory across windows. Long-range dependencies get truncated.</div>
+            <div class="solution">Fix: Segment-level recurrence. Cache hidden states from previous segments; attend to them in the current segment. Also introduced relative positional encodings.</div>
+            <p>First real attempt at extending context without quadratic memory blowup.</p>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2020</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>Longformer & BigBird — Sparse Attention</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/2004.05150" class="paper-link" target="_blank">Longformer — Beltagy et al.</a> · <a href="https://arxiv.org/abs/2007.14062" class="paper-link" target="_blank">BigBird — Zaheer et al.</a></div>
+            <div class="problem">Problem: Full attention is O(S²). At S=4096, the attention matrix alone is 64GB. Infeasible for long documents.</div>
+            <div class="solution">Fix: Replace full attention with sparse patterns. Longformer: each token attends to a local window + a few global tokens (e.g. [CLS]). BigBird: local + global + random attention. Reduces to O(S) or O(S·window_size).</div>
+            <p>Enabled processing of long documents (legal, scientific papers) that were previously impossible.</p>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>RoPE — Rotary Positional Embeddings</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/2104.09864" class="paper-link" target="_blank">RoFormer — Su et al.</a></div>
+            <div class="problem">Problem: Absolute positional encodings (sinusoidal or learned) don't generalise to sequence lengths longer than seen during training.</div>
+            <div class="solution">Fix: Encode position as a rotation in the Q and K vectors. Relative position between tokens is naturally captured in the dot product. Generalises to longer sequences than training length.</div>
+            <p>RoPE is now the standard in most modern LLMs — LLaMA, Mistral, GPT-4 all use it.</p>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>FlashAttention — Fixing the Memory Wall</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/2205.14135" class="paper-link" target="_blank">FlashAttention — Dao et al.</a></div>
+            <div class="problem">Problem: The $(S, S)$ attention score matrix must be written to and read from GPU HBM (slow memory). At S=4096 this is 64MB per layer per batch — a massive memory bottleneck even if compute is fine.</div>
+            <div class="solution">Fix: Tiled computation. Split Q, K, V into blocks; compute attention scores, softmax, and weighted sum block-by-block within fast SRAM (on-chip memory). Never materialise the full $(S, S)$ matrix in HBM. Recompute during backprop instead of storing.</div>
+            <p>Same O(S²) compute — but 5–20× faster in practice due to memory access patterns. Became the standard attention implementation. FlashAttention-2 (2023) and FlashAttention-3 (2024) pushed further.</p>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>Multi-Query Attention (MQA) & Grouped-Query Attention (GQA)</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/1911.02150" class="paper-link" target="_blank">MQA — Shazeer (2019, widely adopted 2022+)</a> · <a href="https://arxiv.org/abs/2305.13245" class="paper-link" target="_blank">GQA — Ainslie et al.</a></div>
+            <div class="problem">Problem: KV cache grows as $2 \cdot S \cdot L \cdot d_{model}$ bytes — at 10GB+ for large models, inference is memory-bound. Can't serve many users simultaneously.</div>
+            <div class="solution">MQA: All $n_{heads}$ query heads share a single K and V head. KV cache shrinks by $n_{heads}\times$. GQA (compromise): group $n_{heads}$ into $G$ groups; each group shares one K,V. LLaMA 2/3 uses GQA with $G=8$.</div>
+            <p>GQA reduces KV cache by 8× vs multi-head attention with minimal quality loss. Now standard in production LLMs.</p>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2023</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>Sliding Window Attention & Mixture of Experts — Mistral</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/2310.06825" class="paper-link" target="_blank">Mistral 7B — Jiang et al.</a></div>
+            <div class="problem">Problem: Full attention over long contexts is expensive even with FlashAttention. Most tokens don't need to attend to tokens far away.</div>
+            <div class="solution">Sliding window attention: each token attends only to the $W$ most recent tokens (e.g. $W=4096$). Combined with GQA and RoPE. Mixtral adds sparse MoE layers — only 2 of 8 expert FFN layers active per token, cutting compute while keeping parameters high.</div>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>Linear Attention & State Space Models — Mamba</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/2312.00752" class="paper-link" target="_blank">Mamba — Gu & Dao</a></div>
+            <div class="problem">Problem: Attention is fundamentally O(S²). Even with all the tricks, processing 1M-token contexts remains expensive. Can we get rid of the quadratic entirely?</div>
+            <div class="solution">Mamba: replaces attention with selective state space models (SSMs). Key innovation: input-dependent (selective) state transitions. Achieves O(S) compute and O(1) memory per step during inference. No attention matrix at all.</div>
+            <p>Competitive with transformers on language tasks at medium scale. Not yet clearly dominant — hybrid Mamba+attention models (Jamba) show promise. Active research area.</p>
+        </div>
+    </div>
+
+    <div class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+            <h4>DeepSeek-V3 & Multi-Head Latent Attention (MLA)</h4>
+            <div class="paper-ref"><a href="https://arxiv.org/abs/2412.19437" class="paper-link" target="_blank">DeepSeek-V3 — DeepSeek-AI</a></div>
+            <div class="problem">Problem: Even GQA has a large KV cache. MQA sacrifices quality. Can we get small KV cache without quality loss?</div>
+            <div class="solution">Multi-Head Latent Attention (MLA): compress K and V into a low-rank latent vector $c \in \mathbb{R}^{d_c}$ where $d_c \ll d_{model}$. Cache only $c$ per token instead of full K,V. Reconstruct K,V from $c$ at attention time via learned up-projection. KV cache shrinks by $(2 \cdot n_{heads} \cdot d_{head}) / d_c \approx 5$–$10\times$ vs MHA with no quality loss.</div>
+            <p>Combined with MoE and FP8 training, DeepSeek-V3 achieved GPT-4 level performance at a fraction of training cost. Caused significant industry attention.</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="key-insight">
+    <div class="label">The Through-Line</div>
+    <p>Every innovation above is attacking one of three constraints: <strong>(1) O(S²) compute</strong> (sparse attention, linear attention, Mamba), <strong>(2) O(S²) memory</strong> (FlashAttention, KV caching, MQA/GQA, MLA), or <strong>(3) fixed context/positional generalisation</strong> (Transformer-XL, RoPE). Each post in this series will go deep on one of these rows.</p>
+</div>
+
+<h2 id="ch21"><span class="chapter-num">21</span> Interview Summary</h2>
+
+<div class="interview-tip">
+    <div class="label">🎯 The Full Narrative</div>
+    <p>"RNNs process sequentially and compress everything into a hidden state — causing vanishing gradients and preventing parallelisation.</p>
+    <p>Transformers replace this with attention: $\text{softmax}(QK^\top/\sqrt{d_{head}})V$. Every token directly queries every other. We scale by $\sqrt{d_{head}}$ because dot product variance grows as $d_{head}$, and large values saturate softmax — dividing restores unit variance.</p>
+    <p>Multi-head attention runs $n_{heads}$ independent attention operations in parallel, each specialising in different relationship types, using the same total parameters as single-head attention ($n_{heads} \times d_{head} = d_{model}$).</p>
+    <p>Attention is $O(S^2 \cdot d_{model})$ compute because $QK^\top$ is $(S, d_{head}) \times (d_{head}, S) = O(S^2 d_{head})$ per head, times $n_{heads}$ gives $O(S^2 d_{model})$. Memory is $O(S^2)$ because the score matrix is $(S, S)$ — $d_{head}$ was consumed by the dot product.</p>
+    <p>KV caching saves inference compute by storing previous tokens' $K$ and $V$ — they're deterministic functions of those tokens and never change. $Q$ is always the fresh new token's question, so it's never cached. Without caching, projection cost is $O(S^2 d_{model})$ total. With caching, $O(S \cdot d_{model}^2)$ — linear in $S$. Cache size is $2SLd_{model}$ numbers = $4SLd_{model}$ bytes in float16.</p>
+    <p>Three masking types: attention mask for padding, ignore_index for loss, causal mask for autoregressive models. Forgetting the loss mask causes silent length-correlated degradation. LR warmup stabilises early Adam estimates and prevents cascading instability in deep networks."</p>
+</div>
+
+<div class="tldr">
+    <div class="label">TL;DR Cheatsheet</div>
+    <table style="margin:0">
+        <tr><th>Concept</th><th>One Line</th><th>Key Number</th></tr>
+        <tr><td>Attention formula</td><td>$\text{softmax}(QK^\top/\sqrt{d_{head}})V$</td><td>—</td></tr>
+        <tr><td>Why $\sqrt{d_{head}}$</td><td>Dot product std dev = $\sqrt{d_{head}}$; divide to restore unit variance</td><td>$d_{head}=64$ → divide by 8</td></tr>
+        <tr><td>Multi-head</td><td>Same params ($n_{heads} \times d_{head} = d_{model}$), $n_{heads}$ specialised patterns</td><td>GPT-2: 12 heads × 64 = 768</td></tr>
+        <tr><td>Matrix multiply cost</td><td>$(m,k)\times(k,p) = O(m\cdot k\cdot p)$ — multiply all three dims</td><td>Always</td></tr>
+        <tr><td>Attention compute</td><td>$O(S^2 \cdot d_{model})$ from $QK^\top$ being $(S,S)$ times $n_{heads}$ heads</td><td>Double $S$ → 4× FLOPs</td></tr>
+        <tr><td>Attention memory</td><td>$O(S^2)$ — score matrix is $(S,S)$, $d_{head}$ consumed by dot product</td><td>$S=32k$ → 49 GB/layer</td></tr>
+        <tr><td>KV cache what</td><td>Store K,V of prev tokens; Q is always fresh so never cached</td><td>—</td></tr>
+        <tr><td>KV cache saves</td><td>Projection cost: $O(S^2 d_{model}) \to O(S \cdot d_{model}^2)$ across all steps</td><td>$S=10k$ → ~13× faster projections</td></tr>
+        <tr><td>KV cache size</td><td>$2SLd_{model}$ numbers, $4SLd_{model}$ bytes float16</td><td>LLaMA 70B, $S=4k$ → 10 GB</td></tr>
+        <tr><td>Padding mask</td><td>Add $-\infty$ to PAD positions before softmax</td><td><code>attention_mask</code></td></tr>
+        <tr><td>Loss mask</td><td>Skip PAD token IDs in cross-entropy</td><td><code>ignore_index=0</code></td></tr>
+        <tr><td>Causal mask</td><td>Upper triangular $-\infty$ prevents future token leakage</td><td>GPT-style only</td></tr>
+    </table>
+</div>
+
+<hr>
+
+<p style="color:var(--text-muted); text-align:center; margin-top:2rem;">
+    Papers referenced:
+    <a href="https://arxiv.org/abs/1706.03762" class="paper-link" target="_blank">Attention Is All You Need (2017)</a> ·
+    <a href="https://arxiv.org/abs/2205.14135" class="paper-link" target="_blank">FlashAttention (2022)</a> ·
+    <a href="https://arxiv.org/abs/2305.13245" class="paper-link" target="_blank">GQA (2023)</a> ·
+    <a href="https://arxiv.org/abs/2312.00752" class="paper-link" target="_blank">Mamba (2023)</a> ·
+    <a href="https://arxiv.org/abs/2412.19437" class="paper-link" target="_blank">DeepSeek-V3 (2024)</a>
+</p>
+
+<footer class="article-footer">
+    <div class="article-footer-nav">
+        <a href="vae.html">← Previous: VAEs</a>
+        <a href="flashattention.html" class="next">Next: FlashAttention Deep Dive →</a>
+    </div>
+    <p style="color:var(--text-muted); text-align:center; margin-top:2rem;">
+        Part of the <a href="../index.html#blog" style="color:var(--accent);">Deep Dive Series</a>
+    </p>
+</footer>
+
+<button class="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false }
+            ]
+        });
+    });
+    const backToTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', window.scrollY > 500);
+    });
+</script>
+
+</body>
+</html>

@@ -105,14 +105,40 @@
     filterSelect.addEventListener('change', filterPapers);
   }
 
+  // Handle hash navigation - load section and scroll to it
+  async function handleHashNavigation() {
+    const hash = window.location.hash.slice(1); // Remove the #
+    if (hash && sections[hash]) {
+      // Load the section first
+      await loadSection(hash);
+      
+      // Small delay to ensure DOM is updated, then scroll
+      setTimeout(() => {
+        const target = document.getElementById(hash);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }
+
   // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      createSectionPlaceholders();
-      initializeObserver();
-    });
-  } else {
+  function init() {
     createSectionPlaceholders();
     initializeObserver();
+    
+    // Handle initial hash if present
+    if (window.location.hash) {
+      handleHashNavigation();
+    }
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashNavigation);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
