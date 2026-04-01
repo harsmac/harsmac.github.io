@@ -3,7 +3,8 @@
   const sections = {
     'background': 'sections/background.html',
     'papers': 'sections/papers.html', 
-    'projects': 'sections/projects.html'
+    'projects': 'sections/projects.html',
+    'blog': 'sections/blog.html'
   };
 
   const loadedSections = new Set();
