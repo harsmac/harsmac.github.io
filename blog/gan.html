@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GANs: The Complete Story — Harshitha Machiraju</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #f0883e;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-purple: #a371f7;
+            --accent-blue: #58a6ff;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        .blog-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .blog-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .blog-nav a:hover {
+            color: var(--accent);
+        }
+
+        .blog-nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        /* Article Container */
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+        }
+
+        /* Article Header */
+        .article-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-series {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(240, 136, 62, 0.1);
+            border-radius: 4px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .article-subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Part Headers */
+        .part-header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 1.5rem 2rem;
+            margin: 3rem 0 2rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .part-header .part-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .part-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        /* Content Styles */
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .chapter-num {
+            background: var(--accent);
+            color: var(--bg);
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h4 {
+            font-size: 1.05rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-purple);
+        }
+
+        p { margin-bottom: 1rem; }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li { margin-bottom: 0.5rem; }
+
+        strong { color: var(--text); }
+
+        /* Callout Blocks */
+        .question-block {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .question-block .label {
+            color: var(--accent-yellow);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-block p {
+            margin-bottom: 0;
+            font-style: italic;
+        }
+
+        .answer-block {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-green);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .answer-block .label {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, rgba(240, 136, 62, 0.1), rgba(163, 113, 247, 0.1));
+            border: 1px solid var(--accent);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .key-insight .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Math & Code */
+        .math-block {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            white-space: pre;
+            border: 1px solid var(--border);
+        }
+
+        .ascii-diagram {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        /* Comparison Box */
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-box > div {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-box h4 { margin-top: 0; }
+
+        /* Special Blocks */
+        .interview-tip {
+            background: linear-gradient(135deg, rgba(240, 136, 62, 0.08), rgba(163, 113, 247, 0.08));
+            border: 2px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+        }
+
+        .interview-tip .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .interview-tip p { margin-bottom: 0.75rem; }
+
+        .tldr {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .tldr .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        /* Article Navigation */
+        .article-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-nav a {
+            flex: 1;
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .article-nav a:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .article-nav .nav-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .article-nav .nav-title {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .article-nav .prev { text-align: left; }
+        .article-nav .next { text-align: right; }
+
+        /* Footer */
+        .article-footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .article-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .article-container { padding: 5rem 1rem 2rem; }
+            h1 { font-size: 1.75rem; }
+            .blog-nav { padding: 1rem; }
+            .blog-nav .nav-links { display: none; }
+            .article-nav { flex-direction: column; }
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="blog-nav">
+        <a href="../index.html">← Back to Portfolio</a>
+        <div class="nav-links">
+            <a href="vae.html">VAE</a>
+            <a href="diffusion.html">Diffusion</a>
+        </div>
+    </nav>
+
+    <article class="article-container">
+        <header class="article-header">
+            <span class="article-series">Generative Models Series · Part 2 of 3</span>
+            <h1>GANs: The Complete Story</h1>
+            <p class="article-subtitle">From VAE's Blur Problem to Wasserstein Distance — why adversarial training works</p>
+            <div class="article-meta">
+                <span>Harshitha Machiraju</span>
+                <span>·</span>
+                <span>20 min read</span>
+            </div>
+        </header>
+
+        <!-- PART I -->
+        <div class="part-header">
+            <div class="part-label">Part I</div>
+            <h3>Why GANs? The VAE Problem</h3>
+        </div>
+
+        <h2 id="ch1"><span class="chapter-num">1</span> VAE's Blurry Outputs: Why MSE Sucks</h2>
+
+        <p>VAE works, but outputs are <strong>blurry</strong>. Why?</p>
+
+        <h3>The Culprit: Pixel-wise Reconstruction Loss</h3>
+
+        <p>VAE's reconstruction term is MSE:</p>
+
+        <div class="math-block">
+            $$\mathcal{L}_{recon} = \|x - \hat{x}\|^2 = \sum_i (x_i - \hat{x}_i)^2$$
+        </div>
+
+        <p>This penalizes each pixel <strong>independently</strong>. The problem:</p>
+
+        <div class="ascii-diagram">Ground truth:        Sharp whisker at pixel (50, 73)
+
+Decoder uncertainty: "Whisker could be at (50, 73) or (50, 74)... not sure"
+
+What MSE rewards:    Output 0.5 gray at BOTH pixels
+                     This minimizes expected squared error!
+
+Result:              Blurry whisker</div>
+
+        <p>When uncertain about exact positions, MSE rewards <strong>hedging</strong> — outputting the average. Averages are blurry.</p>
+
+        <h2 id="ch2"><span class="chapter-num">2</span> The GAN Insight: Learn the Metric</h2>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>We can't write down the perfect IQA metric, but we can <strong>train a neural network</strong> to approximate human judgment.</p>
+        </div>
+
+        <div class="comparison-box">
+            <div>
+                <h4 style="color: var(--accent-blue);">VAE</h4>
+                <p>"Minimize pixel difference from ground truth"</p>
+                <p>Hand-crafted loss (MSE)</p>
+                <p>→ Blurry outputs</p>
+            </div>
+            <div>
+                <h4 style="color: var(--accent);">GAN</h4>
+                <p>"Fool a critic that's trying to spot fakes"</p>
+                <p>Learned loss (Discriminator)</p>
+                <p>→ Sharp outputs</p>
+            </div>
+        </div>
+
+        <!-- PART II -->
+        <div class="part-header">
+            <div class="part-label">Part II</div>
+            <h3>GAN Setup & Training</h3>
+        </div>
+
+        <h2 id="ch3"><span class="chapter-num">3</span> Architecture & Nomenclature</h2>
+
+        <p>Two networks playing a game:</p>
+
+        <table>
+            <tr><th>Symbol</th><th>Name</th><th>Input</th><th>Output</th><th>Goal</th></tr>
+            <tr><td>$G(z)$</td><td>Generator</td><td>Random noise z</td><td>Fake image</td><td>Fool D</td></tr>
+            <tr><td>$D(x)$</td><td>Discriminator</td><td>Image (real or fake)</td><td>P ∈ [0,1]</td><td>Spot fakes</td></tr>
+            <tr><td>$z$</td><td>Latent noise</td><td>—</td><td>—</td><td>Seed for generation</td></tr>
+            <tr><td>$p_z$</td><td>Noise prior</td><td>—</td><td>—</td><td>Usually N(0, I)</td></tr>
+        </table>
+
+        <div class="ascii-diagram">                    ┌─────────────┐
+   z ~ N(0,I) ────→ │  Generator  │ ────→ fake image ────┐
+                    │     G(z)    │                      │
+                    └─────────────┘                      ↓
+                                                  ┌─────────────┐
+   real image ──────────────────────────────────→ │Discriminator│ ──→ P(real) ∈ [0,1]
+                                                  │    D(x)     │
+                                                  └─────────────┘</div>
+
+        <h2 id="ch4"><span class="chapter-num">4</span> The Minimax Game</h2>
+
+        <div class="math-block">
+            $$\min_G \max_D \quad \mathbb{E}_{x \sim p_{data}}[\log D(x)] + \mathbb{E}_{z \sim p_z}[\log(1 - D(G(z)))]$$
+        </div>
+
+        <ul>
+            <li>D maximizes (better at classifying)</li>
+            <li>G minimizes (better at fooling)</li>
+        </ul>
+
+        <h2 id="ch5"><span class="chapter-num">5</span> Training: Why Alternate Updates?</h2>
+
+        <div class="code-block"># Each training step:
+
+# Step 1: Train D
+real_images = next(dataloader)
+z = torch.randn(batch_size, latent_dim)
+fake_images = G(z).detach()  # detach: don't update G here
+
+loss_D = -torch.mean(torch.log(D(real_images))) \
+         -torch.mean(torch.log(1 - D(fake_images)))
+loss_D.backward()
+optimizer_D.step()
+
+# Step 2: Train G
+z = torch.randn(batch_size, latent_dim)
+fake_images = G(z)
+
+loss_G = -torch.mean(torch.log(D(fake_images)))  # fool D
+loss_G.backward()
+optimizer_G.step()</div>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Why alternate? Why not update both simultaneously?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+            <p>They have opposite goals — D maximizes, G minimizes. Simultaneous updates fight over the same computation graph. Alternating gives each a stable target.</p>
+        </div>
+
+        <!-- PART III -->
+        <div class="part-header">
+            <div class="part-label">Part III</div>
+            <h3>The Theory</h3>
+        </div>
+
+        <h2 id="ch6"><span class="chapter-num">6</span> What G Actually Minimizes: JS Divergence</h2>
+
+        <p>Given optimal discriminator $D^*(x) = \frac{p_{data}(x)}{p_{data}(x) + p_g(x)}$, plugging back into the objective gives:</p>
+
+        <div class="math-block">
+            $$V(G, D^*) = -\log 4 + 2 \cdot D_{JS}(p_{data} \| p_g)$$
+        </div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>G is minimizing the Jensen-Shannon divergence between real and generated distributions!</p>
+        </div>
+
+        <!-- PART IV -->
+        <div class="part-header">
+            <div class="part-label">Part IV</div>
+            <h3>GAN Problems</h3>
+        </div>
+
+        <h2 id="ch7"><span class="chapter-num">7</span> Mode Collapse</h2>
+
+        <div class="ascii-diagram">Real data has multiple modes:
+  Mode A (faces)  Mode B (cats)  Mode C (cars)
+     ███             ███            ███
+
+Mode collapse: G only produces one mode
+  Generated: All cats
+     ███ ███ ███ ███ ███ ███ ███ ███
+     (all from Mode B)</div>
+
+        <p>G found one thing that fools D and keeps producing it. D keeps catching that thing. Neither improves.</p>
+
+        <h2 id="ch8"><span class="chapter-num">8</span> The JS Gradient Problem</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Wait, why is JS divergence a problem?"</p>
+        </div>
+
+        <p>JS is bounded between 0 and log(2). When distributions don't overlap:</p>
+
+        <div class="math-block">
+            $$D_{JS}(p_{data} \| p_g) = \log 2 \quad \text{(constant)}$$
+        </div>
+
+        <p>Constant = <strong>zero gradient</strong>. Early in training, G's distribution is far from real data with no overlap → JS is constant → no learning signal!</p>
+
+        <!-- PART V -->
+        <div class="part-header">
+            <div class="part-label">Part V</div>
+            <h3>Wasserstein to the Rescue</h3>
+        </div>
+
+        <h2 id="ch9"><span class="chapter-num">9</span> Earth Mover's Distance</h2>
+
+        <div class="ascii-diagram">KL/JS perspective:
+  "How different are the probability values at each point?"
+  Non-overlapping → infinite/constant → useless gradient
+
+Wasserstein perspective:
+  "How much work to move probability mass from one distribution to the other?"
+  Non-overlapping → still finite distance → useful gradient!</div>
+
+        <div class="math-block">
+            $$W(p, q) = \inf_{\gamma \in \Pi(p, q)} \mathbb{E}_{(x,y) \sim \gamma}[\|x - y\|]$$
+        </div>
+
+        <h2 id="ch10"><span class="chapter-num">10</span> Why Wasserstein Gives Better Gradients</h2>
+
+        <div class="ascii-diagram">Non-overlapping distributions:
+
+p_data:     ████████
+                        gap
+p_g:                    ████████
+
+JS divergence:  log(2)  →  log(2)  →  log(2)
+                (constant, zero gradient)
+
+Wasserstein:    100     →    50    →    10
+                (decreases as gap closes, useful gradient!)</div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>Wasserstein distance measures actual geometric distance between distributions. Even when they don't overlap, moving them closer reduces the distance.</p>
+        </div>
+
+        <h2 id="ch11"><span class="chapter-num">11</span> WGAN</h2>
+
+        <p>WGAN approximates Wasserstein distance using a "critic" (not discriminator):</p>
+
+        <div class="math-block">
+            $$W(p_{data}, p_g) \approx \max_{\|D\|_L \leq 1} \left[ \mathbb{E}_{x \sim p_{data}}[D(x)] - \mathbb{E}_{z \sim p_z}[D(G(z))] \right]$$
+        </div>
+
+        <p>The constraint $\|D\|_L \leq 1$ means D must be 1-Lipschitz. Enforced via:</p>
+
+        <table>
+            <tr><th>Method</th><th>How It Works</th><th>Problem</th></tr>
+            <tr><td>Weight clipping</td><td>Clamp weights to [-c, c]</td><td>Destroys capacity</td></tr>
+            <tr><td>Gradient penalty (WGAN-GP)</td><td>Add $(\|\nabla D\| - 1)^2$ to loss</td><td>Works well ✓</td></tr>
+            <tr><td>Spectral normalization</td><td>Normalize by largest singular value</td><td>Works well ✓</td></tr>
+        </table>
+
+        <!-- PART VI -->
+        <div class="part-header">
+            <div class="part-label">Part VI</div>
+            <h3>Conditional Generation & Latent Space</h3>
+        </div>
+
+        <h2 id="ch12"><span class="chapter-num">12</span> Conditional GANs</h2>
+
+        <div class="ascii-diagram">Unconditional GAN:
+    z ~ N(0, I) ──→ G ──→ random image
+
+Conditional GAN:
+    z ~ N(0, I) + condition c ──→ G ──→ image of class c
+                       ↓
+    image + condition c ──→ D ──→ "real example of class c?"</div>
+
+        <table>
+            <tr><th>Model</th><th>Condition</th><th>Task</th></tr>
+            <tr><td>cGAN</td><td>Class label</td><td>Generate specific class</td></tr>
+            <tr><td>Pix2Pix</td><td>Input image</td><td>Image-to-image translation</td></tr>
+            <tr><td>CycleGAN</td><td>Domain</td><td>Unpaired translation (horse↔zebra)</td></tr>
+            <tr><td>StyleGAN</td><td>Style vectors</td><td>Control attributes (age, pose)</td></tr>
+        </table>
+
+        <h2 id="ch13"><span class="chapter-num">13</span> GAN Latent Space: No Guarantees Like VAE</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Do GANs guarantee smooth interpolation like VAE?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+            <p>No theoretical guarantee. GAN has no encoder and no constraint forcing coverage of the latent space.</p>
+        </div>
+
+        <table>
+            <tr><th>Property</th><th>VAE</th><th>GAN</th></tr>
+            <tr><td><strong>Smooth interpolation</strong></td><td>Guaranteed (KL forces coverage)</td><td>No guarantee (empirically ok)</td></tr>
+            <tr><td><strong>Dead zones</strong></td><td>Unlikely</td><td>Possible (mode collapse)</td></tr>
+            <tr><td><strong>Encoder</strong></td><td>Yes (x → z)</td><td>No (need optimization)</td></tr>
+        </table>
+
+        <h2 id="ch14"><span class="chapter-num">14</span> VAE vs GAN: Final Comparison</h2>
+
+        <table>
+            <tr><th>Aspect</th><th>VAE</th><th>GAN</th></tr>
+            <tr><td><strong>Loss</strong></td><td>MSE + KL (hand-crafted)</td><td>Learned by D</td></tr>
+            <tr><td><strong>Training</strong></td><td>Stable (just minimize)</td><td>Unstable (adversarial game)</td></tr>
+            <tr><td><strong>Output quality</strong></td><td>Blurry</td><td>Sharp</td></tr>
+            <tr><td><strong>Mode coverage</strong></td><td>Good</td><td>Poor (collapse risk)</td></tr>
+            <tr><td><strong>Likelihood</strong></td><td>Yes (ELBO)</td><td>No</td></tr>
+        </table>
+
+        <div class="interview-tip">
+            <div class="label">🎯 Interview Narrative</div>
+            <p>"VAE uses MSE which is pixel-wise and doesn't match human perception — it rewards blurry averages. GANs replace this with a learned loss: the discriminator learns what 'real' looks like from data, then guides the generator.</p>
+            <p>The minimax game makes G minimize JS divergence between real and generated distributions. But JS has a problem: it's constant when distributions don't overlap, giving zero gradient early in training.</p>
+            <p>Wasserstein distance fixes this by measuring actual transport cost between distributions. Even non-overlapping distributions get meaningful gradients. WGAN uses a Lipschitz-constrained critic to approximate Wasserstein distance.</p>
+            <p>Unlike VAE, GAN has no encoder and no guarantee of smooth latent space. The KL term in VAE forces coverage of N(0,I); GAN has no such constraint, making mode collapse and dead zones possible."</p>
+        </div>
+
+        <div class="tldr">
+            <div class="label">Divergence Comparison</div>
+            <table>
+                <tr><th>Divergence</th><th>Non-overlapping</th><th>Gradient</th><th>Used in</th></tr>
+                <tr><td>KL</td><td>∞</td><td>Undefined</td><td>VAE</td></tr>
+                <tr><td>JS</td><td>log 2 (constant)</td><td>Zero</td><td>Original GAN</td></tr>
+                <tr><td>Wasserstein</td><td>Actual distance</td><td>Useful!</td><td>WGAN</td></tr>
+            </table>
+        </div>
+
+        <!-- Article Navigation -->
+        <nav class="article-nav">
+            <a href="vae.html" class="prev">
+                <div class="nav-label">← Previous Article</div>
+                <div class="nav-title">VAE: The Complete Story</div>
+            </a>
+            <a href="diffusion.html" class="next">
+                <div class="nav-label">Next Article →</div>
+                <div class="nav-title">Diffusion: The Complete Story</div>
+            </a>
+        </nav>
+    </article>
+
+    <footer class="article-footer">
+        <p>Part of the <a href="../index.html#blog">Generative Models Series</a> · <a href="../index.html">harsmac.github.io</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAE: The Complete Story — Harshitha Machiraju</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-purple: #a371f7;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        .blog-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .blog-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .blog-nav a:hover {
+            color: var(--accent);
+        }
+
+        .blog-nav .nav-home {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .blog-nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        /* Article Container */
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+        }
+
+        /* Article Header */
+        .article-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-series {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(88, 166, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .article-subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .toc h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .toc ol {
+            list-style: none;
+            counter-reset: toc-counter;
+        }
+
+        .toc li {
+            counter-increment: toc-counter;
+            margin-bottom: 0.5rem;
+        }
+
+        .toc li::before {
+            content: counter(toc-counter) ".";
+            color: var(--accent);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .toc a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .toc a:hover {
+            color: var(--accent);
+        }
+
+        /* Content Styles */
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .chapter-num {
+            background: var(--accent);
+            color: var(--bg);
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h4 {
+            font-size: 1.05rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-purple);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--text);
+        }
+
+        /* Callout Blocks */
+        .question-block {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .question-block .label {
+            color: var(--accent-yellow);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-block p {
+            margin-bottom: 0;
+            font-style: italic;
+        }
+
+        .answer-block {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-green);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .answer-block .label {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.1), rgba(163, 113, 247, 0.1));
+            border: 1px solid var(--accent);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .key-insight .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Math & Code */
+        .math-block {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            white-space: pre;
+            border: 1px solid var(--border);
+        }
+
+        .ascii-diagram {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Special Blocks */
+        .verdict {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-green);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            color: var(--accent-green);
+        }
+
+        .interview-tip {
+            background: linear-gradient(135deg, rgba(88, 166, 255, 0.08), rgba(163, 113, 247, 0.08));
+            border: 2px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+        }
+
+        .interview-tip .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .interview-tip p {
+            margin-bottom: 0.75rem;
+        }
+
+        .tldr {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .tldr .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        /* Article Navigation */
+        .article-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-nav a {
+            flex: 1;
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .article-nav a:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .article-nav .nav-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .article-nav .nav-title {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .article-nav .next {
+            text-align: right;
+        }
+
+        /* Footer */
+        .article-footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .article-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .article-container {
+                padding: 5rem 1rem 2rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .blog-nav {
+                padding: 1rem;
+            }
+
+            .blog-nav .nav-links {
+                display: none;
+            }
+
+            .article-nav {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="blog-nav">
+        <a href="../index.html" class="nav-home">← Back to Portfolio</a>
+        <div class="nav-links">
+            <a href="gan.html">GANs</a>
+            <a href="diffusion.html">Diffusion</a>
+        </div>
+    </nav>
+
+    <article class="article-container">
+        <header class="article-header">
+            <span class="article-series">Generative Models Series · Part 1 of 3</span>
+            <h1>VAE: The Complete Story</h1>
+            <p class="article-subtitle">From Autoencoders to ELBO — understanding variational autoencoders from first principles</p>
+            <div class="article-meta">
+                <span>Harshitha Machiraju</span>
+                <span>·</span>
+                <span>15 min read</span>
+            </div>
+        </header>
+
+        <nav class="toc">
+            <h4>Contents</h4>
+            <ol>
+                <li><a href="#ch1">The Autoencoder Setup</a></li>
+                <li><a href="#ch2">The Problem: Dead Zones</a></li>
+                <li><a href="#ch3">VAE Idea: Encode to a Distribution</a></li>
+                <li><a href="#ch4">Why N(0,I)?</a></li>
+                <li><a href="#ch5">How KL Divergence Forces Compliance</a></li>
+                <li><a href="#ch6">The Reparameterization Trick</a></li>
+                <li><a href="#ch7">Where Does the Loss Come From?</a></li>
+                <li><a href="#ch8">Understanding ELBO</a></li>
+                <li><a href="#ch9">KL Divergence Derivation</a></li>
+                <li><a href="#ch10">Making Reconstruction Concrete</a></li>
+                <li><a href="#ch11">Wait, Where's p(z|x)?</a></li>
+                <li><a href="#ch12">Summary So Far</a></li>
+                <li><a href="#ch13">Latent Space Organization</a></li>
+                <li><a href="#ch14">β-VAE</a></li>
+                <li><a href="#ch15">Why One Sample Works</a></li>
+                <li><a href="#ch16">Interview Summary</a></li>
+            </ol>
+        </nav>
+
+        <!-- Chapter 1 -->
+        <h2 id="ch1"><span class="chapter-num">1</span> The Autoencoder Setup</h2>
+
+        <p>An autoencoder compresses data into a smaller representation (latent space) and reconstructs it.</p>
+
+        <div class="ascii-diagram">Input x ──→ [Encoder] ──→ z (latent) ──→ [Decoder] ──→ x̂ (reconstruction)
+                        ↓
+                 Minimize ||x - x̂||²</div>
+
+        <p>The latent space z is typically much smaller than x (say, 128 dims vs 784 for MNIST).</p>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"After training, can I just sample random z and get new images?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+            <p>No — and here's the core problem VAE solves.</p>
+        </div>
+
+        <!-- Chapter 2 -->
+        <h2 id="ch2"><span class="chapter-num">2</span> The Problem: Unstructured Latent Space</h2>
+
+        <p>A regular autoencoder's latent space has no guarantees about structure.</p>
+
+        <div class="ascii-diagram">Training: images encode to scattered points in z-space
+
+     z-space
+     ┌─────────────────────────────────┐
+     │                                 │
+     │      x₁→●                       │
+     │                    x₂→●        │
+     │   x₃→●                         │
+     │                                 │
+     │              x₄→●               │
+     │                                 │
+     │         ???  (dead zones)       │
+     │                                 │
+     └─────────────────────────────────┘
+
+Decoder only trained on these specific points.
+Sample from "???" region → garbage output.</div>
+
+        <p>There's no reason the encoder would place similar images near each other, or fill the space uniformly. Most of z-space is "dead" — the decoder has never seen those regions during training.</p>
+
+        <!-- Chapter 3 -->
+        <h2 id="ch3"><span class="chapter-num">3</span> VAE Idea: Encode to a Distribution</h2>
+
+        <p>Instead of encoding x → single point z, encode x → distribution over z.</p>
+
+        <div class="ascii-diagram">Autoencoder:   x ──→ Encoder ──→ z (point)
+
+VAE:           x ──→ Encoder ──→ (μ, σ) ──→ sample z ~ N(μ, σ²) ──→ Decoder</div>
+
+        <p>The encoder outputs two vectors: mean μ and standard deviation σ. We sample z from N(μ, σ²).</p>
+
+        <div class="question-block">
+            <div class="label">🤔 Pushback</div>
+            <p>"Ok but if I train normally, μ and σ could be anything. Some image might encode to μ=100, σ=0.001. How does this help sampling?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Resolution</div>
+            <p>You're right — we need to constrain these distributions. That's where KL divergence comes in.</p>
+        </div>
+
+        <!-- Chapter 4 -->
+        <h2 id="ch4"><span class="chapter-num">4</span> Why N(0, I) as the Prior?</h2>
+
+        <p>VAE adds a constraint: all the encoder's output distributions should be close to a standard normal N(0, I).</p>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Why specifically N(0, I)?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+        </div>
+
+        <p>It's convenient, not fundamental. Here's what we actually need:</p>
+
+        <ol>
+            <li><strong>Easy to sample from</strong> — at generation time, we want to draw random z values</li>
+            <li><strong>Covers a known region</strong> — so the decoder sees samples from everywhere</li>
+            <li><strong>Closed-form KL</strong> — so we can compute the loss easily</li>
+        </ol>
+
+        <p>N(0, I) satisfies all three. We could use other distributions, but Gaussian is mathematically convenient.</p>
+
+        <!-- Chapter 5 -->
+        <h2 id="ch5"><span class="chapter-num">5</span> How KL Divergence Forces Compliance</h2>
+
+        <p>The KL term in the loss measures how far the encoder's output distribution q(z|x) is from N(0, I):</p>
+
+        <div class="math-block">
+            $$D_{KL}(q(z|x) \| p(z)) = D_{KL}(\mathcal{N}(\mu, \sigma^2) \| \mathcal{N}(0, I))$$
+        </div>
+
+        <p>If the encoder outputs μ=10, σ=0.1, this KL penalty is huge. The loss forces μ→0 and σ→1.</p>
+
+        <div class="ascii-diagram">Without KL penalty:
+     Encoder outputs scattered (μ, σ) values
+     → Dead zones everywhere
+
+With KL penalty:
+     All (μ, σ) pushed toward (0, 1)
+     → All z samples come from region near N(0, I)
+     → Decoder trained on this entire region
+     → No dead zones!</div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>KL divergence is the mechanism that makes the latent space sampleable. Without it, you just have a stochastic autoencoder with the same dead-zone problem.</p>
+        </div>
+
+        <!-- Chapter 6 -->
+        <h2 id="ch6"><span class="chapter-num">6</span> The Reparameterization Trick</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Problem</div>
+            <p>"Wait — sampling is not differentiable. How do we backprop through z ~ N(μ, σ)?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Solution</div>
+            <p>The reparameterization trick.</p>
+        </div>
+
+        <p>Instead of sampling z directly from N(μ, σ²):</p>
+
+        <div class="math-block">
+            $$z = \mu + \sigma \odot \epsilon, \quad \text{where } \epsilon \sim \mathcal{N}(0, I)$$
+        </div>
+
+        <p>The randomness is now in ε (which we don't need gradients for), while μ and σ are deterministic outputs we can backprop through.</p>
+
+        <div class="ascii-diagram">Before (can't backprop):
+     μ, σ ──→ [SAMPLE z ~ N(μ,σ²)] ──→ z
+              ↑ random operation, no gradient
+
+After (can backprop):
+     μ, σ ──→ [z = μ + σ·ε] ──→ z
+       ↑           ↑
+    gradients   ε ~ N(0,I) (fixed randomness)</div>
+
+        <p>Same distribution, but now z is a deterministic function of μ and σ (plus external noise).</p>
+
+        <!-- Chapter 7 -->
+        <h2 id="ch7"><span class="chapter-num">7</span> Where Does the Loss Come From?</h2>
+
+        <p>The VAE loss is:</p>
+
+        <div class="math-block">
+            $$\mathcal{L} = \underbrace{\mathbb{E}_{z \sim q}[\|x - \text{Dec}(z)\|^2]}_{\text{reconstruction}} + \underbrace{D_{KL}(q(z|x) \| p(z))}_{\text{regularization}}$$
+        </div>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Why this specific formula? Did someone just decide to add these two terms?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+            <p>No — it comes from something principled: the ELBO (Evidence Lower Bound).</p>
+        </div>
+
+        <!-- Chapter 8 -->
+        <h2 id="ch8"><span class="chapter-num">8</span> Understanding ELBO</h2>
+
+        <h3>The Goal We Can't Achieve</h3>
+
+        <p>We'd love to maximize log p(x) — the log probability of our data under the model. But:</p>
+
+        <div class="math-block">
+            $$\log p(x) = \log \int p(x|z) p(z) dz$$
+        </div>
+
+        <p>This integral is intractable. We can't compute it.</p>
+
+        <h3>ELBO: A Tractable Lower Bound</h3>
+
+        <p>Instead, we maximize a lower bound:</p>
+
+        <div class="math-block">
+            $$\log p(x) \geq \underbrace{\mathbb{E}_{q(z|x)}[\log p(x|z)]}_{\text{reconstruction}} - \underbrace{D_{KL}(q(z|x) \| p(z))}_{\text{KL penalty}}$$
+        </div>
+
+        <p>This is the ELBO. If we maximize the right side, we push up log p(x).</p>
+
+        <h3>Converting to Loss</h3>
+
+        <p>We want to minimize a loss, so negate:</p>
+
+        <div class="math-block">
+            $$\mathcal{L} = -\text{ELBO} = -\mathbb{E}_{q(z|x)}[\log p(x|z)] + D_{KL}(q(z|x) \| p(z))$$
+        </div>
+
+        <p>If we model p(x|z) as Gaussian, the first term becomes MSE. That's the VAE loss.</p>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>The VAE loss isn't arbitrary. It's the negative of a principled lower bound on log p(x). We're not "adding KL for regularization" — KL appears naturally when deriving the bound.</p>
+        </div>
+
+        <!-- Chapter 9 -->
+        <h2 id="ch9"><span class="chapter-num">9</span> KL Divergence: The Closed Form</h2>
+
+        <p>For two Gaussians, KL has a closed form:</p>
+
+        <div class="math-block">
+            $$D_{KL}(\mathcal{N}(\mu, \sigma^2) \| \mathcal{N}(0, 1)) = \frac{1}{2}\left(\sigma^2 + \mu^2 - 1 - \log \sigma^2\right)$$
+        </div>
+
+        <p>For d dimensions:</p>
+
+        <div class="math-block">
+            $$D_{KL} = \frac{1}{2} \sum_{i=1}^{d} \left(\sigma_i^2 + \mu_i^2 - 1 - \log \sigma_i^2\right)$$
+        </div>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Why is this minimized at μ=0, σ=1?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Verification</div>
+            <p>Plug in μ=0, σ=1: KL = ½(1 + 0 - 1 - 0) = 0. Any deviation increases the loss.</p>
+        </div>
+
+        <!-- Chapter 10 -->
+        <h2 id="ch10"><span class="chapter-num">10</span> Making Reconstruction Concrete</h2>
+
+        <p>The reconstruction term:</p>
+
+        <div class="math-block">
+            $$\mathbb{E}_{q(z|x)}[\log p(x|z)]$$
+        </div>
+
+        <p>If we assume p(x|z) = N(Dec(z), I) (decoder output is mean, fixed unit variance):</p>
+
+        <div class="math-block">
+            $$\log p(x|z) = -\frac{1}{2}\|x - \text{Dec}(z)\|^2 + \text{const}$$
+        </div>
+
+        <p>So maximizing log p(x|z) = minimizing MSE. The expectation over q(z|x) is approximated with one sample (the reparameterized z).</p>
+
+        <!-- Chapter 11 -->
+        <h2 id="ch11"><span class="chapter-num">11</span> Wait, Where's p(z|x)?</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"I see q(z|x) everywhere but you mentioned p(z|x). What's the difference?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+        </div>
+
+        <table>
+            <tr><th>Notation</th><th>Name</th><th>What It Is</th></tr>
+            <tr><td>p(z|x)</td><td>True posterior</td><td>If we had the perfect model, what z generated x?</td></tr>
+            <tr><td>q(z|x)</td><td>Approximate posterior</td><td>Our encoder's guess (outputs μ, σ)</td></tr>
+            <tr><td>p(z)</td><td>Prior</td><td>N(0, I) — what we sample from during generation</td></tr>
+            <tr><td>p(x|z)</td><td>Likelihood/Decoder</td><td>Given z, what x does the decoder produce?</td></tr>
+        </table>
+
+        <p>We can't compute p(z|x) (intractable). So we train q(z|x) to approximate it, while also keeping q close to the prior p(z).</p>
+
+        <!-- Chapter 12 -->
+        <h2 id="ch12"><span class="chapter-num">12</span> Summary So Far</h2>
+
+        <div class="key-insight">
+            <div class="label">The Full Picture</div>
+            <ol>
+                <li><strong>Encoder</strong> outputs (μ, σ) for input x</li>
+                <li><strong>Sample</strong> z = μ + σ · ε where ε ~ N(0, I)</li>
+                <li><strong>Decoder</strong> reconstructs x̂ from z</li>
+                <li><strong>Loss</strong> = MSE(x, x̂) + KL(q(z|x) || N(0,I))</li>
+                <li><strong>Generation</strong>: sample z ~ N(0, I), decode to new image</li>
+            </ol>
+        </div>
+
+        <!-- Chapter 13 -->
+        <h2 id="ch13"><span class="chapter-num">13</span> Where's the "Organization" in Latent Space?</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Pushback</div>
+            <p>"Ok so all we did is the same autoencoder but constrained the latent space... but how is this creating organization? People talk about VAEs having overlapping clusters of classes, but why would same-class images be pushed to the same cluster?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ The Honest Answer</div>
+            <p>The "beautiful organized clusters" thing is <strong>somewhat oversold</strong>.</p>
+        </div>
+
+        <h3>What VAE Actually Guarantees</h3>
+
+        <p><strong>Only this:</strong> Everything lives in a compact region near N(0, I), and the decoder has seen samples from that whole region.</p>
+
+        <h3>Why Same-Class Images End Up Nearby</h3>
+
+        <p>This comes from <strong>reconstruction loss</strong>, not VAE magic.</p>
+
+        <p>Images that need similar features to reconstruct will share similar latents. Two cat images both need "pointy ears", "whiskers", etc. Similar inputs → similar features → similar z.</p>
+
+        <p>This would happen in a regular autoencoder too!</p>
+
+        <div class="ascii-diagram">Autoencoder:
+  Cats at [100, 200]
+  Dogs at [-500, 800]
+  (organized by class, but scattered everywhere)
+
+VAE:
+  Cats at [0.3, 0.5]
+  Dogs at [-0.2, 0.4]
+  (same organization, just compressed near origin)</div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p><strong>Reconstruction</strong> creates organization. <strong>KL</strong> just compresses it into a compact, sampleable region. The real VAE benefit is <strong>interpolation</strong> — no dead zones.</p>
+        </div>
+
+        <!-- Chapter 14 -->
+        <h2 id="ch14"><span class="chapter-num">14</span> What If We Crank Up KL? (β-VAE)</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"What happens if I focus a lot on KL and ignore reconstruction?"</p>
+        </div>
+
+        <h3>Heavy KL, Weak Reconstruction → Collapse</h3>
+
+        <p>The encoder thinks: "I get punished for deviating from N(0,I). Why encode anything?"</p>
+
+        <p><strong>Result:</strong> For ALL inputs, output μ=0, σ=1. The latent carries zero information.</p>
+
+        <div class="ascii-diagram">KL weight = ∞, Reconstruction weight = 0
+
+Encoder: Every x → μ=0, σ=1
+Decoder: Every z → blurry average of all training images</div>
+
+        <p>This is called <strong>posterior collapse</strong>.</p>
+
+        <h3>β-VAE</h3>
+
+        <div class="math-block">
+            $$\mathcal{L} = \text{reconstruction} + \beta \cdot D_{KL}$$
+        </div>
+
+        <table>
+            <tr><th>β Value</th><th>What You Get</th></tr>
+            <tr><td>β ≪ 1</td><td>Almost an autoencoder: good reconstruction, messy latent</td></tr>
+            <tr><td>β = 1</td><td>Standard VAE</td></tr>
+            <tr><td>β ≫ 1</td><td>Risk of collapse, blurry outputs</td></tr>
+        </table>
+
+        <div class="verdict">
+            <strong>Verdict:</strong> β-VAE disentanglement is empirical observation on toy data, not a principled mechanism. The field has moved on.
+        </div>
+
+        <!-- Chapter 15 -->
+        <h2 id="ch15"><span class="chapter-num">15</span> Why Does One Sample Work?</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"How is expectation over 100 samples the same as one sample? That erases the expectation."</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Resolution</div>
+            <p>It doesn't erase it — it <strong>approximates</strong> it.</p>
+        </div>
+
+        <h3>Monte Carlo Estimation</h3>
+
+        <div class="math-block">
+            $$\mathbb{E}_{z \sim q}[f(z)] \approx \frac{1}{N} \sum_{i=1}^{N} f(z_i)$$
+        </div>
+
+        <p>With N=1:</p>
+
+        <div class="math-block">
+            $$\mathbb{E}_{z \sim q}[f(z)] \approx f(z_1)$$
+        </div>
+
+        <p>Terrible estimate for one image. But you're not training on one image.</p>
+
+        <h3>Batches Save Us</h3>
+
+        <p>With batch size 64 and 1 z per image = 64 samples per gradient step. Over 1000 batches = 64,000 samples. Noise averages out.</p>
+
+        <table>
+            <tr><th>Batch Size</th><th>Quality</th><th>Problem</th></tr>
+            <tr><td>1</td><td>Super noisy</td><td>Unstable</td></tr>
+            <tr><td>32-256</td><td>Good</td><td>Sweet spot ✓</td></tr>
+            <tr><td>Full dataset</td><td>Perfect</td><td>Expensive, poor generalization</td></tr>
+        </table>
+
+        <p>VAE follows the same logic: 1 z sample per image × batch of images = enough signal.</p>
+
+        <!-- Chapter 16 -->
+        <h2 id="ch16"><span class="chapter-num">16</span> Interview Summary</h2>
+
+        <div class="interview-tip">
+            <div class="label">🎯 The Full Narrative</div>
+            <p>"Autoencoders compress to a latent space but it's unstructured — you can't sample from it.</p>
+            <p>VAEs encode to a distribution (μ, σ) instead of a point, then force these distributions toward a prior N(0,I) using KL divergence. This ensures the latent space is compact and sampleable.</p>
+            <p>The loss comes from ELBO — a lower bound on log p(x). We can't compute log p(x) directly, so we maximize this bound instead. Negating ELBO gives us: MSE (reconstruction) + KL (stay near prior).</p>
+            <p>The reparameterization trick makes sampling differentiable by writing z = μ + σε where ε ~ N(0,1).</p>
+            <p>Organization comes from reconstruction (similar images need similar features), not KL. KL just compresses everything into the sampleable region.</p>
+            <p>One z sample works because batches + SGD handle noise — 64 images × 1 sample = enough gradient signal."</p>
+        </div>
+
+        <div class="tldr">
+            <div class="label">TL;DR Nomenclature</div>
+            <table>
+                <tr><th>Symbol</th><th>Name</th><th>What It Is</th></tr>
+                <tr><td>$p(z)$</td><td>Prior</td><td>N(0, I) — what we sample from during generation</td></tr>
+                <tr><td>$p(x|z)$</td><td>Likelihood / Decoder</td><td>Given z, how likely is x?</td></tr>
+                <tr><td>$q(z|x)$</td><td>Approx. Posterior / Encoder</td><td>Given x, output distribution over z</td></tr>
+                <tr><td>ELBO</td><td>Lower bound</td><td>E[log p(x|z)] - KL(q||p)</td></tr>
+                <tr><td>Loss</td><td>-ELBO</td><td>MSE + KL (minimize this)</td></tr>
+            </table>
+        </div>
+
+        <!-- Article Navigation -->
+        <nav class="article-nav">
+            <div></div>
+            <a href="gan.html" class="next">
+                <div class="nav-label">Next Article →</div>
+                <div class="nav-title">GANs: The Complete Story</div>
+            </a>
+        </nav>
+    </article>
+
+    <footer class="article-footer">
+        <p>Part of the <a href="../index.html#blog">Generative Models Series</a> · <a href="../index.html">harsmac.github.io</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+        });
+    </script>
+</body>
+</html>

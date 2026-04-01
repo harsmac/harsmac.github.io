@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffusion Models: The Complete Story — Harshitha Machiraju</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #a371f7;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-orange: #f0883e;
+            --accent-blue: #58a6ff;
+            --border: #30363d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .blog-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .blog-nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .blog-nav a:hover { color: var(--accent); }
+        .blog-nav .nav-links { display: flex; gap: 1.5rem; }
+
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 6rem 2rem 4rem;
+        }
+
+        .article-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-series {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(163, 113, 247, 0.1);
+            border-radius: 4px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .article-subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .part-header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 1.5rem 2rem;
+            margin: 3rem 0 2rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .part-header .part-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .part-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .chapter-num {
+            background: var(--accent);
+            color: var(--bg);
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        strong { color: var(--text); }
+
+        .question-block {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .question-block .label {
+            color: var(--accent-yellow);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-block p { margin-bottom: 0; font-style: italic; }
+
+        .answer-block {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-green);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .answer-block .label {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, rgba(163, 113, 247, 0.1), rgba(88, 166, 255, 0.1));
+            border: 1px solid var(--accent);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .key-insight .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .math-block {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            white-space: pre;
+            border: 1px solid var(--border);
+        }
+
+        .ascii-diagram {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-box > div {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-box h4 { margin-top: 0; }
+
+        .interview-tip {
+            background: linear-gradient(135deg, rgba(163, 113, 247, 0.08), rgba(88, 166, 255, 0.08));
+            border: 2px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+        }
+
+        .interview-tip .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .interview-tip p { margin-bottom: 0.75rem; }
+
+        .tldr {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .tldr .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .article-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-nav a {
+            flex: 1;
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .article-nav a:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .article-nav .nav-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .article-nav .nav-title { color: var(--text); font-weight: 500; }
+        .article-nav .prev { text-align: left; }
+
+        .article-footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .article-footer a { color: var(--accent); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .article-container { padding: 5rem 1rem 2rem; }
+            h1 { font-size: 1.75rem; }
+            .blog-nav { padding: 1rem; }
+            .blog-nav .nav-links { display: none; }
+            .article-nav { flex-direction: column; }
+            .comparison-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="blog-nav">
+        <a href="../index.html">← Back to Portfolio</a>
+        <div class="nav-links">
+            <a href="vae.html">VAE</a>
+            <a href="gan.html">GANs</a>
+        </div>
+    </nav>
+
+    <article class="article-container">
+        <header class="article-header">
+            <span class="article-series">Generative Models Series · Part 3 of 3</span>
+            <h1>Diffusion Models: The Complete Story</h1>
+            <p class="article-subtitle">From Noise to Images — Sharp Like GANs, Stable Like VAEs</p>
+            <div class="article-meta">
+                <span>Harshitha Machiraju</span>
+                <span>·</span>
+                <span>18 min read</span>
+            </div>
+        </header>
+
+        <!-- PART I -->
+        <div class="part-header">
+            <div class="part-label">Part I</div>
+            <h3>Why Diffusion?</h3>
+        </div>
+
+        <h2 id="ch1"><span class="chapter-num">1</span> VAE vs GAN: The Tradeoff We Want to Break</h2>
+
+        <table>
+            <tr><th>Model</th><th>Training</th><th>Output Quality</th><th>The Problem</th></tr>
+            <tr><td>VAE</td><td>Stable ✓</td><td>Blurry ✗</td><td>MSE loss encourages hedging</td></tr>
+            <tr><td>GAN</td><td>Unstable ✗</td><td>Sharp ✓</td><td>Adversarial game is fragile</td></tr>
+        </table>
+
+        <p><strong>Can we get both?</strong> Sharp outputs AND stable training?</p>
+
+        <h2 id="ch2"><span class="chapter-num">2</span> The Diffusion Insight: Gradual Refinement</h2>
+
+        <div class="ascii-diagram">GAN:
+    random noise z ──→ [Generator] ──→ full image
+
+    One network must learn the ENTIRE mapping from noise to image.
+    Huge leap. Easy to mess up. Unstable.
+
+Diffusion:
+    pure noise ──→ slightly ──→ less ──→ ... ──→ almost ──→ clean
+                   cleaner     noisy            clean      image
+
+    Many small steps. Each step is a tiny correction.
+    Much easier to learn. Stable.</div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>Instead of generating an image in one shot, <strong>gradually refine</strong> from noise. Each step only needs to make a small correction — much easier than generating everything at once.</p>
+        </div>
+
+        <!-- PART II -->
+        <div class="part-header">
+            <div class="part-label">Part II</div>
+            <h3>Setup & Nomenclature</h3>
+        </div>
+
+        <h2 id="ch3"><span class="chapter-num">3</span> The Full Notation</h2>
+
+        <table>
+            <tr><th>Symbol</th><th>Name</th><th>What It Is</th></tr>
+            <tr><td>$x_0$</td><td>Clean image</td><td>Original, noise-free image</td></tr>
+            <tr><td>$x_t$</td><td>Noisy image at step t</td><td>Image after adding noise for t steps</td></tr>
+            <tr><td>$x_T$</td><td>Pure noise</td><td>After T steps (typically 1000), complete Gaussian noise</td></tr>
+            <tr><td>$\epsilon$</td><td>The noise</td><td>Gaussian noise $\sim \mathcal{N}(0, I)$</td></tr>
+            <tr><td>$\bar{\alpha}_t$</td><td>Cumulative signal retention</td><td>$\prod_{s=1}^{t} (1-\beta_s)$ — total signal remaining</td></tr>
+            <tr><td>$\epsilon_\theta(x_t, t)$</td><td>Noise predictor</td><td>Neural network that predicts the noise in $x_t$</td></tr>
+        </table>
+
+        <h2 id="ch4"><span class="chapter-num">4</span> The Forward Process: Adding Noise</h2>
+
+        <p>The forward process is <strong>fixed</strong> (not learned). We can jump directly to any timestep:</p>
+
+        <div class="math-block">
+            $$x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1-\bar{\alpha}_t} \, \epsilon$$
+        </div>
+
+        <p>This says: $x_t$ is a weighted combination of the original image and noise.</p>
+        <ul>
+            <li>$\sqrt{\bar{\alpha}_t}$ = how much original image remains</li>
+            <li>$\sqrt{1-\bar{\alpha}_t}$ = how much noise is added</li>
+        </ul>
+
+        <div class="ascii-diagram">t=0:     🐱 (clean cat)
+t=100:   🐱 + slight grain
+t=500:   vague blob + lots of noise  
+t=1000:  pure static (can't tell it was a cat)</div>
+
+        <h2 id="ch5"><span class="chapter-num">5</span> The Reverse Process: What We Learn</h2>
+
+        <p>The reverse process goes from noisy to clean. This is what we <strong>train</strong>.</p>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"So the network directly predicts the less-noisy image?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Answer</div>
+            <p>It could! But there's a better way. Instead of predicting the image directly, we predict the <strong>noise</strong> $\epsilon$. This works much better.</p>
+        </div>
+
+        <!-- PART III -->
+        <div class="part-header">
+            <div class="part-label">Part III</div>
+            <h3>The Training Objective</h3>
+        </div>
+
+        <h2 id="ch6"><span class="chapter-num">6</span> Why Predict Noise?</h2>
+
+        <p>Recall how we made $x_t$:</p>
+
+        <div class="math-block">
+            $$x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1-\bar{\alpha}_t} \, \epsilon$$
+        </div>
+
+        <p>If we can predict $\epsilon$, we can recover $x_0$:</p>
+
+        <div class="math-block">
+            $$x_0 = \frac{x_t - \sqrt{1-\bar{\alpha}_t} \, \epsilon}{\sqrt{\bar{\alpha}_t}}$$
+        </div>
+
+        <div class="comparison-box">
+            <div>
+                <h4 style="color: var(--accent-yellow);">Predicting $x_0$</h4>
+                <p>"Look at this noisy mess. What's the original cat?"</p>
+                <p>Hard when $t$ is large (pure noise).</p>
+            </div>
+            <div>
+                <h4 style="color: var(--accent-green);">Predicting $\epsilon$</h4>
+                <p>"What noise was added?"</p>
+                <p>Same difficulty at all timesteps.</p>
+            </div>
+        </div>
+
+        <h2 id="ch7"><span class="chapter-num">7</span> The Loss Function</h2>
+
+        <div class="math-block">
+            $$\mathcal{L} = \mathbb{E}_{t, x_0, \epsilon}\left[ \| \epsilon - \epsilon_\theta(x_t, t) \|^2 \right]$$
+        </div>
+
+        <p>In words: <strong>"Predict the noise that was added. Minimize prediction error."</strong></p>
+
+        <div class="code-block">def train_step(model, x_0):
+    # 1. Random timestep
+    t = randint(1, T)
+    
+    # 2. Sample noise
+    epsilon = torch.randn_like(x_0)
+    
+    # 3. Create noisy image (one-step formula)
+    alpha_bar_t = alpha_bar[t]
+    x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
+    
+    # 4. Predict the noise
+    epsilon_pred = model(x_t, t)
+    
+    # 5. Simple MSE loss
+    loss = F.mse_loss(epsilon, epsilon_pred)
+    return loss</div>
+
+        <h2 id="ch8"><span class="chapter-num">8</span> Why Doesn't MSE Cause Blur Here?</h2>
+
+        <div class="question-block">
+            <div class="label">🤔 Question</div>
+            <p>"Wait — MSE caused blur in VAE. Why doesn't it cause blur here?"</p>
+        </div>
+
+        <div class="answer-block">
+            <div class="label">✓ Key Insight</div>
+            <p>VAE predicts <strong>images</strong>. Diffusion predicts <strong>noise</strong>.</p>
+        </div>
+
+        <div class="ascii-diagram">VAE predicting images:
+  "Should this pixel be cat-whisker or background?"
+  MSE: "Output 0.5 gray to hedge"
+  Result: BLUR
+
+Diffusion predicting noise:
+  "What Gaussian noise was added to this pixel?"
+  Answer: UNIQUE. There's no averaging across outcomes.
+  The noise ε is fixed — we just need to identify it.
+  Result: NO BLUR</div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>Noise is not ambiguous like semantic content. Given $x_t$ and $t$, there's ONE correct $\epsilon$ that satisfies the forward equation. No hedging needed.</p>
+        </div>
+
+        <!-- PART IV -->
+        <div class="part-header">
+            <div class="part-label">Part IV</div>
+            <h3>Architecture & Extensions</h3>
+        </div>
+
+        <h2 id="ch9"><span class="chapter-num">9</span> The U-Net Architecture</h2>
+
+        <p>The noise predictor $\epsilon_\theta(x_t, t)$ is typically a <strong>U-Net</strong>:</p>
+
+        <div class="ascii-diagram">         Input: x_t (noisy image)
+              ↓
+    ┌─────────────────────────────┐
+    │      Downsample blocks      │  (encode)
+    │   64 → 128 → 256 → 512      │
+    └─────────────────────────────┘
+              ↓
+    ┌─────────────────────────────┐
+    │       Middle block          │  (self-attention)
+    └─────────────────────────────┘
+              ↓
+    ┌─────────────────────────────┐
+    │       Upsample blocks       │  (decode + skip connections)
+    │   512 → 256 → 128 → 64      │
+    └─────────────────────────────┘
+              ↓
+         Output: ε̂ (predicted noise)</div>
+
+        <p>Key addition: <strong>time embedding</strong>. The network needs to know which timestep $t$ we're at (like positional encoding in transformers).</p>
+
+        <h2 id="ch10"><span class="chapter-num">10</span> Classifier-Free Guidance</h2>
+
+        <p>How do we control what gets generated? Add a condition $c$ (text, class label, etc.):</p>
+
+        <div class="math-block">
+            $$\hat{\epsilon} = \epsilon_\theta(x_t, t, \emptyset) + s \cdot (\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t, \emptyset))$$
+        </div>
+
+        <p>where $s > 1$ is the guidance scale. "Push harder in the direction that matches the condition."</p>
+
+        <h2 id="ch11"><span class="chapter-num">11</span> Latent Diffusion (Stable Diffusion)</h2>
+
+        <p>A 512×512 image has 786,432 pixels. Running diffusion in pixel space is expensive.</p>
+
+        <div class="ascii-diagram">Standard Diffusion:
+    noise ←→ diffusion ←→ image (512×512×3)
+    (expensive: huge tensors)
+
+Latent Diffusion:
+    image → VAE encoder → latent (64×64×4)
+                              ↓
+                     diffusion here! (cheap)
+                              ↓
+                         VAE decoder → image</div>
+
+        <div class="key-insight">
+            <div class="label">Key Insight</div>
+            <p>Latent diffusion gets <strong>64× speedup</strong> (going from 512×512 to 64×64). The VAE handles low-level details; diffusion handles high-level structure. This is what <strong>Stable Diffusion</strong> does.</p>
+        </div>
+
+        <h2 id="ch12"><span class="chapter-num">12</span> Diffusion Transformers (DiT)</h2>
+
+        <p>U-Net was the original architecture. But transformers scale better.</p>
+
+        <div class="ascii-diagram">DiT Architecture:
+
+1. Patchify: split latent into patches (like ViT)
+2. Linear embed each patch → tokens
+3. Add positional + time embedding
+4. Process with transformer blocks
+5. Unpatchify → predicted noise</div>
+
+        <p>DiT powers <strong>Sora</strong>, <strong>Stable Diffusion 3</strong>, and other cutting-edge models.</p>
+
+        <h2 id="ch13"><span class="chapter-num">13</span> Final Comparison: VAE vs GAN vs Diffusion</h2>
+
+        <table>
+            <tr><th>Aspect</th><th>VAE</th><th>GAN</th><th>Diffusion</th></tr>
+            <tr><td><strong>Training</strong></td><td>Stable ✓</td><td>Unstable ✗</td><td>Stable ✓</td></tr>
+            <tr><td><strong>Output quality</strong></td><td>Blurry ✗</td><td>Sharp ✓</td><td>Sharp ✓</td></tr>
+            <tr><td><strong>Mode coverage</strong></td><td>Good ✓</td><td>Collapse risk ✗</td><td>Excellent ✓</td></tr>
+            <tr><td><strong>Likelihood</strong></td><td>ELBO ✓</td><td>None ✗</td><td>Yes ✓</td></tr>
+            <tr><td><strong>Sampling speed</strong></td><td>Fast ✓</td><td>Fast ✓</td><td>Slow ✗</td></tr>
+            <tr><td><strong>Loss</strong></td><td>MSE + KL</td><td>Adversarial</td><td>Simple MSE on noise</td></tr>
+        </table>
+
+        <p><strong>The Tradeoff:</strong> Diffusion is slow. Generating one image needs ~50-1000 forward passes.</p>
+
+        <p><strong>Fixes:</strong></p>
+        <ul>
+            <li><strong>DDIM:</strong> Deterministic sampling, fewer steps (~50)</li>
+            <li><strong>Latent diffusion:</strong> Work in smaller latent space</li>
+            <li><strong>Consistency models:</strong> Distill to single-step generation</li>
+        </ul>
+
+        <div class="interview-tip">
+            <div class="label">🎯 Interview Narrative</div>
+            <p>"VAE has blurry outputs because MSE on images encourages hedging. GAN fixes blur with adversarial training but is unstable and mode-collapses.</p>
+            <p>Diffusion takes a different approach: gradually add noise to images (forward process), then train a network to predict and remove that noise (reverse process). Each step is a small correction, much easier than generating an image in one shot.</p>
+            <p>The key insight: predict the noise ε, not the image directly. Noise is simple (Gaussian), so MSE works fine — no hedging about semantic content.</p>
+            <p>Training is simple: sample image, add noise at random timestep, predict the noise, MSE loss. No adversarial game.</p>
+            <p>Sampling is slow (many steps), but latent diffusion fixes this by working in compressed VAE latent space. Modern models use transformer backbones (DiT) instead of U-Net for better scaling."</p>
+        </div>
+
+        <div class="tldr">
+            <div class="label">TL;DR Formulas</div>
+            <table>
+                <tr><th>What</th><th>Formula</th></tr>
+                <tr><td>Forward (direct)</td><td>$x_t = \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1-\bar{\alpha}_t} \epsilon$</td></tr>
+                <tr><td>Loss</td><td>$\mathcal{L} = \|\epsilon - \epsilon_\theta(x_t, t)\|^2$</td></tr>
+                <tr><td>$\epsilon$</td><td>Gaussian noise $\sim \mathcal{N}(0, I)$</td></tr>
+                <tr><td>$\bar{\alpha}_t$</td><td>Cumulative signal retention $= \prod_{s=1}^t (1-\beta_s)$</td></tr>
+            </table>
+        </div>
+
+        <nav class="article-nav">
+            <a href="gan.html" class="prev">
+                <div class="nav-label">← Previous Article</div>
+                <div class="nav-title">GANs: The Complete Story</div>
+            </a>
+            <div></div>
+        </nav>
+    </article>
+
+    <footer class="article-footer">
+        <p>Part of the <a href="../index.html#blog">Generative Models Series</a> · <a href="../index.html">harsmac.github.io</a></p>
+        <p style="margin-top: 1rem;">You now understand VAE → GAN → Diffusion. The complete generative model journey.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+        });
+    </script>
+</body>
+</html>
