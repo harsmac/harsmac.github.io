@@ -31,13 +31,11 @@
             position: fixed; top: 0; left: 0; right: 0;
             background: rgba(13,17,23,0.95); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border); padding: 1rem 2rem;
-            z-index: 100; display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
         }
         .article-nav a { color: var(--accent); text-decoration: none; font-size: 0.9rem; transition: opacity 0.2s; }
         .article-nav a:hover { opacity: 0.8; }
         .article-nav .back-link { display: flex; align-items: center; gap: 0.5rem; }
-        .article-nav .series-links { display: flex; gap: 1.5rem; }
-        .article-nav .series-links a.current { color: var(--text); font-weight: 600; }
         .article-header { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
         .series-badge {
             display: inline-block; background: var(--accent); color: var(--bg);
@@ -141,13 +139,7 @@
 <body>
 
 <nav class="article-nav">
-    <a href="../index.html#blog" class="back-link">← Back to Portfolio</a>
-    <div class="series-links">
-        <a href="vae.html">VAE</a>
-        <a href="gan.html">GAN</a>
-        <a href="diffusion.html">Diffusion</a>
-        <a href="transformers.html" class="current">Transformers</a>
-    </div>
+        <a href="index.html" class="back-link">← Back to Blog</a>
 </nav>
 
 <header class="article-header">
