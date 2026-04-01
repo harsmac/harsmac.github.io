@@ -52,9 +52,6 @@
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
             z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .article-nav a {
@@ -66,22 +63,6 @@
 
         .article-nav a:hover {
             opacity: 0.8;
-        }
-
-        .article-nav .back-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .article-nav .series-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .article-nav .series-links a.current {
-            color: var(--text);
-            font-weight: 600;
         }
 
         /* Article Header */
@@ -344,14 +325,14 @@
 
         .interview-tip {
             background: var(--bg-secondary);
-            border: 1px solid var(--accent);
+            border: 1px solid var(--accent-orange);
             padding: 1.25rem 1.5rem;
             margin: 2rem 0;
             border-radius: 8px;
         }
 
         .interview-tip .label {
-            color: var(--accent);
+            color: var(--accent-orange);
             font-weight: 600;
             font-size: 0.85rem;
             text-transform: uppercase;
@@ -450,6 +431,58 @@
             margin-bottom: 0.5rem;
         }
 
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-box > div {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            border-radius: 8px;
+        }
+
+        .comparison-box h4 {
+            margin-top: 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent);
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 1.25rem;
+            width: 0.75rem;
+            height: 0.75rem;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
         /* Article Footer Navigation */
         .article-footer {
             margin-top: 4rem;
@@ -492,16 +525,16 @@
                 padding: 0.75rem 1rem;
             }
 
-            .article-nav .series-links {
-                display: none;
-            }
-
             h1 {
                 font-size: 1.8rem;
             }
 
             h2 {
                 font-size: 1.4rem;
+            }
+
+            .comparison-box {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -510,12 +543,7 @@
 <body>
     <!-- Navigation -->
     <nav class="article-nav">
-        <a href="../index.html#blog" class="back-link">← Back to Portfolio</a>
-        <div class="series-links">
-            <a href="vae.html">VAE</a>
-            <a href="gan.html">GAN</a>
-            <a href="diffusion.html" class="current">Diffusion</a>
-        </div>
+        <a href="index.html" class="back-link">← Back to Blog</a>
     </nav>
 
     <!-- Article Header -->

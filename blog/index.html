@@ -113,6 +113,10 @@
             background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(163, 113, 247, 0.2));
         }
 
+        .series-icon.transformers {
+            background: linear-gradient(135deg, rgba(240, 136, 62, 0.2), rgba(248, 81, 73, 0.2));
+        }
+
         .series-title {
             flex: 1;
         }
@@ -180,6 +184,11 @@
         .chapter-number.diffusion {
             background: rgba(163, 113, 247, 0.2);
             color: var(--accent-purple);
+        }
+
+        .chapter-number.transformers {
+            background: rgba(240, 136, 62, 0.2);
+            color: var(--accent-orange);
         }
 
         .chapter-content {
@@ -319,6 +328,29 @@
                 </div>
                 <span class="chapter-arrow">→</span>
             </a>
+
+        </div>
+    </section>
+
+    <!-- Transformers Series -->
+    <section class="series-section">
+        <div class="series-header">
+            <div class="series-icon transformers">🤖</div>
+            <div class="series-title">
+                <h2>Transformers</h2>
+                <p>A growing series on attention, architecture, and efficient inference</p>
+            </div>
+        </div>
+
+        <div class="chapter-list">
+            <a href="transformers.html" class="chapter-card">
+                <div class="chapter-number transformers">1</div>
+                <div class="chapter-content">
+                    <h3>Transformers: The Complete Story</h3>
+                    <p>From attention and embeddings to KV caching — a full practical and mathematical walkthrough</p>
+                </div>
+                <span class="chapter-arrow">→</span>
+            </a>
         </div>
     </section>
 
@@ -326,7 +358,7 @@
     <section class="series-section">
         <div class="coming-soon">
             <h3>More coming soon...</h3>
-            <p>Transformers, attention mechanisms, and more deep dives on the way.</p>
+            <p>More deep dives on the way.</p>
         </div>
     </section>
 
