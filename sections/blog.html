@@ -6,35 +6,139 @@
         </p>
     </div>
 
-    <!-- Category Cards - Horizontal Scroll -->
+    <!-- Category Tabs -->
     <div class="blog-categories">
-        <a href="blog/index.html#generative" class="blog-category active">
+        <button class="blog-category active" data-tab="generative">
             <div class="blog-category-icon">🎨</div>
             <span class="blog-category-name">Generative Models</span>
-        </a>
+        </button>
 
-        <a href="blog/index.html#transformers" class="blog-category">
+        <button class="blog-category" data-tab="transformers">
             <div class="blog-category-icon">🤖</div>
             <span class="blog-category-name">Transformers</span>
-        </a>
+        </button>
 
-        <div class="blog-category disabled">
+        <button class="blog-category" data-tab="basicml">
             <div class="blog-category-icon">📊</div>
             <span class="blog-category-name">Basic ML</span>
-            <span class="coming-soon-badge">Coming Soon</span>
-        </div>
+        </button>
 
-        <div class="blog-category disabled">
+        <button class="blog-category" data-tab="deeplearning">
             <div class="blog-category-icon">🧠</div>
             <span class="blog-category-name">Deep Learning</span>
-            <span class="coming-soon-badge">Coming Soon</span>
-        </div>
+        </button>
 
-        <div class="blog-category disabled">
+        <button class="blog-category" data-tab="optimization">
             <div class="blog-category-icon">📈</div>
             <span class="blog-category-name">Optimization</span>
-            <span class="coming-soon-badge">Coming Soon</span>
-        </div>
+        </button>
     </div>
 
+    <!-- Tab Content Panels -->
+    <div class="blog-panels">
+
+        <!-- Generative Models Panel -->
+        <div class="blog-panel active" data-panel="generative">
+            <div class="blog-grid">
+                <a href="blog/vae.html" class="blog-card">
+                    <div class="blog-card-accent vae"></div>
+                    <div class="blog-card-content">
+                        <span class="blog-tag">Part 1</span>
+                        <h3>VAE: The Complete Story</h3>
+                        <p>From autoencoders to ELBO — understanding variational autoencoders from first principles.</p>
+                        <span class="blog-read-more">Read article →</span>
+                    </div>
+                </a>
+
+                <a href="blog/gan.html" class="blog-card">
+                    <div class="blog-card-accent gan"></div>
+                    <div class="blog-card-content">
+                        <span class="blog-tag">Part 2</span>
+                        <h3>GANs: The Complete Story</h3>
+                        <p>From VAE's blur problem to Wasserstein distance — why adversarial training works.</p>
+                        <span class="blog-read-more">Read article →</span>
+                    </div>
+                </a>
+
+                <a href="blog/diffusion.html" class="blog-card">
+                    <div class="blog-card-accent diffusion"></div>
+                    <div class="blog-card-content">
+                        <span class="blog-tag">Part 3</span>
+                        <h3>Diffusion: The Complete Story</h3>
+                        <p>From noise to images — how diffusion achieves the best of VAE stability and GAN quality.</p>
+                        <span class="blog-read-more">Read article →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Transformers Panel -->
+        <div class="blog-panel" data-panel="transformers">
+            <div class="blog-grid">
+                <a href="blog/transformers.html" class="blog-card">
+                    <div class="blog-card-accent transformers"></div>
+                    <div class="blog-card-content">
+                        <span class="blog-tag">Part 1</span>
+                        <h3>Attention Is All You Need</h3>
+                        <p>Understanding the transformer architecture from the ground up.</p>
+                        <span class="blog-read-more">Read article →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Basic ML Panel - Coming Soon -->
+        <div class="blog-panel" data-panel="basicml">
+            <div class="blog-coming-soon">
+                <div class="coming-soon-icon">📊</div>
+                <h3>Coming Soon</h3>
+                <p>Articles on fundamental ML concepts are in the works!</p>
+            </div>
+        </div>
+
+        <!-- Deep Learning Panel - Coming Soon -->
+        <div class="blog-panel" data-panel="deeplearning">
+            <div class="blog-coming-soon">
+                <div class="coming-soon-icon">🧠</div>
+                <h3>Coming Soon</h3>
+                <p>Deep learning deep dives coming soon!</p>
+            </div>
+        </div>
+
+        <!-- Optimization Panel - Coming Soon -->
+        <div class="blog-panel" data-panel="optimization">
+            <div class="blog-coming-soon">
+                <div class="coming-soon-icon">📈</div>
+                <h3>Coming Soon</h3>
+                <p>Optimization techniques and intuitions on the way!</p>
+            </div>
+        </div>
+
+    </div>
 </section>
+
+<!-- Tab Switching Script -->
+<script>
+    (function () {
+        const tabs = document.querySelectorAll('.blog-category');
+        const panels = document.querySelectorAll('.blog-panel');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update active panel
+                panels.forEach(p => {
+                    p.classList.remove('active');
+                    if (p.dataset.panel === target) {
+                        p.classList.add('active');
+                    }
+                });
+            });
+        });
+    })();
+</script>
