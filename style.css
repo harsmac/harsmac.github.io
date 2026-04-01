@@ -1070,3 +1070,160 @@ body.dark .blog-card:hover .blog-read-more {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ============================================
+   BLOG SECTION STYLES - SWIGGY CATEGORY CARDS
+   Add to your style.css
+   ============================================ */
+
+/* Blog Header */
+.blog-header {
+  margin-bottom: 1.5rem;
+}
+
+.blog-header h2 {
+  margin-bottom: 0.25rem;
+}
+
+#blog .section-intro {
+  color: #345c8c;
+  font-size: 1.05rem;
+  margin: 0;
+  max-width: 600px;
+}
+
+body.dark #blog .section-intro {
+  color: #9ab0ff;
+}
+
+/* Blog Categories - Horizontal Scroll */
+.blog-categories {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+.blog-categories::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+/* Category Card */
+.blog-category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 110px;
+  padding: 1.25rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.blog-category:hover:not(.disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(90, 92, 218, 0.15);
+  border-color: #5a5cda;
+}
+
+.blog-category.active {
+  border-color: #5a5cda;
+  box-shadow: 0 4px 16px rgba(90, 92, 218, 0.2);
+}
+
+body.dark .blog-category {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+body.dark .blog-category:hover:not(.disabled) {
+  border-color: #9ab0ff;
+  box-shadow: 0 8px 24px rgba(154, 176, 255, 0.15);
+}
+
+body.dark .blog-category.active {
+  border-color: #9ab0ff;
+}
+
+/* Category Icon */
+.blog-category-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* Category Name */
+.blog-category-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #152238;
+  text-align: center;
+  line-height: 1.2;
+}
+
+body.dark .blog-category-name {
+  color: #e6edf3;
+}
+
+/* Disabled State */
+.blog-category.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.blog-category.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Coming Soon Badge */
+.coming-soon-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #5a5cda, #9f7aea);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+body.dark .coming-soon-badge {
+  background: linear-gradient(135deg, #9ab0ff, #a371f7);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .blog-categories {
+    gap: 0.75rem;
+    margin: 0 -1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .blog-category {
+    min-width: 95px;
+    padding: 1rem 0.75rem;
+  }
+
+  .blog-category-icon {
+    font-size: 1.75rem;
+  }
+
+  .blog-category-name {
+    font-size: 0.8rem;
+  }
+}
