@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GANs: The Complete Story — From VAE's Blur to Adversarial Training</title>
+    <title>GANs: The Complete Story — From VAE's Blur to Wasserstein</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -431,6 +431,23 @@
             margin-bottom: 0.5rem;
         }
 
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-box > div {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            border-radius: 8px;
+        }
+
+        .comparison-box h4 {
+            margin-top: 0;
+        }
+
         /* Article Footer Navigation */
         .article-footer {
             margin-top: 4rem;
@@ -479,6 +496,10 @@
 
             h2 {
                 font-size: 1.4rem;
+            }
+
+            .comparison-box {
+                grid-template-columns: 1fr;
             }
         }
     </style>
