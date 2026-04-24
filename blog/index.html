@@ -17,7 +17,23 @@
             --accent-green: #3fb950;
             --accent-orange: #f0883e;
             --accent-purple: #a371f7;
+            --accent-forest: #5a9a6a;
             --border: #30363d;
+        }
+
+        /* Light mode */
+        .light {
+            --bg: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text: #1f2328;
+            --text-muted: #656d76;
+            --accent: #0969da;
+            --accent-green: #1a7f37;
+            --accent-orange: #bc4c00;
+            --accent-purple: #8250df;
+            --accent-forest: #2d6a3e;
+            --border: #d0d7de;
         }
 
         * {
@@ -43,7 +59,8 @@
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(13, 17, 23, 0.95);
+            background: var(--bg);
+            opacity: 0.95;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
@@ -68,6 +85,34 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-input {
+            display: none;
+        }
+
+        .theme-toggle {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle::before {
+            content: '☀️';
+            font-size: 1.2rem;
+        }
+
+        .light .theme-toggle::before {
+            content: '🌙';
         }
 
         /* Page Header */
@@ -118,6 +163,10 @@
             background: linear-gradient(135deg, rgba(240, 136, 62, 0.2), rgba(248, 81, 73, 0.2));
         }
 
+        .series-icon.vision {
+            background: linear-gradient(135deg, rgba(90, 154, 106, 0.2), rgba(70, 120, 80, 0.2));
+        }
+
         .series-title {
             flex: 1;
         }
@@ -160,6 +209,10 @@
             transform: translateX(4px);
         }
 
+        .chapter-card.vision:hover {
+            border-color: var(--accent-forest);
+        }
+
         .chapter-number {
             width: 40px;
             height: 40px;
@@ -192,6 +245,11 @@
             color: var(--accent-orange);
         }
 
+        .chapter-number.cnn {
+            background: rgba(90, 154, 106, 0.2);
+            color: var(--accent-forest);
+        }
+
         .chapter-content {
             flex: 1;
         }
@@ -217,6 +275,10 @@
         .chapter-card:hover .chapter-arrow {
             transform: translateX(4px);
             color: var(--accent);
+        }
+
+        .chapter-card.vision:hover .chapter-arrow {
+            color: var(--accent-forest);
         }
 
         /* Coming Soon */
@@ -281,6 +343,8 @@
     <!-- Navigation -->
     <nav class="blog-nav">
         <a href="../index.html#blog" class="back-link">← Back to Portfolio</a>
+        <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
+        <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
     </nav>
 
     <!-- Page Header -->
@@ -333,6 +397,29 @@
         </div>
     </section>
 
+    <!-- Computer Vision Series -->
+    <section class="series-section">
+        <div class="series-header">
+            <div class="series-icon vision">👁️</div>
+            <div class="series-title">
+                <h2>Computer Vision</h2>
+                <p>From convolutions to transformers — how machines learn to see</p>
+            </div>
+        </div>
+
+        <div class="chapter-list">
+            <a href="cnn.html" class="chapter-card vision">
+                <div class="chapter-number cnn">1</div>
+                <div class="chapter-content">
+                    <h3>CNNs and Convolutions</h3>
+                    <p>From sliding kernels to Vision Transformers — why convolutions work, how they evolved, and when
+                        to use them</p>
+                </div>
+                <span class="chapter-arrow">→</span>
+            </a>
+        </div>
+    </section>
+
     <!-- Transformers Series -->
     <section class="series-section">
         <div class="series-header">
@@ -369,6 +456,29 @@
             <a href="../index.html#blog">← Back to Portfolio</a>
         </p>
     </footer>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+
+        // Check for saved preference or system preference
+        const savedTheme = localStorage.getItem('blog-theme');
+        if (savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            root.classList.add('light');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                root.classList.add('light');
+                localStorage.setItem('blog-theme', 'light');
+            } else {
+                root.classList.remove('light');
+                localStorage.setItem('blog-theme', 'dark');
+            }
+        });
+    </script>
 </body>
 
 </html>

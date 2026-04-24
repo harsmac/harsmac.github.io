@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNNs and Convolutions — Harshitha Machiraju</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        /* ============================================
+           COLOR SCHEME - FOREST GREEN FOR CNN
+           ============================================ */
+        :root {
+            --bg: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #5a9a6a;
+            /* Forest green for CNN */
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-yellow: #d29922;
+            --accent-purple: #a371f7;
+            --border: #30363d;
+        }
+
+        /* Light mode */
+        .light {
+            --bg: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text: #1f2328;
+            --text-muted: #656d76;
+            --accent: #2d6a3e;
+            /* Darker forest green for light mode */
+            --accent-green: #1a7f37;
+            --accent-red: #cf222e;
+            --accent-yellow: #9a6700;
+            --accent-purple: #8250df;
+            --border: #d0d7de;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem;
+            padding-top: 80px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Navigation Header */
+        .article-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            opacity: 0.95;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .article-nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-input {
+            display: none;
+        }
+
+        .theme-toggle {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle::before {
+            content: '☀️';
+            font-size: 1.2rem;
+        }
+
+        .light .theme-toggle::before {
+            content: '🌙';
+        }
+
+        /* Article Header */
+        .article-header {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .series-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .chapter-num {
+            background: var(--accent);
+            color: var(--bg);
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul,
+        ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Question Block - Yellow accent */
+        .question-block {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .question-block .label {
+            color: var(--accent-yellow);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-block p {
+            margin-bottom: 0;
+            font-style: italic;
+            color: var(--text);
+        }
+
+        /* Answer Block - Green accent */
+        .answer-block {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-green);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .answer-block .label {
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Key Insight Block */
+        .key-insight {
+            background: linear-gradient(135deg, rgba(90, 154, 106, 0.1), rgba(163, 113, 247, 0.1));
+            border: 1px solid var(--accent);
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+
+        .key-insight .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Math Block */
+        .math-block {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text);
+        }
+
+        /* ASCII Diagram */
+        .ascii-diagram {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: var(--text-muted);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Verdict Block */
+        .verdict {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--accent-red);
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            font-weight: 500;
+        }
+
+        .verdict.good {
+            border-left-color: var(--accent-green);
+        }
+
+        strong {
+            color: var(--accent);
+        }
+
+        code {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        /* TL;DR Block */
+        .tldr {
+            background: linear-gradient(135deg, rgba(63, 185, 80, 0.1), rgba(90, 154, 106, 0.1));
+            border: 1px solid var(--accent-green);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .tldr .label {
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Interview Tip Block */
+        .interview-tip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-purple);
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .interview-tip .label {
+            color: var(--accent-purple);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 140px;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 120px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .timeline-year {
+            position: absolute;
+            left: -140px;
+            top: 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            width: 100px;
+            text-align: right;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-link {
+            display: inline-block;
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--accent);
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .timeline-link:hover {
+            opacity: 1;
+        }
+
+        .timeline-link::after {
+            content: ' ↗';
+            font-size: 0.8em;
+        }
+
+        .timeline-desc {
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .timeline-problem {
+            color: #e07070;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-fix {
+            color: #70c090;
+            font-weight: 500;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .toc li {
+            padding: 0.4rem 0;
+            color: var(--text-muted);
+        }
+
+        .toc a {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            color: var(--accent);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        /* Part Header */
+        .part-header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            padding: 2rem;
+            margin: 3rem 0 2rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .part-header .part-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .part-header h2 {
+            margin: 0;
+            justify-content: center;
+            font-size: 1.6rem;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+                padding-top: 70px;
+            }
+
+            .article-nav {
+                padding: 0.75rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="article-nav">
+        <a href="index.html" class="back-link">← Back to Blog</a>
+        <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
+        <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="article-header">
+        <span class="series-badge">Computer Vision</span>
+        <h1>CNNs and Convolutions</h1>
+        <p class="subtitle">From sliding kernels to Vision Transformers — why convolutions work, how they evolved, and
+            when to use them</p>
+    </header>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3>Contents</h3>
+        <ul>
+            <li><strong>Part I: Why Convolutions?</strong></li>
+            <li><a href="#ch1">1. The Problem with Fully Connected Layers</a></li>
+            <li><a href="#ch2">2. The Core Idea: Weight Sharing</a></li>
+            <li><strong>Part II: The Convolution Operation</strong></li>
+            <li><a href="#ch3">3. Sliding the Kernel</a></li>
+            <li><a href="#ch4">4. Output Size, Padding, Stride</a></li>
+            <li><a href="#ch5">5. Channels — RGB and Beyond</a></li>
+            <li><a href="#ch6">6. Computational Cost</a></li>
+            <li><strong>Part III: Building CNNs</strong></li>
+            <li><a href="#ch7">7. What Kernels Learn</a></li>
+            <li><a href="#ch8">8. Pooling vs Stride</a></li>
+            <li><a href="#ch9">9. Receptive Field</a></li>
+            <li><a href="#ch10">10. Full Architecture: LeNet</a></li>
+            <li><strong>Part IV: Evolution of Architectures</strong></li>
+            <li><a href="#ch11">11. From LeNet to Vision Transformers</a></li>
+            <li><a href="#ch12">12. Why Vision Transformers?</a></li>
+            <li><strong>Part V: Advanced Topics</strong></li>
+            <li><a href="#ch13">13. 1×1 Convolutions</a></li>
+            <li><a href="#ch14">14. Depthwise Separable Convolutions</a></li>
+            <li><a href="#ch15">15. Dilated Convolutions</a></li>
+            <li><a href="#ch16">16. Transposed Convolutions & U-Net</a></li>
+            <li><a href="#ch17">17. BatchNorm & Skip Connections</a></li>
+        </ul>
+    </div>
+
+    <!-- ==================== CONTENT ==================== -->
+
+    <div class="part-header">
+        <div class="part-label">Part I</div>
+        <h2>Why Convolutions?</h2>
+    </div>
+
+    <h2 id="ch1"><span class="chapter-num">1</span> The Problem with Fully Connected Layers</h2>
+
+    <p>Before CNNs, people used fully connected layers on images. The problem? It doesn't scale.</p>
+
+    <div class="ascii-diagram">28×28 grayscale image = 784 pixels (flattened)
+
+        FC layer: 784 → 512
+        Weight matrix W: 784 × 512 = 401,408 parameters
+
+        224×224 RGB image = 224 × 224 × 3 = 150,528 pixels (flattened)
+
+        FC layer: 150,528 → 512
+        Weight matrix W: 150,528 × 512 = 77 million parameters</div>
+
+    <p>Beyond the parameter explosion, fully connected layers destroy spatial structure.</p>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"What do you mean by 'destroy spatial structure'?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>When you flatten an image, you turn a 2D grid into a 1D vector:</p>
+    </div>
+
+    <div class="ascii-diagram">5×5 image (each p_i is a pixel):
+
+        p1 p2 p3 p4 p5
+        p6 p7 p8 p9 p10
+        p11 p12 p13 p14 p15
+        p16 p17 p18 p19 p20
+        p21 p22 p23 p24 p25
+
+        Flattened into a vector:
+
+        [p1, p2, p3, p4, p5, p6, p7, ... p25]</div>
+
+    <p>The network has no idea that p1 and p2 are neighbours, but p1 and p25 are corners apart. It's just 25 numbers
+        with 25 separate weights. The spatial layout is <strong>destroyed</strong> the moment you flatten.</p>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why can't we just add positional information back in?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>You can! And people do — Vision Transformers add positional embeddings to image patches. But there's a catch:
+            adding spatial info <em>lets</em> the network learn spatial relationships, but doesn't <em>force</em> it to.
+            The network still has to figure out from data that "nearby pixels matter more."</p>
+        <p>Convolutions <strong>bake in</strong> that assumption. The kernel physically can only see a local region. No
+            learning required to know neighbours are related.</p>
+    </div>
+
+    <h2 id="ch2"><span class="chapter-num">2</span> The Core Idea: Weight Sharing</h2>
+
+    <p>Instead of connecting every pixel to every neuron, slide a small <strong>kernel</strong> across the image. The
+        same kernel weights are applied at every position.</p>
+
+    <p>Think about what a "vertical edge detector" is:</p>
+
+    <div class="ascii-diagram">Kernel:
+        [-1 0 1]
+        [-1 0 1]
+        [-1 0 1]</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why is weight sharing important beyond just reducing parameters?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Should the network learn a <em>separate</em> vertical edge detector for the top-left corner vs the
+            bottom-right corner? No — a vertical edge is a vertical edge regardless of position.</p>
+        <p>Weight sharing means: <strong>learn the pattern once, apply it everywhere.</strong></p>
+        <p>Without weight sharing, the network might learn "vertical edge at position (10,10)" and "vertical edge at
+            position (50,50)" as separate things. Needs way more data to generalise.</p>
+    </div>
+
+    <div class="key-insight">
+        <div class="label">Key Insight</div>
+        <p>Two properties make convolutions powerful:</p>
+        <ul>
+            <li><strong>Weight sharing</strong> — same kernel everywhere = far fewer parameters</li>
+            <li><strong>Translation equivariance</strong> — a pattern is detected the same way regardless of where it
+                appears</li>
+        </ul>
+    </div>
+
+    <div class="part-header">
+        <div class="part-label">Part II</div>
+        <h2>The Convolution Operation</h2>
+    </div>
+
+    <h2 id="ch3"><span class="chapter-num">3</span> Sliding the Kernel</h2>
+
+    <p>A kernel (small matrix) slides across the image. At each position:</p>
+    <ol>
+        <li>Place the kernel over a patch of the input</li>
+        <li>Element-wise multiply kernel and patch</li>
+        <li>Sum to get one output value</li>
+        <li>Slide to next position, repeat</li>
+    </ol>
+
+    <div class="ascii-diagram">Input (5×5) Kernel (3×3)
+        ┌─────────────────┐ ┌───────────┐
+        │ 1 2 3 4 5 │ │ 1 0 1 │
+        │ 2 3 4 5 6 │ * │ 0 1 0 │
+        │ 3 4 5 6 7 │ │ 1 0 1 │
+        │ 4 5 6 7 8 │ └───────────┘
+        │ 5 6 7 8 9 │
+        └─────────────────┘
+
+        Position (0,0) — kernel placed over top-left 3×3:
+
+        [1 2 3] [1 0 1]
+        [2 3 4] × [0 1 0]
+        [3 4 5] [1 0 1]
+
+        Output = 1×1 + 2×0 + 3×1 + 2×0 + 3×1 + 4×0 + 3×1 + 4×0 + 5×1
+        = 1 + 3 + 3 + 3 + 5 = 15</div>
+
+    <h2 id="ch4"><span class="chapter-num">4</span> Output Size, Padding, Stride</h2>
+
+    <p>How big is the output after convolution?</p>
+
+    <div class="math-block">
+        $$\text{output\_size} = \left\lfloor \frac{\text{input\_size} - \text{kernel\_size} + 2 \times
+        \text{padding}}{\text{stride}} \right\rfloor + 1$$
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Input</th>
+                <th>Kernel</th>
+                <th>Padding</th>
+                <th>Stride</th>
+                <th>Output</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>5×5</td>
+                <td>3×3</td>
+                <td>0</td>
+                <td>1</td>
+                <td>3×3</td>
+            </tr>
+            <tr>
+                <td>28×28</td>
+                <td>3×3</td>
+                <td>1</td>
+                <td>1</td>
+                <td>28×28</td>
+            </tr>
+            <tr>
+                <td>28×28</td>
+                <td>3×3</td>
+                <td>1</td>
+                <td>2</td>
+                <td>14×14</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>Padding</h4>
+    <p><code>padding = kernel_size // 2</code> keeps spatial size the same (for stride=1). Adds zeros around the input
+        so the kernel can be centred on edge pixels.</p>
+
+    <h4>Stride</h4>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"What's the point of stride > 1? Why not always stride 1?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Stride controls how much the kernel moves each step. <code>stride=2</code> means skip every other position,
+            roughly halving spatial dimensions.</p>
+        <p>It's used for <strong>downsampling</strong> — making feature maps smaller as you go deeper. Smaller feature
+            maps = less computation, and deeper layers need to "see" larger regions of the original image.</p>
+    </div>
+
+    <h2 id="ch5"><span class="chapter-num">5</span> Channels — RGB and Beyond</h2>
+
+    <p>Real images are RGB — 3 channels. The kernel becomes 3D to handle this:</p>
+
+    <div class="ascii-diagram">RGB image: H × W × 3
+
+        Red channel Green channel Blue channel
+        ┌───────────┐ ┌───────────┐ ┌───────────┐
+        │ │ │ │ │ │
+        │ H × W │ │ H × W │ │ H × W │
+        │ │ │ │ │ │
+        └───────────┘ └───────────┘ └───────────┘
+
+
+        Kernel: 3 × 3 × 3 (one slice per channel)
+
+        Red slice Green slice Blue slice
+        ┌───────┐ ┌───────┐ ┌───────┐
+        │ w w w │ │ w w w │ │ w w w │
+        │ w w w │ │ w w w │ │ w w w │
+        │ w w w │ │ w w w │ │ w w w │
+        └───────┘ └───────┘ └───────┘</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why do we sum all 3 channel outputs into one number?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Because we want to detect patterns that involve <em>all</em> channels together.</p>
+        <p>Think about detecting "orange" in an image: high red, medium green, low blue. A single-channel kernel can't
+            see this — it only looks at one colour. But a 3-channel kernel can learn weights that respond when all three
+            conditions are met.</p>
+        <p>Same for skin detection — skin has a specific RGB signature. The kernel needs to see red AND green AND blue
+            together to recognise it.</p>
+    </div>
+
+    <div class="key-insight">
+        <div class="label">Key Insight</div>
+        <p>One kernel spans ALL input channels and collapses them into one output channel.</p>
+    </div>
+
+    <h3>Multiple Output Channels</h3>
+
+    <p>Want to detect multiple patterns? Use multiple kernels.</p>
+
+    <div class="ascii-diagram">Input: H × W × 3
+
+        Kernel 1 (3×3×3): detects vertical edges → Output channel 1
+        Kernel 2 (3×3×3): detects horizontal edges → Output channel 2
+        Kernel 3 (3×3×3): detects blobs → Output channel 3
+        ...
+        Kernel 16 (3×3×3): detects ??? (learned) → Output channel 16
+
+        Stack all outputs: H' × W' × 16</div>
+
+    <p>In PyTorch:</p>
+
+    <div class="code-block">nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3)
+        # Creates 16 kernels, each of size 3×3×3
+        # Total weights: 16 × 3 × 3 × 3 = 432 (plus 16 biases)</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"So each of the 16 kernels applies on the RGB channels and sums up the output to get one channel?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Yes, exactly.</p>
+    </div>
+
+    <div class="ascii-diagram">Kernel 1 (3×3×3):
+        - red slice applies to red channel → number
+        - green slice applies to green channel → number
+        - blue slice applies to blue channel → number
+        - sum → one value at that position
+        - slide across whole image → Output channel 1 (H' × W')
+
+        Kernel 2 (3×3×3):
+        - same process, different weights
+        → Output channel 2 (H' × W')
+
+        ...
+
+        Stack all 16 → Output (H' × W' × 16)</div>
+
+    <h2 id="ch6"><span class="chapter-num">6</span> Computational Cost</h2>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"What's the computational cost of a conv layer?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>At each output position, the kernel does <code>k × k × in_channels</code> multiply-adds.</p>
+        <p>Total cost:</p>
+    </div>
+
+    <div class="math-block">
+        $$k^2 \times \text{in\_channels} \times \text{out\_channels} \times H' \times W'$$
+    </div>
+
+    <div class="question-block">
+        <div class="label">🤔 Follow-up</div>
+        <p>"Why multiply by H' × W'?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>The kernel has to slide across every position in the output. Each position requires those
+            <code>k² × in_channels</code> operations. More positions = more computation.</p>
+        <p>It's not matrix multiplication — it's literally "slide to position, compute, slide to next position,
+            compute..."</p>
+    </div>
+
+    <div class="part-header">
+        <div class="part-label">Part III</div>
+        <h2>Building CNNs</h2>
+    </div>
+
+    <h2 id="ch7"><span class="chapter-num">7</span> What Kernels Learn</h2>
+
+    <p>Early layers learn simple patterns:</p>
+
+    <div class="ascii-diagram">Vertical edge: Horizontal edge: Diagonal:
+        [-1 0 1] [-1 -1 -1] [ 1 0 -1]
+        [-1 0 1] [ 0 0 0] [ 0 1 0]
+        [-1 0 1] [ 1 1 1] [-1 0 1]</div>
+
+    <p>These aren't hand-designed — the network learns them via backprop. But if you visualise learned kernels from
+        layer 1, they look exactly like classic edge detectors.</p>
+
+    <h3>Hierarchical Features</h3>
+
+    <div class="ascii-diagram">Layer 1: pixels → edges
+        Layer 2: edges → corners, curves, textures
+        Layer 3: textures → parts (eyes, wheels, handles)
+        Layer 4+: parts → objects (faces, cars, cups)</div>
+
+    <div class="key-insight">
+        <div class="label">Key Insight</div>
+        <p>The network builds a hierarchy: simple → complex. Each layer combines the previous layer's features into
+            something more abstract. That's why depth works.</p>
+    </div>
+
+    <h2 id="ch8"><span class="chapter-num">8</span> Pooling vs Stride</h2>
+
+    <p>Both shrink spatial size. What's the difference?</p>
+
+    <h4>Max Pooling</h4>
+
+    <div class="ascii-diagram">Input (4×4): Max pool (2×2, stride 2):
+
+        ┌───┬───┬───┬───┐ ┌───┬───┐
+        │ 1 │ 3 │ 2 │ 1 │ │ 4 │ 6 │
+        ├───┼───┼───┼───┤ ├───┼───┤
+        │ 4 │ 2 │ 6 │ 5 │ → │ 8 │ 9 │
+        ├───┼───┼───┼───┤ └───┴───┘
+        │ 7 │ 8 │ 1 │ 2 │
+        ├───┼───┼───┼───┤ Output (2×2)
+        │ 3 │ 5 │ 9 │ 4 │
+        └───┴───┴───┴───┘
+
+        Top-left: max(1,3,4,2) = 4
+        Top-right: max(2,1,6,5) = 6
+        Bottom-left: max(7,8,3,5) = 8
+        Bottom-right: max(1,2,9,4) = 9</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why is max pooling bad for gradients? Won't the non-max pixels never update?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Yes — same issue as ReLU. Gradient flows only to the max position, others get zero. But in practice:</p>
+        <ul>
+            <li>Different images have max at different positions — over a batch, most positions get some gradient</li>
+            <li>Unlike dead ReLUs (which are dead forever), pooling positions change every forward pass</li>
+        </ul>
+    </div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why did people move away from pooling?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Two reasons:</p>
+        <ol>
+            <li><strong>Gradient flow:</strong> Stride 2 conv gives gradients to all positions (weighted by learned
+                kernel). Smoother learning.</li>
+            <li><strong>Information loss:</strong> Max pooling actively throws away 3 of 4 values per window. Stride 2
+                conv doesn't discard pixels — it just visits fewer positions. The learned kernel decides what to keep.
+            </li>
+        </ol>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Max Pooling</th>
+                <th>Stride 2 Conv</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Parameters</td>
+                <td>None</td>
+                <td>Learned</td>
+            </tr>
+            <tr>
+                <td>Gradient flow</td>
+                <td>Only to max position</td>
+                <td>To all positions</td>
+            </tr>
+            <tr>
+                <td>Flexibility</td>
+                <td>Fixed operation</td>
+                <td>Learns what to keep</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="ch9"><span class="chapter-num">9</span> Receptive Field</h2>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"If each conv only sees 3×3, how does the network see the whole image?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Stacking layers expands the receptive field.</p>
+    </div>
+
+    <div class="ascii-diagram">Layer 1: one output position sees 3×3 of input
+
+        Layer 2: sees 3×3 of Layer 1
+        each Layer 1 position saw 3×3 of input
+        combined: 5×5 of original input
+
+        Layer 3: sees 3×3 of Layer 2
+        combined: 7×7 of original input</div>
+
+    <h4>The Formula</h4>
+
+    <p>For stride 1 and kernel size k:</p>
+
+    <div class="math-block">
+        $$\text{RF after } n \text{ layers} = 1 + n \times (k - 1)$$
+    </div>
+
+    <p>With stride > 1, receptive field grows faster:</p>
+
+    <div class="math-block">
+        $$\text{RF}_{new} = \text{RF}_{old} + (k - 1) \times \text{stride\_product}$$
+    </div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"What's stride_product?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Cumulative product of all strides from previous layers. After stride 2, the feature map is half the size — so
+            one pixel in that feature map corresponds to 2 pixels in the previous layer.</p>
+    </div>
+
+    <div class="ascii-diagram">Layer 1: Conv 3×3, stride 1 → RF = 3, stride_product = 1
+        Layer 2: Conv 3×3, stride 2 → RF = 5, stride_product = 2
+        Layer 3: Conv 3×3, stride 1 → RF = 5 + (3-1)×2 = 9, stride_product = 2
+        Layer 4: Conv 3×3, stride 2 → RF = 9 + (3-1)×2 = 13, stride_product = 4
+
+        After stride 2, each kernel "covers" 2× more of the original input.</div>
+
+    <h2 id="ch10"><span class="chapter-num">10</span> Full Architecture: LeNet</h2>
+
+    <p>LeNet (1998) — one of the first CNNs. Simple enough to understand fully:</p>
+
+    <div class="ascii-diagram">Input: (1, 32, 32) ← grayscale 32×32 image
+        ↓
+        Conv2d(1, 6, kernel=5) → (6, 28, 28)
+        ReLU
+        MaxPool2d(2, stride=2) → (6, 14, 14)
+        ↓
+        Conv2d(6, 16, kernel=5) → (16, 10, 10)
+        ReLU
+        MaxPool2d(2, stride=2) → (16, 5, 5)
+        ↓
+        Flatten → (400,)
+        ↓
+        Linear(400, 120) → ReLU → (120,)
+        Linear(120, 84) → ReLU → (84,)
+        Linear(84, 10) → (10,)
+        ↓
+        Softmax → prediction</div>
+
+    <h4>Parameter Count</h4>
+
+    <div class="ascii-diagram">Conv1: 6 × 1 × 5 × 5 + 6 bias = 156
+        Conv2: 16 × 6 × 5 × 5 + 16 bias = 2,416
+        FC1: 400 × 120 + 120 = 48,120
+        FC2: 120 × 84 + 84 = 10,164
+        FC3: 84 × 10 + 10 = 850
+        ───────
+        Total: ~61,000 parameters
+
+        Notice: FC layers have way more params than conv layers.
+        This is why modern architectures minimise FC layers.</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"What happens for variable image sizes? The FC part would break, right?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Exactly. Conv layers don't care about image size — kernel just slides however many times it can. But FC layer
+            has fixed input size.</p>
+        <p><strong>Solutions:</strong></p>
+        <ul>
+            <li>Resize all images to same size (most common — ImageNet uses 224×224)</li>
+            <li><strong>Global Average Pooling</strong> — instead of flatten, average each channel to one number: (16,
+                5, 5) → GAP → (16,). Same output size regardless of spatial dimensions. This is what modern
+                architectures use.</li>
+        </ul>
+    </div>
+
+    <div class="part-header">
+        <div class="part-label">Part IV</div>
+        <h2>Evolution of Architectures</h2>
+    </div>
+
+    <h2 id="ch11"><span class="chapter-num">11</span> From LeNet to Vision Transformers</h2>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-year">1998</div>
+            <div class="timeline-title">LeNet</div>
+            <a href="http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf" class="timeline-link">Gradient-Based Learning —
+                LeCun et al.</a>
+            <p class="timeline-desc">First working CNN. Conv → Pool → FC architecture for digit recognition. Proved that
+                neural networks could learn hierarchical features from raw pixels.</p>
+            <p class="timeline-problem">Problem: Limited by compute of the era. Couldn't scale to larger images or
+                deeper networks.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2012</div>
+            <div class="timeline-title">AlexNet — The Deep Learning Revolution</div>
+            <a href="https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
+                class="timeline-link">ImageNet Classification with Deep CNNs — Krizhevsky et al.</a>
+            <p class="timeline-desc">LeNet scaled up massively. Won ImageNet by a huge margin. Key additions: ReLU
+                (instead of sigmoid), Dropout for regularisation, GPU training with model parallelism.</p>
+            <p class="timeline-problem">Problem: Still just "stack more layers" — no principled way to go deeper. 8
+                layers was already pushing limits.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2014</div>
+            <div class="timeline-title">VGGNet — Deeper with 3×3s</div>
+            <a href="https://arxiv.org/abs/1409.1556" class="timeline-link">Very Deep Convolutional Networks — Simonyan
+                & Zisserman</a>
+            <p class="timeline-desc">"Just use 3×3 convs everywhere, stack them deep." VGG-16 and VGG-19. Key insight:
+                two 3×3 convs have same receptive field as one 5×5, but fewer parameters and more non-linearity.</p>
+            <p class="timeline-problem">Problem: 138M parameters. Very slow. Going beyond 19 layers caused degradation —
+                deeper models performed worse.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2014</div>
+            <div class="timeline-title">GoogLeNet / Inception — Multiple Kernel Sizes</div>
+            <a href="https://arxiv.org/abs/1409.4842" class="timeline-link">Going Deeper with Convolutions — Szegedy et
+                al.</a>
+            <p class="timeline-desc">"Why choose one kernel size? Use multiple in parallel." Inception module: 1×1, 3×3,
+                5×5 convs side by side, concatenate results. Introduced 1×1 convolutions for cheap channel reduction
+                before expensive operations.</p>
+            <p class="timeline-problem">Problem: Complex architecture, hard to modify. Still couldn't go arbitrarily
+                deep.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2015</div>
+            <div class="timeline-title">ResNet — The Skip Connection Breakthrough ⭐</div>
+            <a href="https://arxiv.org/abs/1512.03385" class="timeline-link">Deep Residual Learning — He et al.</a>
+            <p class="timeline-desc">Solved the degradation problem — why deeper networks performed worse. Key
+                innovation: skip connections. Instead of learning H(x), learn the residual F(x) = H(x) - x, so output =
+                F(x) + x.</p>
+            <p class="timeline-fix">Fix: The +x provides a gradient highway. Even if F(x) gradients vanish, gradient
+                still flows through identity. Enabled 152 layers (vs VGG's 19). Still the backbone of most vision models
+                today.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2017</div>
+            <div class="timeline-title">MobileNet — CNNs for Phones</div>
+            <a href="https://arxiv.org/abs/1704.04861" class="timeline-link">MobileNets — Howard et al.</a>
+            <p class="timeline-desc">Key trick: depthwise separable convolutions. Split spatial filtering (depthwise)
+                from channel mixing (pointwise 1×1). Same effective operation, ~8× fewer parameters and FLOPs.</p>
+            <p class="timeline-fix">Fix: Made CNNs practical for mobile devices and edge deployment. Spawned
+                MobileNetV2, V3 with further optimisations.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2017</div>
+            <div class="timeline-title">Squeeze-and-Excitation Networks</div>
+            <a href="https://arxiv.org/abs/1709.01507" class="timeline-link">SE-Net — Hu et al.</a>
+            <p class="timeline-desc">"Let the network learn which channels are important." Global average pool → FC →
+                sigmoid → reweight channels. Adds channel attention with minimal overhead.</p>
+            <p class="timeline-fix">Fix: Can be added to any architecture. Won ImageNet 2017. Channel attention became a
+                standard component.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2019</div>
+            <div class="timeline-title">EfficientNet — Neural Architecture Search</div>
+            <a href="https://arxiv.org/abs/1905.11946" class="timeline-link">EfficientNet — Tan & Le</a>
+            <p class="timeline-desc">"Stop hand-designing, let NAS find optimal scaling." Compound scaling: scale depth,
+                width, and resolution together with fixed ratios. EfficientNet-B0 to B7 family.</p>
+            <p class="timeline-fix">Fix: State-of-the-art accuracy/efficiency tradeoff. Showed that scaling all
+                dimensions together beats scaling just one.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2020</div>
+            <div class="timeline-title">Vision Transformer (ViT) — Attention Is All You Need (for Vision)</div>
+            <a href="https://arxiv.org/abs/2010.11929" class="timeline-link">An Image is Worth 16x16 Words — Dosovitskiy
+                et al.</a>
+            <p class="timeline-desc">Throw away convolutions entirely. Chop image into 16×16 patches, flatten, add
+                positional embeddings, feed to standard transformer encoder. Direct application of NLP transformer
+                architecture to vision.</p>
+            <p class="timeline-problem">Problem: Needs massive data (ImageNet-21k or JFT-300M) to match CNNs. Without
+                enough data, lacks the inductive bias that convolutions provide for free.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2021</div>
+            <div class="timeline-title">Swin Transformer — Efficient Vision Transformer</div>
+            <a href="https://arxiv.org/abs/2103.14030" class="timeline-link">Swin Transformer — Liu et al.</a>
+            <p class="timeline-desc">Make ViT efficient and hierarchical like CNNs. Key innovations: shifted windows for
+                local attention (not full image), hierarchical feature maps (like CNN pyramid), linear complexity in
+                image size.</p>
+            <p class="timeline-fix">Fix: Best of both worlds — transformer flexibility with CNN-like efficiency.
+                State-of-the-art on many vision benchmarks.</p>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-year">2022</div>
+            <div class="timeline-title">ConvNeXt — CNNs Strike Back</div>
+            <a href="https://arxiv.org/abs/2201.03545" class="timeline-link">A ConvNet for the 2020s — Liu et al.</a>
+            <p class="timeline-desc">"What if we modernise CNNs with all the tricks learned from transformers?" Pure CNN
+                with: larger kernels (7×7), fewer activations, LayerNorm instead of BatchNorm, inverted bottlenecks,
+                separate downsampling layers.</p>
+            <p class="timeline-fix">Result: Pure CNN matching Swin Transformer performance. Proved that architecture
+                differences matter less than training recipes. CNNs aren't dead.</p>
+        </div>
+    </div>
+
+    <div class="key-insight">
+        <div class="label">The Through-Line</div>
+        <p>Every innovation attacks one of three constraints:</p>
+        <ul>
+            <li><strong>Depth</strong> — Skip connections (ResNet) enabled 100+ layers</li>
+            <li><strong>Efficiency</strong> — Depthwise separable, 1×1 convs, NAS</li>
+            <li><strong>Global context</strong> — Vision Transformers, but CNNs can match with modern training</li>
+        </ul>
+    </div>
+
+    <h2 id="ch12"><span class="chapter-num">12</span> Why Vision Transformers?</h2>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"But doesn't receptive field handle global context for CNNs?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Yes, but only at the <em>end</em> of the network.</p>
+    </div>
+
+    <div class="ascii-diagram">Layer 1: RF = 3×3 → can only compare nearby pixels
+        Layer 5: RF = 11×11 → still local
+        Layer 10: RF = 21×21 → still not full image
+        ...
+        Layer 30: RF = 224×224 → finally sees whole image</div>
+
+    <p>The network <em>can</em> eventually see both corners. But information has to travel through 30 layers — by the
+        time distant pixels "meet", the information has been transformed and potentially lost.</p>
+
+    <p><strong>Transformers:</strong> Self-attention compares every patch to every other patch directly in layer 1.
+        Global context immediately.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>CNN</th>
+                <th>Transformer</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Local patterns</td>
+                <td>Great (built-in bias)</td>
+                <td>Has to learn it</td>
+            </tr>
+            <tr>
+                <td>Global patterns</td>
+                <td>Slow (needs depth)</td>
+                <td>Instant (attention)</td>
+            </tr>
+            <tr>
+                <td>Data needed</td>
+                <td>Less (strong bias helps)</td>
+                <td>More (no bias)</td>
+            </tr>
+            <tr>
+                <td>Compute</td>
+                <td>Cheaper</td>
+                <td>O(n²) in patches</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"But I thought the point of CNNs was local position info vs flattened networks? Aren't transformers just
+            fancy flattened networks?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Good catch — there's a tension here.</p>
+        <p>CNNs bake in "local matters" as a hard constraint. Transformers say "learn what matters" — attention
+            <em>can</em> look everywhere, but <em>learns</em> to focus locally when useful.</p>
+        <p>What actually happens in trained ViT: early layers have mostly local attention (learns CNN-like behaviour),
+            later layers become more global. The transformer essentially <em>learns</em> to act like a CNN early on,
+            then goes beyond.</p>
+        <p>ConvNeXt (2022) showed: if you train CNNs with transformer-style tricks, they match transformers.
+            Architecture may matter less than training recipes.</p>
+    </div>
+
+    <div class="part-header">
+        <div class="part-label">Part V</div>
+        <h2>Advanced Topics</h2>
+    </div>
+
+    <h2 id="ch13"><span class="chapter-num">13</span> 1×1 Convolutions</h2>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"A 1×1 kernel? What can it even do?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>No spatial mixing — just channel mixing. It's a learned weighted combination across channels at each pixel.
+        </p>
+    </div>
+
+    <div class="ascii-diagram">Input at one pixel: [c1, c2, c3, c4] (4 channels)
+        1×1 kernel: [w1, w2, w3, w4]
+
+        Output = w1×c1 + w2×c2 + w3×c3 + w4×c4
+
+        That's a dot product — combining information from all channels.</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"For a single input channel, a 1×1 conv would just result in scaled input?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Yes, exactly. 1×1 on single channel = scaling = pointless. The power comes from channel mixing when you have
+            multiple channels.</p>
+    </div>
+
+    <p><strong>Use cases:</strong></p>
+    <ul>
+        <li>Cheap dimensionality reduction before expensive 3×3 convs</li>
+        <li>Adding non-linearity without spatial change</li>
+    </ul>
+
+    <h2 id="ch14"><span class="chapter-num">14</span> Depthwise Separable Convolutions</h2>
+
+    <p>Normal conv does spatial filtering AND channel mixing in one operation. Depthwise separable splits them:</p>
+
+    <div class="ascii-diagram">Step 1 — Depthwise: one 3×3 kernel per channel (spatial only)
+        Input: H × W × 64 → 64 separate 3×3 kernels → H × W × 64
+        Cost: 3 × 3 × 64 = 576 parameters
+
+        Step 2 — Pointwise: 1×1 conv (channel mixing only)
+        Input: H × W × 64 → 128 filters of 1×1×64 → H × W × 128
+        Cost: 1 × 1 × 64 × 128 = 8,192 parameters
+
+        Total: 576 + 8,192 = 8,768 parameters
+
+        Normal conv: 3 × 3 × 64 × 128 = 73,728 parameters
+
+        ~8× cheaper!</div>
+
+    <p>Used in MobileNet, EfficientNet — anywhere efficiency matters.</p>
+
+    <h2 id="ch15"><span class="chapter-num">15</span> Dilated (Atrous) Convolutions</h2>
+
+    <p>Expand receptive field without pooling by spacing out the kernel:</p>
+
+    <div class="ascii-diagram">Normal 3×3: Dilated 3×3 (dilation=2):
+
+        ■ ■ ■ ■ · ■ · ■
+        ■ ■ ■ · · · · ·
+        ■ ■ ■ ■ · ■ · ■
+        · · · · ·
+        Sees 3×3 ■ · ■ · ■
+
+        Sees 5×5 area, same 9 parameters</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"What are the gaps?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>The kernel skips pixels. The · positions are just ignored — the kernel doesn't look at them. Same 9 weights,
+            but applied to pixels that are spaced apart.</p>
+    </div>
+
+    <p>Used in DeepLab (segmentation), WaveNet (audio) — anywhere you need global context without losing resolution.</p>
+
+    <h2 id="ch16"><span class="chapter-num">16</span> Transposed Convolutions & U-Net</h2>
+
+    <h4>Transposed Convolution</h4>
+
+    <p>For upsampling — going from small to big. Used in segmentation, GANs.</p>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why did transposed conv get a bad rep?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p><strong>Checkerboard artifacts.</strong> When stride > 1, the "stamps" overlap unevenly — some pixels get
+            more contributions than others, creating visible grid patterns.</p>
+        <p><strong>Modern solution:</strong> Nearest neighbour upsample + regular conv. Cleaner results.</p>
+    </div>
+
+    <div class="ascii-diagram">Transposed conv: tries to upsize AND learn in one step
+        → uneven "stamps" create grid patterns
+
+        Upsample + conv:
+        Step 1: Upsample (dumb resize — repeat or interpolate)
+        Step 2: Conv (learned refinement)
+        → cleaner, no artifacts</div>
+
+    <div class="question-block">
+        <div class="label">🤔 Question</div>
+        <p>"Why conv after upsample?"</p>
+    </div>
+
+    <div class="answer-block">
+        <div class="label">✓ Answer</div>
+        <p>Upsampling alone doesn't add any new information — it just repeats or interpolates. Conv after lets the
+            network <em>learn</em> how to fill in details.</p>
+    </div>
+
+    <h4>U-Net</h4>
+
+    <p>Segmentation architecture with encoder-decoder + skip connections:</p>
+
+    <div class="ascii-diagram">Encoder (downsample): Decoder (upsample):
+
+        224×224 ─────────────────────────────────► concat → 224×224
+        ↓ ↑
+        112×112 ─────────────────────────────► concat → 112×112
+        ↓ ↑
+        56×56 ───────────────────────────► concat → 56×56
+        ↓ ↑
+        28×28 ─────────────────────► concat → 28×28
+        ↓ ↑
+        14×14 (bottleneck) ───────────────
+
+        The U shape:
+        Down Up
+        \ /
+        \ /
+        \ /
+        \/
+        bottleneck</div>
+
+    <p>Skip connections from encoder to decoder preserve fine spatial details (edges, precise boundaries) that get lost
+        during downsampling.</p>
+
+    <h2 id="ch17"><span class="chapter-num">17</span> BatchNorm & Skip Connections</h2>
+
+    <h4>BatchNorm in CNNs</h4>
+
+    <p>CNN activations have shape: <code>(batch, channels, H, W)</code></p>
+
+    <p>BatchNorm2d normalises across batch AND spatial dimensions, but separately per channel:</p>
+
+    <div class="ascii-diagram">For channel 0:
+        Collect all values: 32 batches × 14 × 14 positions = 6,272 values
+        Compute mean and variance
+        Normalise
+
+        Repeat for each of 64 channels.
+
+        Why per channel? Each channel detects different features with different statistics.</div>
+
+    <h4>Skip Connections — Why Gradients Flow</h4>
+
+    <p>The problem with deep networks:</p>
+
+    <div class="math-block">
+        $$\frac{\partial \text{Loss}}{\partial \text{Layer}_1} = \frac{\partial \text{Loss}}{\partial \text{Layer}_{50}}
+        \times \frac{\partial \text{Layer}_{50}}{\partial \text{Layer}_{49}} \times \cdots$$
+    </div>
+
+    <p>That's 49 multiplications. If each term < 1, gradient vanishes.</p>
+
+            <p><strong>With skip connection:</strong></p>
+
+            <div class="math-block">
+                $$y = F(x) + x$$
+                $$\frac{\partial y}{\partial x} = \frac{\partial F(x)}{\partial x} + 1$$
+            </div>
+
+            <div class="key-insight">
+                <div class="label">Key Insight</div>
+                <p>That <strong>+1</strong> is the key. Even if ∂F(x)/∂x vanishes, gradient is still at least 1. The
+                    gradient has a "highway" — it can skip directly through the + without being multiplied by small
+                    weights 50 times.</p>
+                <p>That's why ResNet could train 152 layers when VGG struggled with 19.</p>
+            </div>
+
+            <!-- TL;DR -->
+            <div class="tldr">
+                <div class="label">TL;DR</div>
+                <ul>
+                    <li><strong>Convolutions exploit spatial structure</strong> — local patterns matter, weight sharing
+                        is efficient</li>
+                    <li><strong>Output size:</strong> $\lfloor(H - k + 2P)/s\rfloor + 1$</li>
+                    <li><strong>Cost:</strong> $k^2 \times \text{in} \times \text{out} \times H' \times W'$</li>
+                    <li><strong>Receptive field grows with depth</strong> — early layers see edges, deep layers see
+                        objects</li>
+                    <li><strong>Stride 2 conv > pooling</strong> — gradients flow better, learns what to keep</li>
+                    <li><strong>Skip connections enable depth</strong> — ResNet's +1 gradient term was the breakthrough
+                    </li>
+                    <li><strong>1×1 conv</strong> = channel mixing. <strong>Depthwise separable</strong> = ~8× cheaper.
+                        <strong>Dilated</strong> = bigger RF, same params</li>
+                    <li><strong>CNNs vs Transformers:</strong> CNNs have strong local bias (good for small data),
+                        Transformers learn everything (need massive data)</li>
+                </ul>
+            </div>
+
+            <div class="interview-tip">
+                <div class="label">🎯 Interview Tip</div>
+                <p>"Convolutions work because images have spatial structure — nearby pixels are related. Weight sharing
+                    means we learn local patterns once and apply everywhere, giving translation equivariance. Receptive
+                    field grows with depth: early layers detect edges, deeper layers combine them into objects. Modern
+                    architectures use stride 2 conv instead of pooling (better gradients), skip connections (enables
+                    depth), and may even drop convolutions entirely for attention (ViT) when data is plentiful."</p>
+            </div>
+
+            <hr>
+
+            <p style="text-align: center; color: var(--text-muted);">
+                Part of the <a href="index.html" style="color: var(--accent);">Computer Vision</a> series
+                &nbsp;·&nbsp;
+                <a href="index.html" style="color: var(--accent);">Back to Blog</a>
+            </p>
+
+            <!-- Back to Top Button -->
+            <button class="back-to-top" aria-label="Back to top"
+                onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
+            <script>
+                // Math rendering
+                document.addEventListener("DOMContentLoaded", function () {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            { left: "$$", right: "$$", display: true },
+                            { left: "$", right: "$", display: false }
+                        ]
+                    });
+                });
+
+                // Back to top button visibility
+                const backToTop = document.querySelector('.back-to-top');
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 500) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                });
+
+                // Theme toggle
+                const themeToggle = document.getElementById('theme-toggle');
+                const root = document.documentElement;
+
+                // Check for saved preference or system preference
+                const savedTheme = localStorage.getItem('blog-theme');
+                if (savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                    root.classList.add('light');
+                    themeToggle.checked = true;
+                }
+
+                themeToggle.addEventListener('change', () => {
+                    if (themeToggle.checked) {
+                        root.classList.add('light');
+                        localStorage.setItem('blog-theme', 'light');
+                    } else {
+                        root.classList.remove('light');
+                        localStorage.setItem('blog-theme', 'dark');
+                    }
+                });
+            </script>
+</body>
+
+</html>
