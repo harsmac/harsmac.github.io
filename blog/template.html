@@ -44,6 +44,22 @@
             --border: #30363d;
         }
 
+        /* Light mode */
+        .light {
+            --bg: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --text: #1f2328;
+            --text-muted: #656d76;
+            --accent: #0969da;
+            /* <-- CHANGE THIS for article accent color (light mode) */
+            --accent-green: #1a7f37;
+            --accent-red: #cf222e;
+            --accent-yellow: #9a6700;
+            --accent-purple: #8250df;
+            --border: #d0d7de;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -67,11 +83,15 @@
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(13, 17, 23, 0.95);
+            background: var(--bg);
+            opacity: 0.95;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
             z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .article-nav a {
@@ -83,6 +103,34 @@
 
         .article-nav a:hover {
             opacity: 0.8;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-input {
+            display: none;
+        }
+
+        .theme-toggle {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle::before {
+            content: '☀️';
+            font-size: 1.2rem;
+        }
+
+        .light .theme-toggle::before {
+            content: '🌙';
         }
 
         /* Article Header */
@@ -472,6 +520,8 @@
     <!-- Navigation -->
     <nav class="article-nav">
         <a href="index.html" class="back-link">← Back to Blog</a>
+        <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
+        <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
     </nav>
 
     <!-- Article Header -->
@@ -574,6 +624,26 @@
                 backToTop.classList.add('visible');
             } else {
                 backToTop.classList.remove('visible');
+            }
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+
+        const savedTheme = localStorage.getItem('blog-theme');
+        if (savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            root.classList.add('light');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                root.classList.add('light');
+                localStorage.setItem('blog-theme', 'light');
+            } else {
+                root.classList.remove('light');
+                localStorage.setItem('blog-theme', 'dark');
             }
         });
     </script>
