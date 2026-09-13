@@ -2311,16 +2311,44 @@ ol.cv-pubs {
   bottom: var(--space-5);
 }
 
-/* Degrees ride the same rail as roles but read as a different kind of entry */
-.cv-timeline .cv-entry--edu {
-  background: transparent;
-  box-shadow: none;
-  border-style: dashed;
-}
+/* Degrees use the same card as roles; only the dot on the rail differs, so the
+   cards read as one set rather than two. */
 
 @supports (color: color-mix(in oklab, red, blue)) {
   .cv-timeline .cv-entry--edu::before {
     background: var(--card-bg);
     box-shadow: 0 0 0 3px var(--dot);
+  }
+}
+
+/* The photo only needs its own width; the text column should take the rest,
+   otherwise a 50/50 split wraps the eyebrow and breaks the name over 3 lines. */
+@media (min-width: 769px) {
+  .hero-photo {
+    flex: 0 0 auto;
+  }
+
+  .hero-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* only safe where the column is wide enough; on a phone it would overflow */
+  .hero-eyebrow {
+    white-space: nowrap;
+  }
+}
+
+
+/* A nowrap venue chip sets the grid track's min-content width, which pushed
+   paper rows past the viewport on very narrow phones. Let tracks shrink, and
+   let the longest chips wrap down there. */
+.paper-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 380px) {
+  .paper-venue {
+    white-space: normal;
   }
 }
