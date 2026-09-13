@@ -21,7 +21,7 @@
     <section class="hero" id="overview" data-nav-label="Overview">
       <div class="hero-text">
         <h1>Latent Adversarial Training</h1>
-        <p>Adversarial training protects the input layer. We show the damage simply moves inward — and that attacking, then hardening, the latent layers recovers several points of robust accuracy.</p>
+        <p>Adversarial training protects the input layer. We show the damage simply moves inward, and that attacking, then hardening, the latent layers recovers several points of robust accuracy.</p>
         <p class="project-links"><a href="https://arxiv.org/abs/1905.05186" target="_blank" rel="noreferrer">Paper (IJCAI 2019)</a><a href="https://github.com/msingh27/LAT_adversarial_robustness" target="_blank" rel="noreferrer">Code</a></p>
       </div>
     </section>
@@ -35,7 +35,7 @@
       </p>
       <p>
         We probed the latent layers of adversarially trained models directly and found exactly that gap. The
-        features are considerably less robust than the input-level guarantee suggests — small perturbations applied
+        features are considerably less robust than the input-level guarantee suggests: small perturbations applied
         to an intermediate activation flip the prediction even when no input-space attack of comparable strength can.
       </p>
     </section>
@@ -68,7 +68,7 @@
         <li><strong>LAT adds 4–6% robust accuracy.</strong> On CIFAR-10 and CIFAR-100, fine-tuning with latent
           perturbations improves adversarial accuracy over the adversarially trained baseline it starts from.</li>
         <li><strong>LA beats PGD on robust models.</strong> Attacking the latent space finds failures that
-          input-space PGD of the same budget misses — which means published robustness numbers measured with PGD
+          input-space PGD of the same budget misses, which means published robustness numbers measured with PGD
           alone are optimistic.</li>
       </ul>
     </section>
@@ -77,7 +77,7 @@
       <h2>Takeaways</h2>
       <p>
         If you only defend the input, you only measure the input. Evaluating and training at intermediate layers
-        gives both a stricter robustness estimate and a cheap way to improve it — no architecture changes, no
+        gives both a stricter robustness estimate and a cheap way to improve it: no architecture changes, no
         training from scratch.
       </p>
     </section>

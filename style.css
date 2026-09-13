@@ -2279,3 +2279,48 @@ ol.cv-pubs {
   z-index: 1;
   max-width: 320px;
 }
+
+/* Timeline entries get the same bounded card as papers, so the list-like
+   sections on the page share one treatment instead of three. */
+.cv-timeline .cv-entry {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.cv-timeline .cv-entry:hover {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-md);
+}
+
+.cv-timeline .cv-entry:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: var(--space-3);
+}
+
+.cv-timeline .cv-entry::before {
+  top: calc(var(--space-3) + 7px);
+}
+
+.cv-timeline::before {
+  top: calc(var(--space-3) + 13px);
+  bottom: var(--space-5);
+}
+
+/* Degrees ride the same rail as roles but read as a different kind of entry */
+.cv-timeline .cv-entry--edu {
+  background: transparent;
+  box-shadow: none;
+  border-style: dashed;
+}
+
+@supports (color: color-mix(in oklab, red, blue)) {
+  .cv-timeline .cv-entry--edu::before {
+    background: var(--card-bg);
+    box-shadow: 0 0 0 3px var(--dot);
+  }
+}

@@ -46,8 +46,7 @@
       <h2>Approach</h2>
       <p>
         EREN is a differentiable normalisation and restoration stage placed between the input and a frozen
-        classifier. Because the whole path is differentiable, it can be trained through the classifier's loss —
-        the front-end learns to produce inputs that the <em>specific downstream model</em> reads correctly, rather
+        classifier. Because the whole path is differentiable, it can be trained through the classifier's loss: the front-end learns to produce inputs that the <em>specific downstream model</em> reads correctly, rather
         than inputs that merely look clean to a human.
       </p>
       <ul>
@@ -55,7 +54,7 @@
           is preserved by construction and the front-end transfers across deployments.</li>
         <li><strong>Adaptive normalisation.</strong> Corruption statistics vary per image; the normalisation is
           conditioned on the input rather than fixed at training time.</li>
-        <li><strong>Real-time budget.</strong> The stage is deliberately small — the point is a front-end you can
+        <li><strong>Real-time budget.</strong> The stage is deliberately small: the point is a front-end you can
           afford to run on every frame.</li>
       </ul>
     </section>

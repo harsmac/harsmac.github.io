@@ -22,8 +22,7 @@
         <section class="hero" id="overview" data-nav-label="Overview">
             <div class="hero-text">
                 <h1>Fairness vs. Robustness</h1>
-                <p>Does making a model adversarially robust also make it fair? We challenge this assumption —
-                    and find the answer is more complicated than it seems.</p>
+                <p>Does making a model adversarially robust also make it fair? We challenge this assumption, and find the answer is more complicated than it seems.</p>
             </div>
         </section>
 
@@ -31,8 +30,7 @@
         <section class="section">
             <h2>Project Overview</h2>
             <p>
-                A common intuition in ML safety is that adversarially robust models should also be <em>fairer</em> —
-                after all, if a model is harder to fool, it should rely on genuine features rather than spurious
+                A common intuition in ML safety is that adversarially robust models should also be <em>fairer</em>. After all, if a model is harder to fool, it should rely on genuine features rather than spurious
                 correlations tied to sensitive attributes like gender or background context. This project puts that
                 intuition to the test.
             </p>
@@ -47,7 +45,7 @@
         <section class="section" id="motivation">
             <h2>Motivation</h2>
             <p>
-                Adversarial training — exposing a model to worst-case perturbations during training — is the
+                Adversarial training, exposing a model to worst-case perturbations during training, is the
                 de-facto method for improving robustness. It encourages models to learn features that are stable
                 under small input changes. At the same time, biased models often latch onto <em>unstable</em>
                 shortcut features (e.g., background textures, co-occurrence statistics). So one might hope
@@ -57,7 +55,7 @@
                 But adversarial training optimises for <strong>average-case worst-case robustness</strong> across
                 the whole dataset. It says nothing about whether that robustness is distributed <em>equitably</em>
                 across demographic groups or classes. A model can become globally more robust while becoming
-                less robust — and less accurate — for minority or underrepresented groups.
+                less robust, and less accurate, for minority or underrepresented groups.
             </p>
             <figure class="chart-wrap">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" class="chart" role="img"
@@ -102,7 +100,7 @@
             <p>
                 We evaluate models trained with standard empirical risk minimisation alongside adversarially trained
                 counterparts (PGD-AT and TRADES) on ImageNet variants and background-augmented benchmarks. Fairness
-                is measured via class-wise accuracy gaps and worst-group accuracy — metrics that surface whether
+                is measured via class-wise accuracy gaps and worst-group accuracy, metrics that surface whether
                 robustness gains are spread evenly or concentrated on already-easy classes.
             </p>
             <ol>
@@ -128,7 +126,7 @@
                 </li>
                 <li>
                     <strong>Robust models retain background bias.</strong> Adversarially trained models still
-                    rely heavily on background context for classification — the robustness guarantee applies to
+                    rely heavily on background context for classification: the robustness guarantee applies to
                     ℓ∞ perturbations, not to the semantic spurious correlations that drive unfairness.
                 </li>
                 <li>
@@ -138,8 +136,7 @@
                 </li>
                 <li>
                     <strong>Standard training is more class-balanced, but fragile.</strong> Models trained
-                    without adversarial objectives show more uniform per-class performance — but at near-zero
-                    robustness to adversarial attack.
+                    without adversarial objectives show more uniform per-class performance, but at near-zero robustness to adversarial attack.
                 </li>
             </ul>
         </section>
@@ -151,7 +148,7 @@
                 Robustness and fairness are <strong>not substitutes</strong>. A model hardened against adversarial
                 perturbations can still make systematically unfair predictions for underrepresented groups.
                 Practitioners deploying adversarially trained models in high-stakes settings should audit
-                fairness metrics <em>independently</em> — robustness certificates are not fairness certificates.
+                fairness metrics <em>independently</em>: robustness certificates are not fairness certificates.
             </p>
             <p>
                 Future directions include class-reweighted adversarial training objectives that explicitly

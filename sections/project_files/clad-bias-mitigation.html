@@ -108,7 +108,7 @@
         <section class="hero">
             <div class="hero-text">
                 <h1>CLAD: Contrastive Learning for Background Debiasing</h1>
-                <p>CNNs learn to cheat — leaning on backgrounds rather than the objects themselves. CLAD fixes this
+                <p>CNNs learn to cheat by leaning on backgrounds rather than the objects themselves. CLAD fixes this
                     with a targeted contrastive objective, achieving state-of-the-art results on the Background
                     Challenge benchmark.</p>
                 <a class="paper-link" href="https://arxiv.org/abs/2210.02748" target="_blank" rel="noreferrer">
@@ -126,7 +126,7 @@
             <h2>The Problem: CNNs That Cheat on Backgrounds</h2>
             <p>
                 Despite achieving superhuman performance on many benchmarks, CNNs don't see images the way humans do.
-                They routinely exploit <strong>backgrounds and textures</strong> as shortcuts — a wolf classifier that
+                They routinely exploit <strong>backgrounds and textures</strong> as shortcuts: a wolf classifier that
                 fires because it sees snow, not the animal. This means excellent accuracy on standard test sets can
                 mask a model that will fail catastrophically when the background distribution shifts.
             </p>
@@ -145,7 +145,7 @@
         <section class="section" id="method">
             <h2>Method: Background-Debiased Contrastive Pairs</h2>
             <p>
-                Standard contrastive learning doesn't help here — conventional positive pairs share the same
+                Standard contrastive learning doesn't help here: conventional positive pairs share the same
                 background, so minimising their distance actually <em>reinforces</em> background bias. CLAD flips this
                 logic with a purpose-built sampling strategy:
             </p>
@@ -165,7 +165,7 @@
             <img loading="lazy" src="../../assets/clad/construct_samples.jpg"
                 alt="Contrastive pair sampling: conventional vs CLAD's background-debiased strategy" class="figure">
             <p class="fig-caption">Left: conventional contrastive learning preserves background in positive pairs.
-                Right: CLAD's strategy — same foreground, different background for positives; different foreground,
+                Right: CLAD's strategy: same foreground, different background for positives; different foreground,
                 same background for negatives.</p>
             <img loading="lazy" src="../../assets/clad/flow_chart.jpg" alt="Full CLAD training pipeline" class="figure">
             <p class="fig-caption">The full training pipeline: for each batch, positive samples are generated via
@@ -177,8 +177,7 @@
         <section class="section" id="results">
             <h2>Results</h2>
             <p>
-                Evaluated on the Background Challenge (ImageNet-9), CLAD and CLAD+ set a new state of the art —
-                with almost no accuracy trade-off on original, unmodified images.
+                Evaluated on the Background Challenge (ImageNet-9), CLAD and CLAD+ set a new state of the art, with almost no accuracy trade-off on original, unmodified images.
             </p>
 
             <div class="metric-row">
@@ -188,7 +187,7 @@
                 </div>
                 <div class="metric-card">
                     <div class="val">1.2</div>
-                    <div class="label">BG-GAP (CLAD+) — lowest of all methods</div>
+                    <div class="label">BG-GAP (CLAD+), lowest of all methods</div>
                 </div>
                 <div class="metric-card">
                     <div class="val">&lt;0.5%</div>
@@ -344,7 +343,7 @@
                 </svg>
             </figure>
             <p class="fig-caption">Models closer to the identity line have lower background bias. CLAD and CLAD+ sit
-                furthest right and closest to the line — high accuracy on both splits.</p>
+                furthest right and closest to the line: high accuracy on both splits.</p>
         </section>
 
         <!-- Analysis -->
@@ -354,19 +353,18 @@
             <h3 style="margin-top:1.5rem;">Saliency Maps</h3>
             <p>
                 SmoothGrad saliency maps make the improvement visually clear. Baseline models (Base-IN9 and Base-MR)
-                highlight background regions — notably the snow behind a wolf. CLAD and CLAD+ focus tightly on the
+                highlight background regions, notably the snow behind a wolf. CLAD and CLAD+ focus tightly on the
                 animal itself, even in cluttered scenes.
             </p>
             <img loading="lazy" src="../../assets/clad/saliency.jpg"
                 alt="Saliency maps: CLAD focuses on foreground vs baselines attending to background" class="figure">
             <p class="fig-caption">SmoothGrad saliency maps across four models. CLAD+ and CLAD produce cleaner,
-                foreground-focused maps. The wolf/snow example (row 2) is a classic CNN background bias failure —
-                only CLAD correctly attends to the animal.</p>
+                foreground-focused maps. The wolf/snow example (row 2) is a classic CNN background bias failure: only CLAD correctly attends to the animal.</p>
 
             <h3 style="margin-top:1.5rem;">Feature &amp; Decision Consistency</h3>
             <p>
                 CLAD+ achieves 92.0% feature similarity and 96.9% decision consistency between original and
-                background-swapped image pairs — meaning the model extracts nearly the same features regardless of
+                background-swapped image pairs, meaning the model extracts nearly the same features regardless of
                 what's behind the object. Baselines sit 10–17 points lower on both metrics.
             </p>
 
@@ -374,17 +372,13 @@
             <img loading="lazy" src="../../assets/clad/ablation_lambda.png"
                 alt="Ablation of lambda: MIXED-RAND improves while ORIGINAL stays stable up to λ=1" class="figure">
             <p class="fig-caption">As λ increases from 0 to 1, MIXED-RAND accuracy improves while ORIGINAL accuracy
-                stays flat. Beyond λ=1, the contrastive term dominates and performance on clean images degrades —
-                the sweet spot is λ=1.</p>
+                stays flat. Beyond λ=1, the contrastive term dominates and performance on clean images degrades. The sweet spot is λ=1.</p>
 
             <h3 style="margin-top:1.5rem;">Generalising to Texture Bias</h3>
             <p>
                 CLAD's framework is not specific to background. By swapping the contrastive construction to use
-                texture (via AdaIN style transfer) instead of background, the same approach reduces <em>texture
-                    bias</em>
-                — improving accuracy on Stylized ImageNet-9 and ImageNet-9-Sketch by ~20% over the standard baseline,
-                with no drop on original images. Background debiasing alone does not fully transfer to texture, and
-                vice versa — each bias requires its own targeted contrastive pairs.
+                texture (via AdaIN style transfer) instead of background, the same approach reduces <em>texture bias</em>, improving accuracy on Stylized ImageNet-9 and ImageNet-9-Sketch by ~20% over the standard baseline,
+                with no drop on original images. Background debiasing alone does not fully transfer to texture, and vice versa: each bias requires its own targeted contrastive pairs.
             </p>
         </section>
 
@@ -392,14 +386,13 @@
         <section class="section" id="takeaways">
             <h2>Takeaways</h2>
             <ul>
-                <li><strong>Contrastive pair design matters.</strong> Simply adding contrastive loss doesn't help —
-                    you need pairs where the <em>spurious feature is the only thing that varies</em>.</li>
+                <li><strong>Contrastive pair design matters.</strong> Simply adding contrastive loss doesn't help: you need pairs where the <em>spurious feature is the only thing that varies</em>.</li>
                 <li><strong>The negative dictionary is key.</strong> It provides scalable, hard negatives that share
                     background with the anchor, without requiring expensive per-sample generation.</li>
                 <li><strong>No accuracy trade-off.</strong> Unlike augmentation-only baselines (e.g. Base-MR, which
                     drops 7.6% on ORIGINAL to gain robustness), CLAD achieves both.</li>
                 <li><strong>Generalises beyond background.</strong> The same contrastive recipe reduces texture bias
-                    when applied to shape/texture pairs — suggesting a general framework for targeted debiasing.</li>
+                    when applied to shape/texture pairs, suggesting a general framework for targeted debiasing.</li>
             </ul>
         </section>
     </main>

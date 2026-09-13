@@ -94,7 +94,7 @@
         <section class="hero">
             <div class="hero-text">
                 <h1>Are Adversarial Examples also Features in NLP?</h1>
-                <p>Adversarial perturbations in vision models encode discriminative features — not random noise. We
+                <p>Adversarial perturbations in vision models encode discriminative features, not random noise. We
                     ask whether the same holds for language models, and find that it does, along with a troubling
                     consequence: those features encode gender and religious bias.</p>
                 <p class="authors">With Javier Maroto &amp; Apostolos Modas · EPFL</p>
@@ -105,8 +105,7 @@
         <section class="section" id="overview">
             <h2>Project Overview</h2>
             <p>
-                It's well established in computer vision that adversarial perturbations aren't just noise — they
-                span a <strong>low-dimensional, highly discriminative subspace</strong> that captures the features
+                It's well established in computer vision that adversarial perturbations aren't just noise: they span a <strong>low-dimensional, highly discriminative subspace</strong> that captures the features
                 a model relies on most. Remove that subspace from the data and accuracy collapses; keep only that
                 subspace and accuracy is nearly preserved.
             </p>
@@ -117,7 +116,7 @@
                 to identify the dominant eigen-directions of those perturbations.
             </p>
             <div class="insight-box">
-                <strong>Core finding:</strong> Yes — adversarial perturbations in NLP span a compact subspace that
+                <strong>Core finding:</strong> Yes. Adversarial perturbations in NLP span a compact subspace that
                 encodes most of BERT's discriminative power. And alarmingly, that same subspace is strongly aligned
                 with gender and religious bias features.
             </div>
@@ -127,8 +126,8 @@
         <section class="section" id="method">
             <h2>Methodology</h2>
             <p>
-                We use two BERT models — one trained normally (94% test accuracy) and one adversarially trained with
-                TextAttack (95% test accuracy) — on the IMDB 25k-review sentiment dataset.
+                We use two BERT models, one trained normally (94% test accuracy) and one adversarially trained with
+                TextAttack (95% test accuracy), on the IMDB 25k-review sentiment dataset.
             </p>
             <ol>
                 <li><strong>Adversarial perturbation generation:</strong> For each word embedding in the dataset, apply
@@ -138,7 +137,7 @@
                     T ∈ ℝ<sup>(N×W)×D</sup> (N=25,000 reviews) and run SVD to obtain the eigen basis V with singular
                     values S ranked by importance.</li>
                 <li><strong>Discriminative power test:</strong> Project clean embeddings onto the top-k eigenvectors
-                    and measure classification accuracy — how much of the model's knowledge lives in each subspace?</li>
+                    and measure classification accuracy: how much of the model's knowledge lives in each subspace?</li>
                 <li><strong>Bias alignment test:</strong> Use WEAT bias word pairs (e.g. <em>he/she</em>,
                     <em>church/mosque</em>, <em>art/science</em>) and measure how much of their energy concentrates in
                     the top eigen components.
@@ -151,7 +150,7 @@
             <h2>Results: A Compact, Powerful Subspace</h2>
             <p>
                 The singular value spectrum drops sharply after the first few hundred dimensions, indicating that the
-                adversarial perturbation space is highly structured — not uniform noise. The discriminative power
+                adversarial perturbation space is highly structured, not uniform noise. The discriminative power
                 test confirms this:
             </p>
 
@@ -162,7 +161,7 @@
                 </div>
                 <div class="metric-card">
                     <div class="val">53%</div>
-                    <div class="label">accuracy after removing just the top 50 eigenvectors — near random</div>
+                    <div class="label">accuracy after removing just the top 50 eigenvectors (near random)</div>
                 </div>
                 <div class="metric-card">
                     <div class="val">80%</div>
@@ -176,8 +175,7 @@
                 confirm that the subspace is where the discriminative information lives.</p>
 
             <p>
-                Crucially, this pattern holds for both the standard and adversarially trained model — adversarial
-                training compresses the subspace slightly (300 eigenvectors needed instead of 400) but does not
+                Crucially, this pattern holds for both the standard and adversarially trained model; adversarial training compresses the subspace slightly (300 eigenvectors needed instead of 400) but does not
                 remove its discriminative structure.
             </p>
         </section>
@@ -197,7 +195,7 @@
             </p>
 
             <p>Decomposing energy on the adversarial eigen-basis separates the three bias types cleanly. Gender and
-                religion concentrate their energy in the top components — the model is using them as discriminative
+                religion concentrate their energy in the top components: the model is using them as discriminative
                 features. Subject bias (art versus science) spreads out far more evenly, meaning the model is
                 largely invariant to it.</p>
 
@@ -243,7 +241,7 @@
             <div class="insight-box">
                 <strong>Key insight:</strong> The robust model associates male pronouns more strongly with positive
                 sentiment. When male → female pronouns are swapped, its positive prediction rate drops more sharply
-                than the standard model's — adversarial training did not make it fairer; it may have made it
+                than the standard model's. Adversarial training did not make it fairer; it may have made it
                 less fair.
             </div>
         </section>
@@ -253,8 +251,7 @@
             <h2>Takeaways</h2>
             <ul>
                 <li><strong>Adversarial perturbations in NLP are features, not bugs.</strong> Even in the discrete
-                    embedding space, they span a low-dimensional, highly discriminative subspace — mirroring findings
-                    in vision.</li>
+                    embedding space, they span a low-dimensional, highly discriminative subspace, mirroring findings in vision.</li>
                 <li><strong>That subspace encodes social biases.</strong> Gender and religious associations
                     concentrate in the top adversarial eigen-directions, meaning the model treats them as core
                     classification features.</li>
@@ -262,7 +259,7 @@
                     alignment. Robustness to synonym substitution does not imply invariance to sensitive attributes.
                 </li>
                 <li><strong>SVD of adversarial perturbations is a powerful interpretability tool.</strong> It reveals
-                    what a model is <em>actually</em> using to make decisions — without needing to hand-craft probes.
+                    what a model is <em>actually</em> using to make decisions, without needing to hand-craft probes.
                 </li>
             </ul>
             <p>

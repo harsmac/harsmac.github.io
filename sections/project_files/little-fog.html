@@ -21,7 +21,7 @@
     <section class="hero" id="overview" data-nav-label="Overview">
       <div class="hero-text">
         <h1>A Little Fog for a Large Turn</h1>
-        <p>Adversarial examples usually look like static. We asked whether the weather could do the same job — and found that physically plausible fog is enough to send a steering model off the road.</p>
+        <p>Adversarial examples usually look like static. We asked whether the weather could do the same job, and found that physically plausible fog is enough to send a steering model off the road.</p>
         <p class="project-links"><a href="https://openaccess.thecvf.com/content_WACV_2020/html/Machiraju_A_Little_Fog_for_a_Large_Turn_WACV_2020_paper.html" target="_blank" rel="noreferrer">Paper (WACV 2020)</a><a href="https://github.com/harsmac/A_Little_fog_for_a_Large_Turn" target="_blank" rel="noreferrer">Code</a></p>
       </div>
     </section>
@@ -35,7 +35,7 @@
       </p>
       <p>
         What does happen is weather. Fog, rain and glare are common, uncontrolled, and change the image a great deal
-        more than any &#8467;<sub>p</sub> budget allows — while remaining entirely natural. If a navigation model
+        more than any &#8467;<sub>p</sub> budget allows, while remaining entirely natural. If a navigation model
         breaks under realistic fog, that is a safety finding, not a curiosity.
       </p>
       <p>
@@ -60,7 +60,7 @@
         <li><strong>DistanceGAN.</strong> An alternative one-sided mapping that preserves pairwise distances, used
           as a check that the findings are not an artefact of one generator.</li>
         <li><strong>Adversarial search.</strong> Rather than perturbing pixels, we optimise in the generator's
-          latent space for the fog that maximises steering error — every candidate is a realistic image by
+          latent space for the fog that maximises steering error: every candidate is a realistic image by
           construction.</li>
       </ol>
     </section>
@@ -89,7 +89,7 @@
         a model survives imperceptible noise, but whether it survives a bad afternoon.
       </p>
       <p>
-        The same machinery doubles as a data generator — synthetic adverse-weather sets for training and for
+        The same machinery doubles as a data generator: synthetic adverse-weather sets for training and for
         regression-testing a stack before it meets real fog.
       </p>
     </section>
