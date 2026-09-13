@@ -7,12 +7,17 @@
   <title>Harshitha Machiraju — Portfolio</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 
 <body>
   <!-- Flowing waves background -->
-  <div class="wave-bg" aria-hidden="true"></div>
+  <div class="wave-bg" aria-hidden="true"><span></span></div>
 
   <!-- Sticky header with brand and navigation links -->
   <header class="site-header">
@@ -26,7 +31,7 @@
       <!-- <a href="#blog">Blog</a> -->
       <a href="blog/index.html" target="_blank">Blog</a>
 
-      <a href="assets/Resume general AI.pdf" target="_blank">Resume</a>
+      <a href="resume.html">Resume</a>
       <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
       <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
     </nav>
@@ -71,11 +76,11 @@
   </main>
 
   <!-- Parallax scroll script -->
-  <script src="parallax.js"></script>
+  <script src="parallax.js?v=3"></script>
   <!-- Section loader script -->
-  <script src="section-loader.js"></script>
-  <script src="menu.js"></script>
-  <script src="theme.js"></script>
+  <script src="section-loader.js?v=3"></script>
+  <script src="menu.js?v=3"></script>
+  <script src="theme.js?v=3"></script>
 
   <!-- Copyright notice -->
   <footer class="copyright">
