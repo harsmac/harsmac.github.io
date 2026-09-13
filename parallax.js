@@ -5,12 +5,19 @@
   const root = document.documentElement;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  const waveBg = document.querySelector('.wave-bg');
+
   const update = () => {
     if (reduced.matches) return root.style.setProperty('--wave-y', '0px');
     const vh = window.innerHeight || 1;
+    // Measure the wave layer's own box. window.innerHeight grows when a mobile
+    // URL bar hides, while a position:fixed element keeps the small viewport;
+    // using the window there shifted the layers further than their headroom
+    // allowed and exposed their flat bottom edge as a hard horizontal line.
+    const boxH = (waveBg && waveBg.clientHeight) || vh;
     const scrollable = Math.max(1, document.documentElement.scrollHeight - vh);
     const progress = Math.min(1, Math.max(0, (window.scrollY || 0) / scrollable));
-    root.style.setProperty('--wave-y', `${-progress * vh * 0.3}px`);
+    root.style.setProperty('--wave-y', `${-progress * boxH * 0.3}px`);
   };
 
   update();

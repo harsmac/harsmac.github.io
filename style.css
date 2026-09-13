@@ -220,9 +220,11 @@ main {
   position: absolute;
   left: 0;
   /* One tile wider than the viewport, so translating by exactly one tile
-     loops with no seam. Taller than the viewport to give --wave-y headroom. */
+     loops with no seam. 150% tall gives --wave-y 50% of headroom for a 30%
+     shift, so the layer's flat bottom edge can never enter the viewport even
+     if the measured height and the CSS percentage disagree. */
   width: calc(100% + var(--tile));
-  height: 132%;
+  height: 150%;
   mask-repeat: repeat-x;
   mask-position: left bottom;
   -webkit-mask-repeat: repeat-x;
