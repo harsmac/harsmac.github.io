@@ -2201,3 +2201,81 @@ ol.cv-pubs {
     background: #999;
   }
 }
+
+/* ============================================
+   PAGE RHYTHM
+   Every section used to arrive with the same padding and the same decorated
+   heading, so the page read as five equal modules. Experience and Projects
+   are the peaks and keep the full treatment; Papers and Education are the
+   quieter interludes between them.
+   ============================================ */
+#experience h2,
+#projects h2 {
+  font-size: var(--step-4);
+}
+
+#experience h2::after,
+#projects h2::after {
+  width: 72px;
+  height: 4px;
+}
+
+#papers h2,
+#education h2 {
+  font-size: var(--step-2);
+  color: var(--ink-muted);
+}
+
+#papers h2::after,
+#education h2::after {
+  display: none;
+}
+
+#papers,
+#education {
+  padding-block: var(--space-5);
+}
+
+/* Dates should sit under the role title, not compete with it */
+.cv-timeline .cv-when span {
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-subtle);
+  background: transparent;
+  border-color: transparent;
+  padding-left: 0;
+}
+
+/* Hero */
+.hero-eyebrow {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  color: var(--brand-strong);
+}
+
+/* A soft halo turns the portrait from a profile widget into part of the
+   composition. Sits behind the photo so the spin animation is untouched. */
+.hero-photo {
+  position: relative;
+}
+
+.hero-photo::before {
+  content: '';
+  position: absolute;
+  inset: -14% -6% -10% -6%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 32%, color-mix(in oklab, var(--brand), transparent 62%), transparent 62%),
+    radial-gradient(circle at 70% 74%, color-mix(in oklab, var(--accent), transparent 74%), transparent 60%);
+  filter: blur(18px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-photo img {
+  position: relative;
+  z-index: 1;
+  max-width: 320px;
+}

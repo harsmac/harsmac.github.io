@@ -1,11 +1,10 @@
 // Dynamic section loader for modular content
 (function() {
   const sections = {
-    'background': 'sections/background.html',
     'experience': 'sections/experience.html',
-    'papers': 'sections/papers.html', 
+    'papers': 'sections/papers.html',
     'projects': 'sections/projects.html',
-    // 'blog': 'sections/blog.html'
+    'education': 'sections/education.html',
   };
 
   const loadedSections = new Set();
@@ -21,13 +20,8 @@
       placeholder.className = 'section-placeholder';
       placeholder.innerHTML = '<div class="loading">Loading...</div>';
       
-      // Insert after hero section
-      const hero = document.querySelector('.hero');
-      if (hero && sectionId === 'background') {
-        hero.parentNode.insertBefore(placeholder, hero.nextSibling);
-      } else {
-        main.appendChild(placeholder);
-      }
+      // The hero is already inside main, so appending in key order is the order
+      main.appendChild(placeholder);
       
       sectionContainers.set(sectionId, placeholder);
     });
