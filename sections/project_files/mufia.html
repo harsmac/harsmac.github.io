@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MUFIA</title>
+  <meta name="description" content="A multiplicative frequency attack that exposes the spectral blind spots shared by deep vision models." />
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+  <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=3" />
+</head>
+
+<body>
+  <main>
+    <section class="hero" id="overview" data-nav-label="Overview">
+      <div class="hero-text">
+        <h1>MUFIA</h1>
+        <p>Deep vision models fail on corruptions that humans barely notice. MUFIA asks the question in the frequency domain: which parts of the spectrum is a model actually leaning on, and what happens when you turn them down?</p>
+        <p class="project-links"><a href="https://arxiv.org/abs/2306.07178" target="_blank" rel="noreferrer">Paper</a><a href="https://github.com/harsmac/MUFIACode" target="_blank" rel="noreferrer">Code</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="motivation">
+      <h2>Motivation</h2>
+      <p>
+        Benchmarks such as ImageNet-C test robustness with a fixed menu of hand-picked corruptions — blur, noise,
+        weather, compression. They tell you <em>that</em> a model breaks, but not <em>why</em>. Two models with
+        identical ImageNet-C scores can fail for completely different reasons.
+      </p>
+      <p>
+        Frequency is a more honest coordinate system. Natural images concentrate their energy in low frequencies;
+        most corruptions are really reweightings of the spectrum. If you can find the frequency band a model depends
+        on, you have found its failure mode — and you have found it in a form that transfers across architectures.
+      </p>
+    </section>
+
+    <section class="section" id="method">
+      <h2>Method</h2>
+      <p>
+        MUFIA (Multiplicative Frequency Attack) decomposes an image with a DCT, then searches for a
+        <strong>multiplicative mask</strong> over frequency coefficients that flips the model's prediction while
+        keeping the image perceptually close to the original. Because the perturbation is multiplicative rather
+        than additive, it behaves like a plausible corruption — an attenuation of detail — rather than like noise
+        pasted on top of the picture.
+      </p>
+      <img class="figure" loading="lazy" src="../../assets/projects/mufia_overview.jpg"
+        alt="Diagram of the MUFIA pipeline: DCT decomposition, learned multiplicative mask, inverse DCT." />
+      <p class="caption">The MUFIA pipeline: decompose, learn a multiplicative frequency mask, reconstruct.</p>
+      <ol>
+        <li><strong>Decompose.</strong> Transform the image into DCT frequency bands.</li>
+        <li><strong>Search.</strong> Optimise a per-band multiplicative mask against the model's loss, constrained
+          to stay within a perceptual similarity budget.</li>
+        <li><strong>Reconstruct.</strong> Invert the transform. The result reads as a mildly degraded photograph,
+          not an attacked one.</li>
+      </ol>
+    </section>
+
+    <section class="section" id="findings">
+      <h2>What we found</h2>
+      <ul>
+        <li><strong>The blind spots are shared.</strong> Masks found against one architecture transfer to others,
+          including models trained with completely different recipes. The vulnerability lives in the data
+          statistics, not in any one network.</li>
+        <li><strong>Corruption-robust training does not close them.</strong> Models hardened on ImageNet-C style
+          augmentations remain vulnerable to MUFIA — they learned those specific corruptions, not the underlying
+          spectral sensitivity.</li>
+        <li><strong>Perceptual similarity stays high.</strong> The attacked images remain close to the originals
+          under perceptual metrics, so the failures are not explained away as out-of-distribution inputs.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="takeaways">
+      <h2>Takeaways</h2>
+      <p>
+        Robustness benchmarks built from a fixed corruption list overstate how robust models really are. A
+        frequency-domain view gives a sharper, architecture-agnostic picture of where a model is fragile — and a
+        cheap way to generate new corruptions that a benchmark has never seen.
+      </p>
+      <p>
+        This line of work fed directly into <a href="eren.html">EREN</a>, which attacks the same problem from the
+        other end: fixing the input before it reaches the classifier.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="../../project-chrome.js?v=3"></script>
+  <script src="../../parallax.js?v=3"></script>
+  <script src="../../menu.js?v=3"></script>
+  <script src="../../theme.js?v=3"></script>
+</body>
+
+</html>

@@ -5,9 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adversarial Subspace Analysis in NLP</title>
-    <link rel="icon" href="https://harsmac.github.io/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
-    <link rel="stylesheet" href="https://harsmac.github.io/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+    <link rel="stylesheet" href="../../style.css?v=3">
     <style>
         .metric-row {
             display: flex;
@@ -83,42 +88,6 @@
 </head>
 
 <body>
-    <div class="wave-bg" aria-hidden="true"></div>
-    <aside class="social-bar" aria-label="Social links">
-        <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path
-                    d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.8.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.3 1-.3 2-.4 3-.4s2 .1 3 .4C18 5.4 19 5.7 19 5.7c.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.4.3.8 1 .8 2v3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" />
-            </svg>
-        </a>
-        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank"
-            rel="noreferrer">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path
-                    d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.6 4.8 6v8.6h-4V15c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V23h-4V8.5z" />
-            </svg>
-        </a>
-        <a href="mailto:harshitha.acad@gmail.com" aria-label="Email">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 13 2 6.76V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6.76L12 13zm10-9H2l10 6 10-6z" />
-            </svg>
-        </a>
-    </aside>
-
-    <header class="site-header">
-        <a class="brand" href="https://harsmac.github.io/">HM</a>
-        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-        <nav class="site-nav" data-collapsible>
-            <a href="https://harsmac.github.io/">Home</a>
-            <a href="#overview">Overview</a>
-            <a href="#method">Method</a>
-            <a href="#results">Results</a>
-            <a href="#bias">Bias</a>
-            <a href="#takeaways">Takeaways</a>
-            <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
-            <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
-        </nav>
-    </header>
 
     <main>
         <!-- Hero -->
@@ -201,13 +170,10 @@
                 </div>
             </div>
 
-            <img src="../../assets/adversarial_nlp/figures/svd_accuracy.png"
-                alt="Singular value spectrum and classification accuracy vs. number of eigenvectors used or removed"
-                class="figure">
-            <p class="fig-caption">Top: singular value profiles for standard (left) and adversarially trained BERT
-                (right) — both show a sharp drop, indicating structured subspaces. Bottom: projecting onto the
-                top-k eigenvectors (left) quickly recovers near-full accuracy; removing the top-k (right) causes
-                accuracy to collapse, confirming the subspace encodes discriminative information.</p>
+            <p>The singular value profiles of both the standard and the adversarially trained BERT drop sharply,
+                which is the signature of a structured subspace. Projecting onto the top-k eigenvectors recovers
+                near-full accuracy; removing those same k directions makes accuracy collapse. Together these
+                confirm that the subspace is where the discriminative information lives.</p>
 
             <p>
                 Crucially, this pattern holds for both the standard and adversarially trained model — adversarial
@@ -230,19 +196,15 @@
                 important feature for classification. A flat distribution means the model is effectively invariant.
             </p>
 
-            <img src="../../assets/adversarial_nlp/figures/bias_plots.png"
-                alt="Energy decomposition on adversarial basis: gender (left), religion (middle), subjects (right)"
-                class="figure">
-            <p class="fig-caption">Energy decomposition on the adversarial eigen-basis for three bias types. Gender
-                (left) and religion (middle) show concentrated energy in top components — the model uses these as
-                discriminative features. Subject bias (art vs. science, right) shows a flatter distribution —
-                the model is largely invariant to it.</p>
+            <p>Decomposing energy on the adversarial eigen-basis separates the three bias types cleanly. Gender and
+                religion concentrate their energy in the top components — the model is using them as discriminative
+                features. Subject bias (art versus science) spreads out far more evenly, meaning the model is
+                largely invariant to it.</p>
 
-            <img src="../../assets/adversarial_nlp/figures/bias_energy.png"
-                alt="Energy of synonym substitutions and gender table results" class="figure">
-            <p class="fig-caption">Synonym substitution energy profiles (left: standard model, right: robust model).
-                The robust model distributes energy more evenly — consistent with synonym invariance — but gender
-                and religious biases remain concentrated at the top in both models.</p>
+            <p>Across synonym substitution energy profiles, the robust model spreads energy more evenly than the
+                standard one, which is consistent with the synonym invariance adversarial training is supposed to
+                buy. Gender and religious bias, however, stay concentrated in the top components of
+                <em>both</em> models.</p>
 
             <h3 style="margin-top:1.5rem;">Input Manipulation: Gender Pronoun Swaps</h3>
             <p>
@@ -309,19 +271,12 @@
                 framework to decoder-based LLMs where the embedding space has richer structure.
             </p>
         </section>
-
-        <div class="section" style="text-align:center; padding-bottom:4rem;">
-            <a href="https://harsmac.github.io/" class="primary-btn">← Back to Home</a>
-        </div>
     </main>
 
-    <footer>
-        <p>© 2026 Harshitha Machiraju. All rights reserved.</p>
-    </footer>
-
-    <script src="https://harsmac.github.io/parallax.js"></script>
-    <script src="https://harsmac.github.io/menu.js"></script>
-    <script src="https://harsmac.github.io/theme.js"></script>
+    <script src="../../project-chrome.js?v=3"></script>
+    <script src="../../parallax.js?v=3"></script>
+    <script src="../../menu.js?v=3"></script>
+    <script src="../../theme.js?v=3"></script>
 </body>
 
 </html>

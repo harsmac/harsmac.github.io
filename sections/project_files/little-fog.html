@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Little Fog for a Large Turn</title>
+  <meta name="description" content="Generative fog as a natural adversary for autonomous navigation models. WACV 2020." />
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+  <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=3" />
+</head>
+
+<body>
+  <main>
+    <section class="hero" id="overview" data-nav-label="Overview">
+      <div class="hero-text">
+        <h1>A Little Fog for a Large Turn</h1>
+        <p>Adversarial examples usually look like static. We asked whether the weather could do the same job — and found that physically plausible fog is enough to send a steering model off the road.</p>
+        <p class="project-links"><a href="https://openaccess.thecvf.com/content_WACV_2020/html/Machiraju_A_Little_Fog_for_a_Large_Turn_WACV_2020_paper.html" target="_blank" rel="noreferrer">Paper (WACV 2020)</a><a href="https://github.com/harsmac/A_Little_fog_for_a_Large_Turn" target="_blank" rel="noreferrer">Code</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="motivation">
+      <h2>Motivation</h2>
+      <p>
+        The standard threat model for adversarial robustness is an &#8467;<sub>p</sub> ball: perturbations small
+        enough that no human would notice. It is mathematically clean and operationally irrelevant. Nobody airbrushes
+        pixel noise onto a road sign at 60&nbsp;km/h.
+      </p>
+      <p>
+        What does happen is weather. Fog, rain and glare are common, uncontrolled, and change the image a great deal
+        more than any &#8467;<sub>p</sub> budget allows — while remaining entirely natural. If a navigation model
+        breaks under realistic fog, that is a safety finding, not a curiosity.
+      </p>
+      <p>
+        So we redefined the perturbation budget in <strong>perceptual</strong> terms instead of pixel terms: the
+        attacked image must remain a believable photograph of the same scene, not merely a nearby point in pixel
+        space.
+      </p>
+    </section>
+
+    <section class="section" id="method">
+      <h2>Method</h2>
+      <p>
+        We learn the clear&nbsp;&rarr;&nbsp;foggy mapping with unpaired image translation, then search
+        <em>inside</em> the generator for the fog that most damages a downstream steering model.
+      </p>
+      <img class="figure" loading="lazy" src="../../assets/projects/fog_generation.jpg"
+        alt="Clear driving scenes transformed into realistic foggy conditions." />
+      <p class="caption">Clear-weather frames transformed into physically plausible fog.</p>
+      <ol>
+        <li><strong>CycleGAN.</strong> Learns a clear&#8596;foggy mapping from unpaired data while preserving the
+          structure of the scene, so the road geometry the steering model needs is still there.</li>
+        <li><strong>DistanceGAN.</strong> An alternative one-sided mapping that preserves pairwise distances, used
+          as a check that the findings are not an artefact of one generator.</li>
+        <li><strong>Adversarial search.</strong> Rather than perturbing pixels, we optimise in the generator's
+          latent space for the fog that maximises steering error — every candidate is a realistic image by
+          construction.</li>
+      </ol>
+    </section>
+
+    <section class="section" id="results">
+      <h2>Results</h2>
+      <img class="figure" loading="lazy" src="../../assets/projects/fog_results.jpg"
+        alt="Generated foggy frames alongside the resulting steering-angle predictions." />
+      <p class="caption">Left: generated fog. Right: the resulting shift in predicted steering angle.</p>
+      <ul>
+        <li><strong>Large turns from a little fog.</strong> Fog well within the range a human driver would call
+          "light" produces steering-angle errors big enough to leave the lane.</li>
+        <li><strong>Not just degradation.</strong> Randomly sampled fog of the same density does far less damage
+          than the adversarially searched fog, so the effect is a targeted failure, not a general loss of image
+          quality.</li>
+        <li><strong>Consistent across generators.</strong> Both CycleGAN and DistanceGAN pipelines reproduce the
+          effect, on multiple steering models.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="impact">
+      <h2>Why it matters</h2>
+      <p>
+        This was, to our knowledge, the first work to use generative weather as an adversarial attack on
+        autonomous navigation. It reframes robustness testing for driving: the interesting question is not whether
+        a model survives imperceptible noise, but whether it survives a bad afternoon.
+      </p>
+      <p>
+        The same machinery doubles as a data generator — synthetic adverse-weather sets for training and for
+        regression-testing a stack before it meets real fog.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="../../project-chrome.js?v=3"></script>
+  <script src="../../parallax.js?v=3"></script>
+  <script src="../../menu.js?v=3"></script>
+  <script src="../../theme.js?v=3"></script>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EREN</title>
+  <meta name="description" content="A differentiable pre-processing front-end that restores corrupted inputs before they reach the classifier." />
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+  <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=3" />
+</head>
+
+<body>
+  <main>
+    <section class="hero" id="overview" data-nav-label="Overview">
+      <div class="hero-text">
+        <h1>EREN</h1>
+        <p>Most corruption-robustness work retrains the classifier. EREN asks whether you can leave the backbone alone and fix the image on the way in.</p>
+        <p class="project-links"><span class="paper-venue">Under review, 2024</span></p>
+      </div>
+    </section>
+
+    <section class="section" id="motivation">
+      <h2>Motivation</h2>
+      <p>
+        Retraining a large vision backbone for robustness is expensive, and it has to be redone every time the
+        backbone changes. Worse, the gains are narrow: a model augmented against a fixed corruption list learns
+        those corruptions, as our work on <a href="mufia.html">MUFIA</a> showed, rather than the underlying
+        sensitivity.
+      </p>
+      <p>
+        A pre-processing front-end is a different bargain. It sits in front of any classifier, it is small enough
+        to train quickly, and it can be swapped out without touching the deployed model. The question is whether a
+        front-end can actually recover the signal a corruption destroyed, rather than just smoothing the image
+        until the classifier stops complaining.
+      </p>
+    </section>
+
+    <section class="section" id="approach">
+      <h2>Approach</h2>
+      <p>
+        EREN is a differentiable normalisation and restoration stage placed between the input and a frozen
+        classifier. Because the whole path is differentiable, it can be trained through the classifier's loss —
+        the front-end learns to produce inputs that the <em>specific downstream model</em> reads correctly, rather
+        than inputs that merely look clean to a human.
+      </p>
+      <ul>
+        <li><strong>Frozen backbone.</strong> The classifier is never updated, so existing accuracy on clean data
+          is preserved by construction and the front-end transfers across deployments.</li>
+        <li><strong>Adaptive normalisation.</strong> Corruption statistics vary per image; the normalisation is
+          conditioned on the input rather than fixed at training time.</li>
+        <li><strong>Real-time budget.</strong> The stage is deliberately small — the point is a front-end you can
+          afford to run on every frame.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="evaluation">
+      <h2>Evaluation</h2>
+      <p>
+        We evaluate against common natural corruptions and against frequency-domain attacks, which are the harder
+        test: a front-end that only learned to undo Gaussian blur will not survive a corruption it has never seen.
+        Alongside accuracy we report clean-accuracy retention, since a defence that quietly costs several points on
+        uncorrupted data is not a defence anyone will deploy.
+      </p>
+    </section>
+
+    <section class="section" id="status">
+      <h2>Status</h2>
+      <p>
+        Under review, 2024. Part of my doctoral work at EPFL on
+        <a href="https://infoscience.epfl.ch/entities/publication/ac8892a4-df42-4176-8c1e-fc16df744f74"
+          target="_blank" rel="noreferrer">robust vision models</a>.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="../../project-chrome.js?v=3"></script>
+  <script src="../../parallax.js?v=3"></script>
+  <script src="../../menu.js?v=3"></script>
+  <script src="../../theme.js?v=3"></script>
+</body>
+
+</html>

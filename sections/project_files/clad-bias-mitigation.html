@@ -5,9 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAD: Contrastive Learning for Background Debiasing</title>
-    <link rel="icon" href="https://harsmac.github.io/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
-    <link rel="stylesheet" href="https://harsmac.github.io/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+    <link rel="stylesheet" href="../../style.css?v=3">
     <style>
         .results-table {
             width: 100%;
@@ -97,42 +102,6 @@
 </head>
 
 <body>
-    <div class="wave-bg" aria-hidden="true"></div>
-    <aside class="social-bar" aria-label="Social links">
-        <a href="https://github.com/harsmac" aria-label="GitHub" target="_blank" rel="noreferrer">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path
-                    d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.8.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.3 1-.3 2-.4 3-.4s2 .1 3 .4C18 5.4 19 5.7 19 5.7c.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.5-2.7 5.5-5.3 5.8.4.3.8 1 .8 2v3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" />
-            </svg>
-        </a>
-        <a href="https://www.linkedin.com/in/harshitha-machiraju" aria-label="LinkedIn" target="_blank"
-            rel="noreferrer">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path
-                    d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8.5h4V23h-4V8.5zM8.5 8.5h3.8v2h.1c.5-1 1.8-2.1 3.8-2.1 4 0 4.8 2.6 4.8 6v8.6h-4V15c0-1.9 0-4.4-2.7-4.4-2.7 0-3.1 2.1-3.1 4.2V23h-4V8.5z" />
-            </svg>
-        </a>
-        <a href="mailto:harshitha.acad@gmail.com" aria-label="Email">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 13 2 6.76V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6.76L12 13zm10-9H2l10 6 10-6z" />
-            </svg>
-        </a>
-    </aside>
-
-    <header class="site-header">
-        <a class="brand" href="https://harsmac.github.io/">HM</a>
-        <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-        <nav class="site-nav" data-collapsible>
-            <a href="https://harsmac.github.io/">Home</a>
-            <a href="#overview">Overview</a>
-            <a href="#method">Method</a>
-            <a href="#results">Results</a>
-            <a href="#analysis">Analysis</a>
-            <a href="#takeaways">Takeaways</a>
-            <input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />
-            <label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>
-        </nav>
-    </header>
 
     <main>
         <!-- Hero -->
@@ -166,7 +135,7 @@
                 normally show dramatic accuracy drops when objects are placed on completely random backgrounds
                 (MIXED-RAND), even though the foreground hasn't changed at all.
             </p>
-            <img src="../../assets/clad/intro_fig.png"
+            <img loading="lazy" src="../../assets/clad/intro_fig.jpg"
                 alt="CLAD feature space: robust to background, sensitive to foreground" class="figure">
             <p class="fig-caption">CLAD learns a feature space that stays consistent across background changes while
                 remaining sensitive to foreground object differences.</p>
@@ -193,12 +162,12 @@
                     InfoNCE contrastive loss (L<sub>con</sub>), weighted by λ. CLAD+ optionally adds classification
                     loss on the positive samples too.</li>
             </ol>
-            <img src="../../assets/clad/construct_samples.png"
+            <img loading="lazy" src="../../assets/clad/construct_samples.jpg"
                 alt="Contrastive pair sampling: conventional vs CLAD's background-debiased strategy" class="figure">
             <p class="fig-caption">Left: conventional contrastive learning preserves background in positive pairs.
                 Right: CLAD's strategy — same foreground, different background for positives; different foreground,
                 same background for negatives.</p>
-            <img src="../../assets/clad/flow_chart.png" alt="Full CLAD training pipeline" class="figure">
+            <img loading="lazy" src="../../assets/clad/flow_chart.jpg" alt="Full CLAD training pipeline" class="figure">
             <p class="fig-caption">The full training pipeline: for each batch, positive samples are generated via
                 background swapping, used to update the negative dictionary, and the combined loss is computed over
                 anchor, positive, and negative features.</p>
@@ -296,8 +265,84 @@
             <p class="fig-caption">Accuracy (%) on Background Challenge variants. BG-GAP = MIXED-SAME − MIXED-RAND;
                 lower means less background bias.</p>
 
-            <img src="../../assets/clad/results.png"
-                alt="MIXED-SAME vs MIXED-RAND scatter: CLAD closest to identity line" class="figure">
+            <figure class="chart-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 600" role="img" aria-label="Model accuracy on Mixed-Same versus Mixed-Rand. CLAD and CLAD+ sit closest to the identity line, meaning the least background bias." class="chart">
+                <style>
+                .chart{font-family:var(--font-body,system-ui,sans-serif)}
+                .chart .plot-bg{fill:var(--chart-plot,#eef0f6)}
+                .chart .grid{stroke:var(--chart-grid,#fff);stroke-width:1.2}
+                .chart .ident{stroke:var(--ink,#17171c);stroke-width:2;stroke-dasharray:9 7;fill:none;opacity:.65}
+                .chart .tick{fill:var(--ink-muted,#4f5060);font-size:16px}
+                .chart .axis{fill:var(--ink,#17171c);font-size:19px;font-weight:600}
+                .chart .lbl{font-size:14px;font-weight:500}
+                .chart .g-other{fill:var(--chart-other,#2f7d32)}
+                .chart .g-base{fill:var(--chart-base,#2438c4)}
+                .chart .g-ours{fill:var(--chart-ours,#d92b2b)}
+                .chart .note{fill:var(--ink-subtle,#737485);font-size:14px;font-style:italic}
+                </style>
+                <rect class="plot-bg" x="74" y="18" width="590" height="520" rx="4"/>
+                <line class="grid" x1="163.4" y1="18" x2="163.4" y2="538"/>
+                <line class="grid" x1="74" y1="459.2" x2="664" y2="459.2"/>
+                <text class="tick" x="163.4" y="564" text-anchor="middle">65</text>
+                <text class="tick" x="62" y="465.2" text-anchor="end">65</text>
+                <line class="grid" x1="252.8" y1="18" x2="252.8" y2="538"/>
+                <line class="grid" x1="74" y1="380.4" x2="664" y2="380.4"/>
+                <text class="tick" x="252.8" y="564" text-anchor="middle">70</text>
+                <text class="tick" x="62" y="386.4" text-anchor="end">70</text>
+                <line class="grid" x1="342.2" y1="18" x2="342.2" y2="538"/>
+                <line class="grid" x1="74" y1="301.6" x2="664" y2="301.6"/>
+                <text class="tick" x="342.2" y="564" text-anchor="middle">75</text>
+                <text class="tick" x="62" y="307.6" text-anchor="end">75</text>
+                <line class="grid" x1="431.6" y1="18" x2="431.6" y2="538"/>
+                <line class="grid" x1="74" y1="222.8" x2="664" y2="222.8"/>
+                <text class="tick" x="431.6" y="564" text-anchor="middle">80</text>
+                <text class="tick" x="62" y="228.8" text-anchor="end">80</text>
+                <line class="grid" x1="521.0" y1="18" x2="521.0" y2="538"/>
+                <line class="grid" x1="74" y1="144.1" x2="664" y2="144.1"/>
+                <text class="tick" x="521.0" y="564" text-anchor="middle">85</text>
+                <text class="tick" x="62" y="150.1" text-anchor="end">85</text>
+                <line class="grid" x1="610.4" y1="18" x2="610.4" y2="538"/>
+                <line class="grid" x1="74" y1="65.3" x2="664" y2="65.3"/>
+                <text class="tick" x="610.4" y="564" text-anchor="middle">90</text>
+                <text class="tick" x="62" y="71.3" text-anchor="end">90</text>
+                <line class="ident" x1="74.0" y1="538.0" x2="664.0" y2="18.0"/>
+                <text class="note" x="127.6" y="449.8" transform="rotate(-45 127.6 449.8)">no background bias</text>
+                <polygon class="g-base" points="472.7,273.2 480.2,286.7 465.2,286.7"/>
+                <text class="lbl g-base" x="482.7" y="285.2" text-anchor="start">Base (IN)</text>
+                <polygon class="g-base" points="565.7,318.8 573.2,332.3 558.2,332.3"/>
+                <text class="lbl g-base" x="575.7" y="330.8" text-anchor="start">Base (IN9)</text>
+                <polygon class="g-base" points="558.5,109.3 566.0,122.8 551.0,122.8"/>
+                <text class="lbl g-base" x="548.5" y="121.3" text-anchor="end">Base (MR)</text>
+                <circle class="g-other" cx="606.8" cy="205.5" r="6.5"/>
+                <text class="lbl g-other" x="616.8" y="203.5" text-anchor="start">CIM</text>
+                <circle class="g-other" cx="622.9" cy="221.3" r="6.5"/>
+                <text class="lbl g-other" x="632.9" y="230.3" text-anchor="start">SCL_E2E</text>
+                <circle class="g-other" cx="613.9" cy="188.2" r="6.5"/>
+                <text class="lbl g-other" x="623.9" y="180.2" text-anchor="start">CIM+VIB</text>
+                <circle class="g-other" cx="417.3" cy="344.2" r="6.5"/>
+                <text class="lbl g-other" x="417.3" y="330.2" text-anchor="middle">SupCon+ShapeAug</text>
+                <circle class="g-other" cx="603.2" cy="140.9" r="6.5"/>
+                <text class="lbl g-other" x="601.2" y="127.9" text-anchor="middle">MoCo-v2</text>
+                <circle class="g-other" cx="613.9" cy="140.9" r="6.5"/>
+                <text class="lbl g-other" x="624.9" y="152.9" text-anchor="start">BYOL</text>
+                <circle class="g-other" cx="556.7" cy="268.5" r="6.5"/>
+                <text class="lbl g-other" x="566.7" y="272.5" text-anchor="start">SwAV</text>
+                <circle class="g-other" cx="363.6" cy="501.8" r="6.5"/>
+                <text class="lbl g-other" x="373.6" y="505.8" text-anchor="start">AttMask-High</text>
+                <circle class="g-other" cx="512.0" cy="348.9" r="6.5"/>
+                <text class="lbl g-other" x="522.0" y="352.9" text-anchor="start">MoCov2+GT</text>
+                <circle class="g-other" cx="519.2" cy="372.5" r="6.5"/>
+                <text class="lbl g-other" x="529.2" y="376.5" text-anchor="start">BYOL+GT</text>
+                <circle class="g-other" cx="420.8" cy="418.2" r="6.5"/>
+                <text class="lbl g-other" x="430.8" y="422.2" text-anchor="start">DILEMMA</text>
+                <g class="g-ours"><polygon points="619.30,67.80 621.40,73.41 627.39,73.68 622.70,77.41 624.30,83.18 619.30,79.87 614.31,83.18 615.91,77.41 611.22,73.68 617.20,73.41"/></g>
+                <text class="lbl g-ours" x="631.3" y="80.3" text-anchor="start">CLAD+</text>
+                <g class="g-ours"><polygon points="612.15,96.17 614.25,101.78 620.24,102.04 615.55,105.77 617.15,111.54 612.15,108.24 607.16,111.54 608.76,105.77 604.07,102.04 610.05,101.78"/></g>
+                <text class="lbl g-ours" x="624.2" y="108.7" text-anchor="start">CLAD</text>
+                <text class="axis" x="369" y="584" text-anchor="middle">Mixed-Same accuracy (%)</text>
+                <text class="axis" x="22" y="278" text-anchor="middle" transform="rotate(-90 22 278)">Mixed-Rand accuracy (%)</text>
+                </svg>
+            </figure>
             <p class="fig-caption">Models closer to the identity line have lower background bias. CLAD and CLAD+ sit
                 furthest right and closest to the line — high accuracy on both splits.</p>
         </section>
@@ -312,7 +357,7 @@
                 highlight background regions — notably the snow behind a wolf. CLAD and CLAD+ focus tightly on the
                 animal itself, even in cluttered scenes.
             </p>
-            <img src="../../assets/clad/saliency.png"
+            <img loading="lazy" src="../../assets/clad/saliency.jpg"
                 alt="Saliency maps: CLAD focuses on foreground vs baselines attending to background" class="figure">
             <p class="fig-caption">SmoothGrad saliency maps across four models. CLAD+ and CLAD produce cleaner,
                 foreground-focused maps. The wolf/snow example (row 2) is a classic CNN background bias failure —
@@ -326,7 +371,7 @@
             </p>
 
             <h3 style="margin-top:1.5rem;">Contrastive Loss Weight (λ) Ablation</h3>
-            <img src="../../assets/clad/ablation_lambda.png"
+            <img loading="lazy" src="../../assets/clad/ablation_lambda.png"
                 alt="Ablation of lambda: MIXED-RAND improves while ORIGINAL stays stable up to λ=1" class="figure">
             <p class="fig-caption">As λ increases from 0 to 1, MIXED-RAND accuracy improves while ORIGINAL accuracy
                 stays flat. Beyond λ=1, the contrastive term dominates and performance on clean images degrades —
@@ -357,19 +402,12 @@
                     when applied to shape/texture pairs — suggesting a general framework for targeted debiasing.</li>
             </ul>
         </section>
-
-        <div class="section" style="text-align:center; padding-bottom:4rem;">
-            <a href="https://harsmac.github.io/" class="primary-btn">← Back to Home</a>
-        </div>
     </main>
 
-    <footer>
-        <p>© 2026 Harshitha Machiraju. All rights reserved.</p>
-    </footer>
-
-    <script src="https://harsmac.github.io/parallax.js"></script>
-    <script src="https://harsmac.github.io/menu.js"></script>
-    <script src="https://harsmac.github.io/theme.js"></script>
+    <script src="../../project-chrome.js?v=3"></script>
+    <script src="../../parallax.js?v=3"></script>
+    <script src="../../menu.js?v=3"></script>
+    <script src="../../theme.js?v=3"></script>
 </body>
 
 </html>

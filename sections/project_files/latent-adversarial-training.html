@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latent Adversarial Training</title>
+  <meta name="description" content="Adversarially trained networks are still fragile inside. LAT hardens the latent layers. IJCAI 2019." />
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+  <script>/*! early-theme */(function () { try { var k = 'hm-theme', t = localStorage.getItem(k); if (t === 'dark' || t === 'light') { document.documentElement.classList.add(t); } } catch (e) { } })();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../../style.css?v=3" />
+</head>
+
+<body>
+  <main>
+    <section class="hero" id="overview" data-nav-label="Overview">
+      <div class="hero-text">
+        <h1>Latent Adversarial Training</h1>
+        <p>Adversarial training protects the input layer. We show the damage simply moves inward — and that attacking, then hardening, the latent layers recovers several points of robust accuracy.</p>
+        <p class="project-links"><a href="https://arxiv.org/abs/1905.05186" target="_blank" rel="noreferrer">Paper (IJCAI 2019)</a><a href="https://github.com/msingh27/LAT_adversarial_robustness" target="_blank" rel="noreferrer">Code</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="motivation">
+      <h2>Motivation</h2>
+      <p>
+        Adversarial training is the one defence that has reliably survived contact with stronger attacks. But it is
+        defined entirely at the input: perturb the pixels, minimise the worst-case loss. Nothing in that objective
+        says the network's <em>internal</em> representations have to be stable.
+      </p>
+      <p>
+        We probed the latent layers of adversarially trained models directly and found exactly that gap. The
+        features are considerably less robust than the input-level guarantee suggests — small perturbations applied
+        to an intermediate activation flip the prediction even when no input-space attack of comparable strength can.
+      </p>
+    </section>
+
+    <section class="section" id="method">
+      <h2>Method</h2>
+      <h3>Latent Attack (LA)</h3>
+      <p>
+        An &#8467;<sub>&infin;</sub> attack that constructs perturbations at an intermediate feature layer rather
+        than at the input. Because it works where the model is weakest, it outperforms standard PGD on adversarially
+        trained models across the datasets we tested.
+      </p>
+
+      <h3>Latent Adversarial Training (LAT)</h3>
+      <p>
+        A fine-tuning step, not a retrain. Starting from an already adversarially trained model, LAT alternates
+        input-space and latent-space perturbations, so the objective now covers both the pixels and the features
+        they produce. It is cheap: a short fine-tune on top of an existing robust checkpoint.
+      </p>
+      <p>
+        We validated on MNIST, CIFAR-10, CIFAR-100, SVHN and Restricted ImageNet.
+      </p>
+    </section>
+
+    <section class="section" id="findings">
+      <h2>What we found</h2>
+      <ul>
+        <li><strong>Robustness is not uniform through depth.</strong> Intermediate layers of adversarially trained
+          models remain attackable well after the input layer has been hardened.</li>
+        <li><strong>LAT adds 4–6% robust accuracy.</strong> On CIFAR-10 and CIFAR-100, fine-tuning with latent
+          perturbations improves adversarial accuracy over the adversarially trained baseline it starts from.</li>
+        <li><strong>LA beats PGD on robust models.</strong> Attacking the latent space finds failures that
+          input-space PGD of the same budget misses — which means published robustness numbers measured with PGD
+          alone are optimistic.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="takeaways">
+      <h2>Takeaways</h2>
+      <p>
+        If you only defend the input, you only measure the input. Evaluating and training at intermediate layers
+        gives both a stricter robustness estimate and a cheap way to improve it — no architecture changes, no
+        training from scratch.
+      </p>
+    </section>
+
+  </main>
+
+  <script src="../../project-chrome.js?v=3"></script>
+  <script src="../../parallax.js?v=3"></script>
+  <script src="../../menu.js?v=3"></script>
+  <script src="../../theme.js?v=3"></script>
+</body>
+
+</html>
