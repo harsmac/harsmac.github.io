@@ -1,11 +1,22 @@
-// Minimal parallax: update a CSS variable based on scroll
-(function(){
+// Wave background parallax.
+// Drives --wave-y across the layer's 30vh of headroom over the whole page,
+// so the waves drift slower than the content but always stay behind it.
+(function () {
   const root = document.documentElement;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
   const update = () => {
-    root.style.setProperty('--scroll', String(window.scrollY || 0));
+    if (reduced.matches) return root.style.setProperty('--wave-y', '0px');
+    const vh = window.innerHeight || 1;
+    const scrollable = Math.max(1, document.documentElement.scrollHeight - vh);
+    const progress = Math.min(1, Math.max(0, (window.scrollY || 0) / scrollable));
+    root.style.setProperty('--wave-y', `${-progress * vh * 0.3}px`);
   };
+
   update();
   window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  reduced.addEventListener('change', update);
 })();
 
 // Spin hero image on load and when scrolled through its midline
