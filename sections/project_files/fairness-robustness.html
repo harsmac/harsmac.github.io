@@ -59,9 +59,41 @@
                 across demographic groups or classes. A model can become globally more robust while becoming
                 less robust — and less accurate — for minority or underrepresented groups.
             </p>
-            <img src="../../assets/project2.jpg" alt="Fairness vs Robustness visualisation"
-                style="width:100%; max-height:340px; object-fit:cover; border-radius:var(--border-radius); margin-top:1.5rem;" />
-            <p class="caption">Illustration of the divergence between average robustness and group-level fairness.</p>
+            <figure class="chart-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" class="chart" role="img"
+                  aria-label="Schematic: as adversarial training strength increases, average robust accuracy rises while worst-class robust accuracy falls, widening the gap between them.">
+                <style>
+                  .chart{font-family:var(--font-body,system-ui,sans-serif)}
+                  .chart .axis-ln{fill:none;stroke:var(--ink-subtle,#737485);stroke-width:2;stroke-linecap:round}
+                  .chart .avg{fill:none;stroke:var(--chart-base,#2438c4);stroke-width:4;stroke-linecap:round}
+                  .chart .worst{fill:none;stroke:var(--chart-ours,#d92b2b);stroke-width:4;stroke-linecap:round}
+                  .chart .gap{fill:var(--chart-ours,#d92b2b);opacity:.11}
+                  .chart .lbl{font-size:17px;font-weight:600}
+                  .chart .lbl-avg{fill:var(--chart-base,#2438c4)}
+                  .chart .lbl-worst{fill:var(--chart-ours,#d92b2b)}
+                  .chart .ax{fill:var(--ink-muted,#4f5060);font-size:16px}
+                  .chart .note{fill:var(--ink-subtle,#737485);font-size:14px;font-style:italic}
+                  .chart .gap-ln{stroke:var(--ink-subtle,#737485);stroke-width:1.5;stroke-dasharray:5 5}
+                </style>
+                <!-- the widening gap is the whole point, so it is the filled shape -->
+                <path class="gap" d="M96,250 C240,214 380,192 610,178 L610,300 C380,268 240,258 96,250 Z"/>
+                <path class="axis-ln" d="M96,64 V340 H648"/>
+                <path class="avg" d="M96,250 C240,214 380,192 610,178"/>
+                <path class="worst" d="M96,250 C240,258 380,268 610,300"/>
+                <circle cx="96" cy="250" r="6" fill="var(--ink-subtle,#737485)"/>
+                <path class="gap-ln" d="M610,178 V300"/>
+                <path class="gap-ln" d="M602,178 H618 M602,300 H618"/>
+                <text class="lbl lbl-avg" x="604" y="162" text-anchor="end">Average over classes</text>
+                <text class="lbl lbl-worst" x="604" y="324" text-anchor="end">Worst-performing class</text>
+                <text class="note" x="596" y="245" text-anchor="end">the gap</text>
+                <text class="ax" x="96" y="366">no adversarial training</text>
+                <text class="ax" x="648" y="366" text-anchor="end">stronger adversarial training</text>
+                <text class="ax" x="96" y="52">robust accuracy</text>
+              </svg>
+            </figure>
+            <p class="caption">Schematic, not measured data: average robust accuracy can keep climbing while the
+                worst-performing class stalls or regresses. The gap between the two lines is what an average-only
+                metric hides.</p>
         </section>
 
         <!-- Analysis -->
