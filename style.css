@@ -2106,3 +2106,10 @@ ol.cv-pubs {
     display: none !important;
   }
 }
+
+/* Link out from the landing page's experience section to the full resume */
+.experience-more {
+  margin-top: var(--space-4);
+  font-size: var(--step--1);
+  font-weight: 500;
+}

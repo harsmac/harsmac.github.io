@@ -2,6 +2,7 @@
 (function() {
   const sections = {
     'background': 'sections/background.html',
+    'experience': 'sections/experience.html',
     'papers': 'sections/papers.html', 
     'projects': 'sections/projects.html',
     // 'blog': 'sections/blog.html'
