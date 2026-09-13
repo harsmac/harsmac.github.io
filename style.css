@@ -2039,3 +2039,70 @@ ol.cv-pubs {
     content: none;
   }
 }
+
+/* A wide table scrolls inside its own box rather than dragging the page sideways */
+.table-wrap {
+  overflow-x: auto;
+  margin: var(--space-4) 0 var(--space-2);
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap table {
+  margin: 0;
+}
+
+@media (max-width: 620px) {
+  .table-wrap {
+    mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+  }
+}
+
+/* Back to top */
+.to-top {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--brand-strong);
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, color .2s ease;
+}
+
+.to-top.is-shown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.to-top:hover,
+.to-top:focus-visible {
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+/* Below 1040px the social bar is a pill on the bottom edge; sit above it */
+@media (max-width: 1040px) {
+  .to-top {
+    bottom: calc(74px + env(safe-area-inset-bottom));
+  }
+}
+
+@media print {
+  .to-top {
+    display: none !important;
+  }
+}

@@ -62,6 +62,16 @@
     );
   }
 
+  // A wide table makes the whole PAGE scroll sideways on a phone. Give each one
+  // its own scroll container instead, so only the table moves.
+  document.querySelectorAll('main table').forEach((t) => {
+    if (t.parentElement.classList.contains('table-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+
   // A figure whose file is missing should leave a gap, not a broken-image box.
   // (Its caption goes with it.)
   document.querySelectorAll('main img').forEach((img) => {
