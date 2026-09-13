@@ -2113,3 +2113,91 @@ ol.cv-pubs {
   font-size: var(--step--1);
   font-weight: 500;
 }
+
+/* ============================================
+   CV TIMELINE
+   A rail with a dot per role. The rail grades from brand at the top (most
+   recent) toward the accent and then fades out at the bottom, so the sequence
+   reads as running back in time rather than just stopping.
+   ============================================ */
+.cv-timeline {
+  position: relative;
+  padding-left: 32px;
+  margin-top: var(--space-4);
+}
+
+.cv-timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 14px;
+  bottom: 0;
+  width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(180deg,
+      var(--brand-strong) 0%,
+      var(--brand) 38%,
+      var(--accent) 74%,
+      transparent 100%);
+}
+
+/* the rail replaces the row dividers */
+.cv-timeline .cv-entry {
+  position: relative;
+  border-top: 0;
+  padding: 0 0 var(--space-5);
+}
+
+.cv-timeline .cv-entry:last-of-type {
+  padding-bottom: var(--space-2);
+}
+
+/* index per entry, so each dot can sit at its own point along the ramp */
+.cv-timeline .cv-entry {
+  --i: 0;
+  --dot: color-mix(in oklab, var(--brand-strong), var(--accent) calc(var(--i) * 20%));
+}
+
+.cv-timeline .cv-entry:nth-of-type(2) {
+  --i: 1;
+}
+
+.cv-timeline .cv-entry:nth-of-type(3) {
+  --i: 2;
+}
+
+.cv-timeline .cv-entry:nth-of-type(4) {
+  --i: 3;
+}
+
+.cv-timeline .cv-entry:nth-of-type(5) {
+  --i: 4;
+}
+
+.cv-timeline .cv-entry:nth-of-type(n + 6) {
+  --i: 5;
+}
+
+.cv-timeline .cv-entry::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--brand-strong);
+}
+
+@supports (color: color-mix(in oklab, red, blue)) {
+  .cv-timeline .cv-entry::before {
+    background: var(--dot);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--dot), transparent 84%);
+  }
+}
+
+@media print {
+  .cv-timeline::before {
+    background: #999;
+  }
+}
