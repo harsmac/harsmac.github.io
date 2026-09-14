@@ -30,8 +30,12 @@
   --wave-far: rgba(24, 58, 119, 0.19);
   --wave-near: rgba(38, 91, 195, 0.25);
 
-  /* the blog's own tokens, remapped onto the palette above */
-  --bg: transparent;
+  /* the blog's own tokens, remapped onto the palette above.
+     --bg stays a SOLID colour: the blog uses `color: var(--bg)` as a
+     foreground on accent-filled pills (.series-badge and friends), so making
+     it transparent turned that text invisible. body is made transparent
+     separately, further down, so the wave field still shows through. */
+  --bg: #0b0f18;
   --bg-secondary: var(--surface);
   --bg-tertiary: var(--surface-strong);
   --text: var(--ink);
@@ -44,10 +48,18 @@
   --accent-forest: #83c9a5;
   --accent-red: #ff9ca6;
   --accent-yellow: #f2cb6b;
+
+  /* per-article identity hues (dark) */
+  --hue-vae: #aeb8ff;
+  --hue-gan: #ffad83;
+  --hue-diffusion: #c9b6ff;
+  --hue-transformers: #ff9ca6;
+  --hue-cnn: #83c9a5;
 }
 
 html.light {
   --page-bg: linear-gradient(180deg, #fbfcff, #f2f5ff);
+  --bg: #fbfcff;
   --ink: #17171c;
   --ink-muted: #4f5060;
   --ink-subtle: #737485;
@@ -70,6 +82,13 @@ html.light {
   --accent-forest: #39745c;
   --accent-red: #b6404d;
   --accent-yellow: #8a6100;
+
+  /* per-article identity hues (light) */
+  --hue-vae: #3b4fd0;
+  --hue-gan: #b4552f;
+  --hue-diffusion: #6b4fc4;
+  --hue-transformers: #b6404d;
+  --hue-cnn: #2f7d5b;
 }
 
 /* ---------- page ground + the site's wave field ---------- */
@@ -164,11 +183,13 @@ a { color: var(--accent); }
   color: var(--accent);
 }
 
-.chapter-number.vae { background: color-mix(in srgb, var(--brand) 18%, transparent); color: var(--brand); }
-.chapter-number.gan { background: color-mix(in srgb, var(--accent-orange) 18%, transparent); color: var(--accent-orange); }
-.chapter-number.diffusion { background: color-mix(in srgb, var(--accent-purple) 18%, transparent); color: var(--accent-purple); }
-.chapter-number.transformers { background: color-mix(in srgb, var(--accent-green) 18%, transparent); color: var(--accent-green); }
-.chapter-number.cnn { background: color-mix(in srgb, var(--accent-forest) 18%, transparent); color: var(--accent-forest); }
+/* Each chapter dot on the index uses that article's own accent, so the index
+   and the article it opens agree. Values match the theme-*.css files. */
+.chapter-number.vae { background: color-mix(in srgb, var(--hue-vae) 18%, transparent); color: var(--hue-vae); }
+.chapter-number.gan { background: color-mix(in srgb, var(--hue-gan) 18%, transparent); color: var(--hue-gan); }
+.chapter-number.diffusion { background: color-mix(in srgb, var(--hue-diffusion) 18%, transparent); color: var(--hue-diffusion); }
+.chapter-number.transformers { background: color-mix(in srgb, var(--hue-transformers) 18%, transparent); color: var(--hue-transformers); }
+.chapter-number.cnn { background: color-mix(in srgb, var(--hue-cnn) 18%, transparent); color: var(--hue-cnn); }
 
 .key-insight {
   background: linear-gradient(135deg,

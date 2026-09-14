@@ -1,0 +1,6 @@
+/* Transformers article theme: the shared blog theme, then this article's own accent.
+   The blog gives every article a distinct accent (red here) and that identity
+   is worth keeping; these values are the site-harmonised version of it. */
+@import url("blog-theme.css?v=5");
+
+:root { --accent: var(--hue-transformers); }
