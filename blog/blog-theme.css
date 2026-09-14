@@ -1,0 +1,265 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap");
+
+/* ============================================================
+   BLOG THEME
+   Restyles the blog to match the main site without touching any
+   article markup. It works by redefining the blog's own tokens
+   (--bg, --text, --accent, ...) and overriding the few rules that
+   hardcode colours. Keyed off html.light, which is the class the
+   blog's existing toggle already sets, so its theme switch and its
+   'blog-theme' storage key keep working exactly as before.
+
+   Deliberately self-contained rather than importing the site's
+   style.css, whose layout rules would fight the blog's own.
+   ============================================================ */
+
+:root {
+  /* site palette, dark (the blog's default state) */
+  --page-bg: linear-gradient(180deg, #0b0f18, #05070c);
+  --ink: #e6e9f0;
+  --ink-muted: #b5bac8;
+  --ink-subtle: #858b9b;
+  --brand: #aeb8ff;
+  --brand-strong: #c1c8ff;
+  --surface: rgba(27, 28, 35, 0.82);
+  --surface-strong: rgba(37, 38, 47, 0.95);
+  --card-border: rgba(181, 190, 255, 0.2);
+  --font-display: 'Fraunces', 'Iowan Old Style', Palatino, Georgia, serif;
+  --font-body: 'DM Sans', 'Avenir Next', Avenir, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: 'DM Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
+  --wave-far: rgba(24, 58, 119, 0.19);
+  --wave-near: rgba(38, 91, 195, 0.25);
+
+  /* the blog's own tokens, remapped onto the palette above */
+  --bg: transparent;
+  --bg-secondary: var(--surface);
+  --bg-tertiary: var(--surface-strong);
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --accent: var(--brand);
+  --border: var(--card-border);
+  --accent-green: #72d2a1;
+  --accent-orange: #ffad83;
+  --accent-purple: #c1c8ff;
+  --accent-forest: #83c9a5;
+  --accent-red: #ff9ca6;
+  --accent-yellow: #f2cb6b;
+}
+
+html.light {
+  --page-bg: linear-gradient(180deg, #fbfcff, #f2f5ff);
+  --ink: #17171c;
+  --ink-muted: #4f5060;
+  --ink-subtle: #737485;
+  --brand: #5f6ee8;
+  --brand-strong: #4554cc;
+  --surface: rgba(252, 252, 255, 0.82);
+  --surface-strong: rgba(243, 243, 251, 0.95);
+  --card-border: rgba(113, 121, 190, 0.22);
+  --wave-far: rgba(199, 215, 255, 0.34);
+  --wave-near: rgba(124, 151, 232, 0.22);
+
+  --accent: var(--brand-strong);
+  /* on a near-white page a near-white panel is invisible, so panels take a
+     light lavender wash instead of the site's translucent surfaces */
+  --bg-secondary: #f1f3fc;
+  --bg-tertiary: #e7eaf8;
+  --accent-green: #287a59;
+  --accent-orange: #a94f2d;
+  --accent-purple: #6754b8;
+  --accent-forest: #39745c;
+  --accent-red: #b6404d;
+  --accent-yellow: #8a6100;
+}
+
+/* ---------- page ground + the site's wave field ---------- */
+html {
+  min-height: 100%;
+  background: var(--page-bg) no-repeat;
+}
+
+body {
+  background: transparent;
+  font-family: var(--font-body);
+}
+
+/* Two wave layers via pseudo-elements, so no markup is added. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 90%;
+  z-index: -1;
+  pointer-events: none;
+  mask-repeat: repeat-x;
+  mask-position: left bottom;
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-position: left bottom;
+  animation-name: blog-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+body::before {
+  background: var(--wave-far);
+  mask-image: url('../assets/wave-far.svg');
+  -webkit-mask-image: url('../assets/wave-far.svg');
+  mask-size: 2600px 100%;
+  -webkit-mask-size: 2600px 100%;
+  animation-duration: 90s;
+}
+
+body::after {
+  background: var(--wave-near);
+  mask-image: url('../assets/wave-near.svg');
+  -webkit-mask-image: url('../assets/wave-near.svg');
+  mask-size: 1500px 100%;
+  -webkit-mask-size: 1500px 100%;
+  animation-duration: 38s;
+}
+
+@keyframes blog-drift {
+  from { background-position-x: 0; }
+  to { background-position-x: -2600px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after { animation: none; }
+}
+
+/* ---------- typography ----------
+   NOTHING here targets .katex or its descendants, deliberately. KaTeX ships
+   its own fonts and metrics; even a `font-family: revert` on .katex * is a
+   hazard, since revert discards author styles and would drop KaTeX's own
+   glyph fonts wherever its selectors are not more specific. Leaving it alone
+   is correct: the .katex wrapper inheriting the body font is harmless because
+   KaTeX sets fonts on every glyph span itself. */
+h1, h2, h3, h4,
+.page-header h1,
+.article-header h1,
+.part-header h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+code,
+pre,
+.code-block,
+.ascii-diagram {
+  font-family: var(--font-mono);
+}
+
+a { color: var(--accent); }
+
+/* ---------- components that hardcode colour ---------- */
+.series-icon.generative,
+.series-icon.transformers,
+.series-icon.vision {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+}
+
+.chapter-number.vae { background: color-mix(in srgb, var(--brand) 18%, transparent); color: var(--brand); }
+.chapter-number.gan { background: color-mix(in srgb, var(--accent-orange) 18%, transparent); color: var(--accent-orange); }
+.chapter-number.diffusion { background: color-mix(in srgb, var(--accent-purple) 18%, transparent); color: var(--accent-purple); }
+.chapter-number.transformers { background: color-mix(in srgb, var(--accent-green) 18%, transparent); color: var(--accent-green); }
+.chapter-number.cnn { background: color-mix(in srgb, var(--accent-forest) 18%, transparent); color: var(--accent-forest); }
+
+.key-insight {
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--brand) 12%, transparent),
+      color-mix(in srgb, var(--accent-purple) 10%, transparent));
+  border-color: var(--card-border);
+}
+
+.tldr {
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--accent-green) 10%, transparent),
+      color-mix(in srgb, var(--brand) 10%, transparent));
+  border-color: var(--card-border);
+}
+
+.worked-example,
+.notation-box {
+  background: var(--surface);
+  border-color: var(--card-border);
+}
+
+.back-to-top {
+  background: var(--surface-strong);
+  color: var(--brand);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32);
+}
+
+.back-to-top:hover {
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.42);
+}
+
+/* The nav is fixed over scrolling text, so it needs to be opaque enough to
+   read against, the way the main site's header is. */
+.blog-nav,
+.article-nav {
+  background: var(--surface-strong);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* Panels need a visible edge in both themes */
+.code-block,
+.ascii-diagram,
+.math-block,
+.toc,
+.nomenclature {
+  background: var(--bg-secondary);
+  border: 1px solid var(--card-border);
+}
+
+/* cards and panels pick up the site's card treatment */
+.chapter-card,
+.toc,
+.code-block,
+.math-block,
+.question-block,
+.answer-block,
+.derivation-step,
+.nomenclature,
+.coming-soon {
+  border-radius: 14px;
+}
+
+/* ---------- specificity: these originals are more specific ---------- */
+html.light .theme-toggle::before { content: '🌙'; }
+
+/* ---------- narrow screens ----------
+   Articles already scrolled sideways on a phone before this restyle: wide
+   tables and display maths set a min-content width larger than the viewport.
+   Give each of them its own scroll box so only they move, not the page.
+   .katex-display scrolling is KaTeX's own documented remedy for wide maths. */
+table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 2px;
+}
+
+.code-block,
+.ascii-diagram,
+.math-block,
+.toc,
+.nomenclature {
+  box-sizing: border-box;
+  overflow-x: auto;
+}
