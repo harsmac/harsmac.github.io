@@ -147,18 +147,24 @@ html.dark {
   box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100%;
+/* The page gradient lives on the root element and must span the whole
+   document. With height:100% on body its background box was only one viewport
+   tall, and the canvas then REPEATED it, so every viewport-height boundary
+   showed a hard step from the gradient's end colour (#f2f5ff) back to its
+   start (#fbfcff). min-height lets the box grow with the content instead. */
+html {
+  min-height: 100%;
+  background: var(--page-bg) no-repeat;
 }
 
 body {
   margin: 0;
+  min-height: 100%;
   font-family: var(--font-body);
   font-size: var(--step-0);
   line-height: 1.65;
   color: var(--ink);
-  background: var(--page-bg);
+  background: transparent;
   -webkit-font-smoothing: antialiased;
 }
 
