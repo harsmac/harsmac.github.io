@@ -106,43 +106,9 @@ html.dark {
   --wave-near: rgba(38, 91, 195, 0.25);
 }
 
-/* Pink tokens: the light theme in pinks, picked explicitly by the user. */
-html.pink {
-  color-scheme: light;
-
-  --ink: #221a1f;
-  --ink-muted: #5c4a55;
-  --ink-subtle: #86707c;
-
-  --brand: #d6559a;
-  --brand-strong: #b8407f;
-  --brand-soft: #ffe6f2;
-  --accent: #e0744e;
-  --on-brand: #ffffff;
-
-  --surface: rgba(255, 250, 253, 0.78);
-  --surface-strong: rgba(253, 243, 249, 0.95);
-  --border: rgba(214, 85, 154, 0.2);
-  --card-bg: rgba(255, 255, 255, 0.78);
-  --card-border: rgba(214, 85, 154, 0.22);
-
-  --chip-bg: #fbeaf3;
-  --chip-border: #f3cde2;
-  --chip-text: #6f2c52;
-
-  --page-bg: linear-gradient(180deg, #fffafc, #fff0f6);
-
-  --shadow-sm: 0 2px 10px rgba(90, 30, 60, 0.08);
-  --shadow-md: 0 14px 36px rgba(90, 30, 60, 0.13);
-
-  --wave-far: rgba(255, 204, 229, 0.38);
-  --wave-mid: rgba(247, 171, 210, 0.3);
-  --wave-near: rgba(236, 135, 190, 0.24);
-}
-
 /* ...and when the OS says dark and the user has not overridden it. */
 @media (prefers-color-scheme: dark) {
-  html:not(.light):not(.pink) {
+  html:not(.light) {
     color-scheme: dark;
 
     --ink: #e6e9f0;
@@ -378,26 +344,35 @@ main {
   color: var(--brand-strong);
 }
 
-/* Toggle control: one button cycling light -> dark -> pink. The knob sits at
-   one of three stops; theme.js sets data-mode to the mode currently shown. */
+/* Toggle control */
+.theme-toggle-input {
+  display: none;
+}
+
 .theme-toggle {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
   width: 64px;
   height: 32px;
   margin-left: 12px;
-  padding: 0;
+  padding: 4px;
   border-radius: 999px;
   background: var(--surface);
   border: 1px solid var(--border);
   position: relative;
   cursor: pointer;
-  font: inherit;
+}
+
+.theme-toggle::before {
+  content: '';
 }
 
 .theme-toggle::after {
   content: '☀️';
   position: absolute;
-  top: 3px;
-  left: 3px;
+  top: 4px;
+  left: 4px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -410,14 +385,13 @@ main {
   transition: transform .25s ease;
 }
 
-.theme-toggle[data-mode="dark"]::after {
-  transform: translateX(16px);
-  content: '🌙';
+.theme-toggle-input:checked+.theme-toggle::before {
+  content: '';
 }
 
-.theme-toggle[data-mode="pink"]::after {
+.theme-toggle-input:checked+.theme-toggle::after {
   transform: translateX(32px);
-  content: '🌸';
+  content: '🌙';
 }
 
 /* Floating social bar */
@@ -1711,7 +1685,7 @@ html.dark {
 }
 
 @media (prefers-color-scheme: dark) {
-  html:not(.light):not(.pink) {
+  html:not(.light) {
     --chart-plot: rgba(255, 255, 255, 0.05);
     --chart-grid: rgba(255, 255, 255, 0.09);
     --chart-other: #6ed07a;
@@ -1744,14 +1718,6 @@ html.dark {
   --cover-accent: #c75e3e;
 }
 
-html.pink {
-  --cover-bg1: #fff0f6;
-  --cover-bg2: #fbdce9;
-  --cover-ink: #b8407f;
-  --cover-soft: #e99bc4;
-  --cover-accent: #e0744e;
-}
-
 html.dark {
   --cover-bg1: #1c1f2e;
   --cover-bg2: #141725;
@@ -1761,7 +1727,7 @@ html.dark {
 }
 
 @media (prefers-color-scheme: dark) {
-  html:not(.light):not(.pink) {
+  html:not(.light) {
     --cover-bg1: #1c1f2e;
     --cover-bg2: #141725;
     --cover-ink: #aeb8ff;

@@ -1,30 +1,28 @@
-// Theme toggle with persistence: light -> dark -> pink -> light.
+// Theme toggle with persistence.
 // The class lives on <html> so the early script in <head> can set it before
-// first paint (no flash). Default = follow the OS (light or dark).
+// first paint (no flash). Default = follow the OS.
 (function () {
   const storageKey = 'hm-theme';
-  const MODES = ['light', 'dark', 'pink'];
   const root = document.documentElement;
   const toggle = document.getElementById('theme-toggle');
   const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-  // The mode actually on screen, resolving "follow the OS" to light or dark.
-  function current() {
-    return MODES.find((m) => root.classList.contains(m)) || (systemDark.matches ? 'dark' : 'light');
+  function isDark() {
+    return root.classList.contains('dark') || (!root.classList.contains('light') && systemDark.matches);
   }
 
   function applyTheme(theme) {
-    root.classList.remove(...MODES);
+    root.classList.remove('light', 'dark');
     if (theme) root.classList.add(theme);
-    if (toggle) toggle.dataset.mode = current();
+    if (toggle) toggle.checked = isDark();
   }
 
   const saved = localStorage.getItem(storageKey);
-  applyTheme(MODES.includes(saved) ? saved : '');
+  applyTheme(saved === 'dark' || saved === 'light' ? saved : '');
 
   if (toggle) {
-    toggle.addEventListener('click', () => {
-      const next = MODES[(MODES.indexOf(current()) + 1) % MODES.length];
+    toggle.addEventListener('change', () => {
+      const next = toggle.checked ? 'dark' : 'light';
       localStorage.setItem(storageKey, next);
       applyTheme(next);
     });
