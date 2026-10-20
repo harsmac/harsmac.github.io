@@ -2254,8 +2254,12 @@ ol.cv-pubs {
   padding-left: 0;
 }
 
+.papers-more {
+  text-align: center;
+}
+
 /* Hero */
-.hero-eyebrow {
+.hero .hero-eyebrow {
   margin: 0 0 var(--space-3);
   font-family: var(--font-mono);
   font-size: var(--step--1);
@@ -2342,7 +2346,7 @@ ol.cv-pubs {
   }
 
   /* only safe where the column is wide enough; on a phone it would overflow */
-  .hero-eyebrow {
+  .hero .hero-eyebrow {
     white-space: nowrap;
   }
 }
