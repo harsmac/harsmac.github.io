@@ -63,8 +63,7 @@
       '<button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>' +
       '<nav class="site-nav" data-collapsible>' +
       navLinks() +
-      '<input id="theme-toggle" type="checkbox" class="theme-toggle-input" aria-label="Toggle dark mode" />' +
-      '<label for="theme-toggle" class="theme-toggle" title="Toggle theme" aria-hidden="true"></label>' +
+      '<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme (light, dark, pink)"></button>' +
       '</nav></header>';
 
     document.body.insertAdjacentHTML('afterbegin', wave + social + header);
